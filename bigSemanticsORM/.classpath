@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="test"/>
+	<classpathentry kind="src" path="resources"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER"/>
+	<classpathentry kind="con" path="org.maven.ide.eclipse.MAVEN2_CLASSPATH_CONTAINER"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ecologylabFundamental"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ecologylabSemantics"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/simplTranslators"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ecologylabSemanticsExample"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ecologylabGeneratedSemantics"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ecologylabSemanticsCyberneko"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/MetaMetadataRepository"/>
+	<classpathentry kind="output" path="target/classes"/>
+</classpath>

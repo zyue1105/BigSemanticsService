@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="ecologylab.semantics.generated.library.nsdl"><joined-subclass name="ecologylab.semantics.generated.library.nsdl.NsdlService" table="nsdl_service" extends="ecologylab.semantics.metadata.Metadata"><key column="orm_id" not-null="true"/><many-to-one name="searchResults" lazy="proxy" column="search_results" class="ecologylab.semantics.generated.library.nsdl.SearchResults"/></joined-subclass></hibernate-mapping>

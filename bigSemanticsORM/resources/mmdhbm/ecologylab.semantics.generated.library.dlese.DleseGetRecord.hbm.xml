@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="ecologylab.semantics.generated.library.dlese"><joined-subclass name="ecologylab.semantics.generated.library.dlese.DleseGetRecord" table="dlese_get_record" extends="ecologylab.semantics.metadata.builtins.CompoundDocument"><key column="orm_id" not-null="true"/><list name="records" lazy="true" table="dlese_get_record__records"><key column="orm_id" not-null="true"/><index column="dlese_get_record__records__index"/><many-to-many column="dlese_record2_id" class="ecologylab.semantics.generated.library.dlese.DleseRecord2" lazy="proxy"/></list></joined-subclass></hibernate-mapping>

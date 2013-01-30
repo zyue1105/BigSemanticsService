@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="ecologylab.semantics.generated.library.globe_cartoon"><joined-subclass name="ecologylab.semantics.generated.library.globe_cartoon.GlobeCartoon" table="globe_cartoon" extends="ecologylab.semantics.metadata.builtins.Document"><key column="orm_id" not-null="true"/><property name="datePublished" lazy="false" access="ecologylab.semantics.compiler.orm.scalartypes.MetadataScalarAccessor" type="ecologylab.semantics.compiler.orm.scalartypes.MetadataDateHibernateType" column="date_published"/><property name="imgLocation" lazy="false" access="ecologylab.semantics.compiler.orm.scalartypes.MetadataScalarAccessor" type="ecologylab.semantics.compiler.orm.scalartypes.MetadataParsedURLHibernateType" column="img_location" length="1024"/></joined-subclass></hibernate-mapping>

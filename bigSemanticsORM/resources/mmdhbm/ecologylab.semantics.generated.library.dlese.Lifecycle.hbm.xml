@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="ecologylab.semantics.generated.library.dlese"><joined-subclass name="ecologylab.semantics.generated.library.dlese.Lifecycle" table="lifecycle" extends="ecologylab.semantics.metadata.Metadata"><key column="orm_id" not-null="true"/><list name="contributors" lazy="true" table="lifecycle__contributors"><key column="orm_id" not-null="true"/><index column="lifecycle__contributors__index"/><many-to-many column="contributor_id" class="ecologylab.semantics.generated.library.dlese.Contributor" lazy="proxy"/></list></joined-subclass></hibernate-mapping>

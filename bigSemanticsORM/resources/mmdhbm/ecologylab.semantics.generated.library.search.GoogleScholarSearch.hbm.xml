@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="ecologylab.semantics.generated.library.search"><joined-subclass name="ecologylab.semantics.generated.library.search.GoogleScholarSearch" table="google_scholar_search" extends="ecologylab.semantics.metadata.builtins.Document"><key column="orm_id" not-null="true"/><list name="searchResults" lazy="true" table="google_scholar_search__search_results"><key column="orm_id" not-null="true"/><index column="google_scholar_search__search_results__index"/><many-to-many column="google_scholar_search_result_id" class="ecologylab.semantics.generated.library.search.GoogleScholarSearchResult" lazy="proxy"/></list></joined-subclass></hibernate-mapping>

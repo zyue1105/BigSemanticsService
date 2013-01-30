@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+	<session-factory>
+		<!-- Database connection settings -->
+		<property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
+		<property name="hibernate.connection.url">jdbc:postgresql://achilles.cse.tamu.edu/mmd_orm_test1</property>
+		<property name="hibernate.connection.username">quyin</property>
+		<property name="hibernate.connection.password">quyindbpwd</property>
+
+		<!-- <property name="hibernate.show_sql">true</property> -->
+
+		<property name="hibernate.hbm2ddl.auto">create</property>
+
+		<!-- SQL dialect -->
+		<property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
+
+		<!-- Configure the connection pool -->
+		<property name="hibernate.c3p0.acquire_increment">1</property>
+		<property name="hibernate.c3p0.min_size">10</property>
+		<property name="hibernate.c3p0.max_size">50</property>
+		<property name="hibernate.c3p0.max_statements">100</property>
+		<property name="hibernate.c3p0.timeout">120</property>
+		<property name="hibernate.c3p0.idle_test_period">120</property>
+
+		<!-- Configure the second-level cache -->
+		<property name="hibernate.cache.use_second_level_cache">true</property>
+		<property name="hibernate.cache.provider_class">org.hibernate.cache.EhCacheProvider</property>
+		<property name="hibernate.cache.region.factory_class">net.sf.ehcache.hibernate.EhCacheRegionFactory</property>
+
+		<!-- Configure the query cache -->
+		<property name="hibernate.cache.use_query_cache">true</property>
+
+		<!-- to test the example, with JPA annotations: -->
+		<mapping class="ecologylab.semantics.compiler.orm.example.BaseEntity" />
+		<mapping class="ecologylab.semantics.compiler.orm.example.Article" />
+		<mapping class="ecologylab.semantics.compiler.orm.example.Author" />
+		<mapping class="ecologylab.semantics.compiler.orm.example.Paper" />
+		<mapping class="ecologylab.semantics.compiler.orm.example.Conference" />
+		<mapping class="ecologylab.semantics.compiler.orm.example.AcmPaper" />
+
+	</session-factory>
+</hibernate-configuration>

@@ -1,0 +1,476 @@
+<DDSWebService mm_name="dlese_user_search"
+	location="http://www.dlese.org/dds/services/ddsws1-1?verb=UserSearch&amp;q=water+on+mars&amp;s=0&amp;n=10&amp;client=ddsws10examples">
+	<Search>
+		<resultInfo offset="0" numReturned="10"
+			totalNumRecordsInLibrary="12925" totalNumResults="283"></resultInfo>
+		<results>
+			<record mm_name="dlese_record1">
+				<head mm_name="dlese_record_head" id="DLESE-000-000-010-539"
+					fileLastModified="Sat Dec 04 00:00:00 CST 2010" xmlFormat="adn">
+					<collection recordId="DLESE-COLLECTION-000-000-000-015"></collection>
+					<additionalMetadata mm_name="additional_metadata">
+						<adn partOfDrc="false" accessionStatus="accessioneddiscoverable"></adn>
+					</additionalMetadata>
+				</head>
+				<metadata>
+					<itemRecord
+						schemaLocation="http://adn.dlese.org http://www.dlese.org/Metadata/adn-item/0.6.50/record.xsd">
+						<metaMetadata>
+							<dateInfo created="Sat Dec 04 00:00:00 CST 2010"
+								accessioned="Sat Dec 04 00:00:00 CST 2010"></dateInfo>
+						</metaMetadata>
+						<lifecycle>
+							<contributors>
+								<contributor role="Publisher">
+									<organization instName="National Aeronautics and Space Administration"></organization>
+								</contributor>
+							</contributors>
+						</lifecycle>
+						<educational>
+							<audiences>
+								<audience gradeRange="DLESE:High school"></audience>
+							</audiences>
+							<resourceTypes>
+								<resourceType></resourceType>
+								<resourceType></resourceType>
+								<resourceType></resourceType>
+							</resourceTypes>
+						</educational>
+						<general title="Is there water on Mars?"
+							description="This module from the Mars Exploration Curriculum revolves around the question of whether there is water on Mars. By experimenting with water as it changes state and investigating some effects of air pressure on water&#39;s boiling temperature, students not only learn core ideas in physical science but can deduce the water situation on Mars by applying those concepts. They use evidence from their work as well as data and images from NASA&#39;s missions to Mars to take a position on whether there was ever water on Mars."
+							language="en">
+							<subjects>
+								<subject></subject>
+								<subject></subject>
+							</subjects>
+						</general>
+					</itemRecord>
+				</metadata>
+			</record>
+			<record mm_name="dlese_record1">
+				<head mm_name="dlese_record_head" id="DLESE-000-000-003-537"
+					fileLastModified="Fri Dec 04 00:00:00 CST 2009" xmlFormat="adn">
+					<collection recordId="DLESE-COLLECTION-000-000-000-015"></collection>
+					<additionalMetadata mm_name="additional_metadata">
+						<adn partOfDrc="false" accessionStatus="accessioneddiscoverable"></adn>
+					</additionalMetadata>
+				</head>
+				<metadata>
+					<itemRecord
+						schemaLocation="http://adn.dlese.org http://www.dlese.org/Metadata/adn-item/0.6.50/record.xsd">
+						<metaMetadata>
+							<dateInfo created="Sat Dec 08 00:00:00 CST 2001"
+								accessioned="Sat Dec 08 00:00:00 CST 2001"></dateInfo>
+							<catalogEntries>
+								<catalog></catalog>
+							</catalogEntries>
+						</metaMetadata>
+						<lifecycle>
+							<contributors>
+								<contributor role="Publisher">
+									<organization instName="University Corporation for Atmospheric Research"></organization>
+								</contributor>
+								<contributor role="Principal Investigator"></contributor>
+							</contributors>
+						</lifecycle>
+						<educational>
+							<audiences>
+								<audience gradeRange="DLESE:General public"></audience>
+								<audience gradeRange="DLESE:High school"></audience>
+								<audience gradeRange="DLESE:Informal education"></audience>
+								<audience gradeRange="DLESE:Intermediate elementary"></audience>
+								<audience gradeRange="DLESE:Middle school"></audience>
+								<audience gradeRange="DLESE:Primary elementary"></audience>
+								<audience gradeRange="DLESE:Undergraduate lower division"></audience>
+							</audiences>
+							<resourceTypes>
+								<resourceType></resourceType>
+								<resourceType></resourceType>
+								<resourceType></resourceType>
+								<resourceType></resourceType>
+								<resourceType></resourceType>
+							</resourceTypes>
+						</educational>
+						<general title="Water on Mars"
+							description="Water on Mars is a Windows to the Universe Exploratour and provides information and images about Mars&#39; atmosphere, polar caps, Martian fog, clouds, Martian storms, possible rain, running water, outflow channels, river valley networks, tributaries, map of valleys and networks, lakes and floods, possible shorelines, Mars Pathfinder, Martian rocks, Mars cryosphere, and the water cycle. Windows to the Universe is a user-friendly learning system pertaining to the Earth and Space sciences. The objective of this project is to develop an innovative and engaging web site that spans the Earth and Space sciences and includes a rich array of documents, including images, movies, animations, and data sets that explore the Earth and Space sciences and the historical and cultural ties between science, exploration and the human experience. Links at the top of each page allow users to navigate between beginner, intermediate, and advanced options for each topic level."
+							language="en">
+							<subjects>
+								<subject></subject>
+								<subject></subject>
+							</subjects>
+						</general>
+					</itemRecord>
+				</metadata>
+			</record>
+			<record mm_name="dlese_record1">
+				<head mm_name="dlese_record_head" id="NASA-ESERevSProd319"
+					fileLastModified="Sun Oct 31 00:00:00 CDT 2010" xmlFormat="adn">
+					<collection recordId="DLESE-COLLECTION-000-000-000-023"></collection>
+					<additionalMetadata mm_name="additional_metadata">
+						<adn partOfDrc="true" accessionStatus="accessioneddiscoverable"></adn>
+					</additionalMetadata>
+				</head>
+				<metadata>
+					<itemRecord
+						schemaLocation="http://adn.dlese.org http://www.dlese.org/Metadata/adn-item/0.6.50/record.xsd">
+						<metaMetadata>
+							<dateInfo created="Tue Oct 31 00:00:00 CST 2006"
+								accessioned="Wed Dec 04 00:00:00 CST 2002"></dateInfo>
+							<catalogEntries>
+								<catalog></catalog>
+							</catalogEntries>
+						</metaMetadata>
+						<lifecycle>
+							<contributors>
+								<contributor role="Contact">
+									<organization instEmail="sbuxner@as.arizona.edu"
+										instName="LPL/ University of Arizona"></organization>
+								</contributor>
+							</contributors>
+						</lifecycle>
+						<educational>
+							<audiences>
+								<audience gradeRange="DLESE:Middle school"></audience>
+								<audience gradeRange="DLESE:High school"></audience>
+							</audiences>
+							<resourceTypes>
+								<resourceType></resourceType>
+								<resourceType></resourceType>
+								<resourceType></resourceType>
+							</resourceTypes>
+						</educational>
+						<general title="Buried Water Ice on Mars"
+							description="This product includes five classroom activities related to the discovery of water ice on Mars. In 2001, the Mars Odyssey spacecraft discovered significant amounts of water ice buried in the high latitude regions of Mars. This discovery, based upon data from the Mars Gamma Ray Spectrometer, helped motivate the development of the Mars Phoenix Lander mission, which arrived in the Martian arctic in 2008 to investigate this buried water ice. These classroom activities involve both guided and open inquiry approaches, using real data to allow students to investigate and learn about processes occurring on Mars. Each lesson includes a teacher guide and student guide. In addition, some of the lessons are accompanied by PowerPoint presentations and one extension activity uses an educational Flash animation."
+							language="en">
+							<subjects>
+								<subject></subject>
+							</subjects>
+						</general>
+					</itemRecord>
+				</metadata>
+			</record>
+			<record mm_name="dlese_record1">
+				<head mm_name="dlese_record_head" id="DWEL-000-000-000-210"
+					fileLastModified="Fri Dec 05 00:00:00 CST 2008" xmlFormat="adn">
+					<collection recordId="DLESE-COLLECTION-000-000-000-009"></collection>
+					<additionalMetadata mm_name="additional_metadata">
+						<adn partOfDrc="true" accessionStatus="accessioneddiscoverable"></adn>
+					</additionalMetadata>
+				</head>
+				<metadata>
+					<itemRecord
+						schemaLocation="http://adn.dlese.org http://www.dlese.org/Metadata/adn-item/0.6.50/record.xsd">
+						<metaMetadata>
+							<dateInfo created="Fri Dec 06 00:00:00 CST 2002"
+								accessioned="Fri Dec 06 00:00:00 CST 2002"></dateInfo>
+							<catalogEntries>
+								<catalog></catalog>
+							</catalogEntries>
+						</metaMetadata>
+						<lifecycle>
+							<contributors>
+								<contributor role="Publisher">
+									<organization instName="Malin Space Science Systems, Inc"></organization>
+								</contributor>
+							</contributors>
+						</lifecycle>
+						<educational>
+							<audiences>
+								<audience gradeRange="DLESE:General public"></audience>
+							</audiences>
+							<resourceTypes>
+								<resourceType></resourceType>
+								<resourceType></resourceType>
+							</resourceTypes>
+						</educational>
+						<general
+							title="Mars Orbiter Camera Images Suggest Recent Sources of Liquid Water on Mars"
+							description="This is a collection of high-quality photographs of Mars, showing evidence of water. Each photo is available in multiple versions, and is accompanied by a detailed description of what it illustrates."
+							language="en">
+							<subjects>
+								<subject></subject>
+								<subject></subject>
+								<subject></subject>
+								<subject></subject>
+							</subjects>
+						</general>
+					</itemRecord>
+				</metadata>
+			</record>
+			<record mm_name="dlese_record1">
+				<head mm_name="dlese_record_head" id="DWEL-000-000-000-360"
+					fileLastModified="Mon Dec 08 00:00:00 CST 2008" xmlFormat="adn">
+					<collection recordId="DLESE-COLLECTION-000-000-000-009"></collection>
+					<additionalMetadata mm_name="additional_metadata">
+						<adn partOfDrc="true" accessionStatus="accessioneddiscoverable"></adn>
+					</additionalMetadata>
+				</head>
+				<metadata>
+					<itemRecord
+						schemaLocation="http://adn.dlese.org http://www.dlese.org/Metadata/adn-item/0.6.50/record.xsd">
+						<metaMetadata>
+							<dateInfo created="Mon Dec 08 00:00:00 CST 2003"
+								accessioned="Tue Dec 09 00:00:00 CST 2003"></dateInfo>
+							<catalogEntries>
+								<catalog></catalog>
+							</catalogEntries>
+						</metaMetadata>
+						<lifecycle>
+							<contributors>
+								<contributor role="Principal Investigator"></contributor>
+							</contributors>
+						</lifecycle>
+						<educational>
+							<audiences>
+								<audience gradeRange="DLESE:Graduate or professional"></audience>
+								<audience gradeRange="DLESE:High school"></audience>
+								<audience gradeRange="DLESE:Undergraduate lower division"></audience>
+								<audience gradeRange="DLESE:Undergraduate upper division"></audience>
+							</audiences>
+							<resourceTypes>
+								<resourceType></resourceType>
+								<resourceType></resourceType>
+							</resourceTypes>
+						</educational>
+						<general title="Mars Express - Water"
+							description="Until very recently, planetary scientists had thought that Mars is a cold, dry planet. Then in the summer of 2000, NASA released images from the Mars Global Surveyor showing evidence of very recent seepage of ground water from crater and valley slopes in the planet&#39;s southern hemisphere. It seems that substantial reservoirs of the water that once may have run so copiously on the surface may still exist. Evidence of other water-created landforms is presented and accompanied by remote imagery."
+							language="en">
+							<subjects>
+								<subject></subject>
+								<subject></subject>
+							</subjects>
+						</general>
+					</itemRecord>
+				</metadata>
+			</record>
+			<record mm_name="dlese_record1">
+				<head mm_name="dlese_record_head" id="DLESE-000-000-006-914"
+					fileLastModified="Sun Dec 07 00:00:00 CST 2008" xmlFormat="adn">
+					<collection recordId="DLESE-COLLECTION-000-000-000-015"></collection>
+					<additionalMetadata mm_name="additional_metadata">
+						<adn partOfDrc="false" accessionStatus="accessioneddiscoverable"></adn>
+					</additionalMetadata>
+				</head>
+				<metadata>
+					<itemRecord
+						schemaLocation="http://adn.dlese.org http://www.dlese.org/Metadata/adn-item/0.6.50/record.xsd">
+						<metaMetadata>
+							<dateInfo created="Fri Oct 31 00:00:00 CST 2003"
+								accessioned="Thu Dec 02 00:00:00 CST 2004"></dateInfo>
+							<catalogEntries>
+								<catalog></catalog>
+							</catalogEntries>
+						</metaMetadata>
+						<lifecycle>
+							<contributors>
+								<contributor role="Publisher">
+									<organization instEmail="scifri@sciencefriday.com"
+										instName="Samanna Productions, Inc., Science Friday"></organization>
+								</contributor>
+								<contributor role="Contact"></contributor>
+							</contributors>
+						</lifecycle>
+						<educational>
+							<audiences>
+								<audience gradeRange="DLESE:General public"></audience>
+							</audiences>
+							<resourceTypes>
+								<resourceType></resourceType>
+							</resourceTypes>
+						</educational>
+						<general
+							title="Water on Mars? / Genetically Engineered Organisms / Spring Sky"
+							description="This 46 minute radio broadcast discusses the NASA announcement in March 2004 that the rover Opportunity explored a crater on Mars that was once soaked with water - the most convincing evidence yet of a warm, wet past on Mars. Though the question of whether that water may have supported life remains, it certainly improves the odds. The second part of the broadcast discusses genetically engineered organisms. Researchers are investigating many different kinds of genetically-modified organisms, from plants that make their own pesticides, to faster-growing fish. There is discussion about the safety of such research, and what can be done to ensure that the environment is protected. Finally, there is a rundown of the spring 2004 highlights in the sky."
+							language="en">
+							<subjects>
+								<subject></subject>
+								<subject></subject>
+							</subjects>
+						</general>
+					</itemRecord>
+				</metadata>
+			</record>
+			<record mm_name="dlese_record1">
+				<head mm_name="dlese_record_head" id="DLESE-000-000-004-933"
+					fileLastModified="Sun Dec 07 00:00:00 CST 2008" xmlFormat="adn">
+					<collection recordId="DLESE-COLLECTION-000-000-000-015"></collection>
+					<additionalMetadata mm_name="additional_metadata">
+						<adn partOfDrc="false" accessionStatus="accessioneddiscoverable"></adn>
+					</additionalMetadata>
+				</head>
+				<metadata>
+					<itemRecord
+						schemaLocation="http://adn.dlese.org http://www.dlese.org/Metadata/adn-item/0.6.50/record.xsd">
+						<metaMetadata>
+							<dateInfo created="Sat Nov 02 00:00:00 CST 2002"
+								accessioned="Sat Nov 02 00:00:00 CST 2002"></dateInfo>
+							<catalogEntries>
+								<catalog></catalog>
+							</catalogEntries>
+						</metaMetadata>
+						<lifecycle>
+							<contributors>
+								<contributor role="Publisher">
+									<organization instEmail="mastteach@vertex.ucls.uchicago.edu"
+										instName="University of Chicago Laboratory Schools"></organization>
+								</contributor>
+							</contributors>
+						</lifecycle>
+						<educational>
+							<audiences>
+								<audience gradeRange="DLESE:Middle school"></audience>
+							</audiences>
+							<resourceTypes>
+								<resourceType></resourceType>
+							</resourceTypes>
+						</educational>
+						<general title="Exploring Mars: Oh Water, Where Art Thou?"
+							description="In this lesson students explore the idea of water on Mars. Many active links allow the students to come to their own conclusions about water on Mars and explore how Earth might appear from space without water. Other links provide the students with the opinions of experts. This is the eighth in a series of interactive student lessons from the Martian Sun Times."
+							language="en">
+							<subjects>
+								<subject></subject>
+								<subject></subject>
+							</subjects>
+						</general>
+					</itemRecord>
+				</metadata>
+			</record>
+			<record mm_name="dlese_record1">
+				<head mm_name="dlese_record_head" id="DWEL-000-000-000-307"
+					fileLastModified="Mon Dec 08 00:00:00 CST 2008" xmlFormat="adn">
+					<collection recordId="DLESE-COLLECTION-000-000-000-009"></collection>
+					<additionalMetadata mm_name="additional_metadata">
+						<adn partOfDrc="true" accessionStatus="accessioneddiscoverable"></adn>
+					</additionalMetadata>
+				</head>
+				<metadata>
+					<itemRecord
+						schemaLocation="http://adn.dlese.org http://www.dlese.org/Metadata/adn-item/0.6.50/record.xsd">
+						<metaMetadata>
+							<dateInfo created="Sat Dec 06 00:00:00 CST 2003"
+								accessioned="Sat Dec 06 00:00:00 CST 2003"></dateInfo>
+							<catalogEntries>
+								<catalog></catalog>
+							</catalogEntries>
+						</metaMetadata>
+						<lifecycle>
+							<contributors>
+								<contributor role="Contributor" date="1999"></contributor>
+							</contributors>
+						</lifecycle>
+						<educational>
+							<audiences>
+								<audience gradeRange="DLESE:High school"></audience>
+								<audience gradeRange="DLESE:Middle school"></audience>
+							</audiences>
+							<resourceTypes>
+								<resourceType></resourceType>
+							</resourceTypes>
+						</educational>
+						<general title="Is There Water on Mars?"
+							description="This resource includes a classroom activity, background information and a set of temperature and surface pressure data from the Pathfinder Lander. Students analyze data on temperature and pressure graphs from the first 30 days of the Pathfinder Mission to determine whether water could have existed under these conditions. A set of 15 images is also available, which can be reproduced on a photocopier for this activity."
+							language="en">
+							<subjects>
+								<subject></subject>
+								<subject></subject>
+							</subjects>
+						</general>
+					</itemRecord>
+				</metadata>
+			</record>
+			<record mm_name="dlese_record1">
+				<head mm_name="dlese_record_head" id="DWEL-000-000-000-361"
+					fileLastModified="Mon Dec 08 00:00:00 CST 2008" xmlFormat="adn">
+					<collection recordId="DLESE-COLLECTION-000-000-000-009"></collection>
+					<additionalMetadata mm_name="additional_metadata">
+						<adn partOfDrc="true" accessionStatus="accessioneddiscoverable"></adn>
+					</additionalMetadata>
+				</head>
+				<metadata>
+					<itemRecord
+						schemaLocation="http://adn.dlese.org http://www.dlese.org/Metadata/adn-item/0.6.50/record.xsd">
+						<metaMetadata>
+							<dateInfo created="Mon Dec 08 00:00:00 CST 2003"
+								accessioned="Tue Dec 09 00:00:00 CST 2003"></dateInfo>
+							<catalogEntries>
+								<catalog></catalog>
+							</catalogEntries>
+						</metaMetadata>
+						<lifecycle>
+							<contributors>
+								<contributor role="Principal Investigator"></contributor>
+							</contributors>
+						</lifecycle>
+						<educational>
+							<audiences>
+								<audience gradeRange="DLESE:Graduate or professional"></audience>
+								<audience gradeRange="DLESE:High school"></audience>
+								<audience gradeRange="DLESE:Middle school"></audience>
+								<audience gradeRange="DLESE:Undergraduate lower division"></audience>
+								<audience gradeRange="DLESE:Undergraduate upper division"></audience>
+							</audiences>
+							<resourceTypes>
+								<resourceType></resourceType>
+							</resourceTypes>
+						</educational>
+						<general title="Mars Express - OMEGA Detects Water at Mars South Pole"
+							description="The European Space Agency&#39;s Mars Express Satellite has recorded images in three different bands of the southern polar cap of Mars, which show both frozen carbon dioxide and water ice. The images are presented with a brief caption and links to other Mars Express imagery and status reports."
+							language="en">
+							<subjects>
+								<subject></subject>
+							</subjects>
+						</general>
+					</itemRecord>
+				</metadata>
+			</record>
+			<record mm_name="dlese_record1">
+				<head mm_name="dlese_record_head" id="DLESE-000-000-005-801"
+					fileLastModified="Sat Dec 04 00:00:00 CST 2010" xmlFormat="adn">
+					<collection recordId="DLESE-COLLECTION-000-000-000-015"></collection>
+					<additionalMetadata mm_name="additional_metadata">
+						<adn partOfDrc="false" accessionStatus="accessioneddiscoverable"></adn>
+					</additionalMetadata>
+				</head>
+				<metadata>
+					<itemRecord
+						schemaLocation="http://adn.dlese.org http://www.dlese.org/Metadata/adn-item/0.6.50/record.xsd">
+						<metaMetadata>
+							<dateInfo created="Thu Dec 04 00:00:00 CST 2003"
+								accessioned="Fri Dec 05 00:00:00 CST 2003"></dateInfo>
+							<catalogEntries>
+								<catalog></catalog>
+							</catalogEntries>
+						</metaMetadata>
+						<lifecycle>
+							<contributors>
+								<contributor role="Publisher">
+									<organization instEmail="webmaster@amnh.org"
+										instName="American Museum of Natural History"></organization>
+								</contributor>
+							</contributors>
+						</lifecycle>
+						<educational>
+							<audiences>
+								<audience gradeRange="DLESE:High school"></audience>
+								<audience gradeRange="DLESE:Middle school"></audience>
+							</audiences>
+							<resourceTypes>
+								<resourceType></resourceType>
+								<resourceType></resourceType>
+								<resourceType></resourceType>
+							</resourceTypes>
+						</educational>
+						<general title="Geologists on Mars"
+							description="In this video NASA scientists discover firm evidence that water once flowed on Mars&#8212;perhaps enough water to harbor life. The site includes links to five essays about Mars, &#34;A Tale of Two Rovers,&#34; &#34;Why Go to Mars,&#34; &#34;Visions (and Revisions) of Mars,&#34; &#34;When Worlds Diverge,&#34; and &#34;Is the Signature Still Wet?&#34; It also has photographs of Mars and interactive presentations."
+							language="en">
+							<subjects>
+								<subject></subject>
+								<subject></subject>
+							</subjects>
+						</general>
+					</itemRecord>
+				</metadata>
+			</record>
+		</results>
+	</Search>
+</DDSWebService>

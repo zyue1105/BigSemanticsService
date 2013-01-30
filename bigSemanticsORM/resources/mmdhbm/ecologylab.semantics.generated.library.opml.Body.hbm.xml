@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="ecologylab.semantics.generated.library.opml"><joined-subclass name="ecologylab.semantics.generated.library.opml.Body" table="body" extends="ecologylab.semantics.metadata.Metadata"><key column="orm_id" not-null="true"/><list name="outline" lazy="true" table="body__outline"><key column="orm_id" not-null="true"/><index column="body__outline__index"/><many-to-many column="outline_id" class="ecologylab.semantics.generated.library.opml.Outline" lazy="proxy"/></list></joined-subclass></hibernate-mapping>

@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="ecologylab.translators.hibernate">
+  <class name="ecologylab.translators.hibernate.TestHibernateXmlMappingGeneratorWithMaps"
+    table="test_hibernate_xml_mapping_generator_with_maps">
+    <id name="id" column="id">
+      <generator class="identity" />
+    </id>
+    <map name="scalarScalarMap" lazy="true"
+      table="test_hibernate_xml_mapping_generator_with_maps__scalar_scalar_map">
+      <key column="test_hibernate_xml_mapping_generator_with_maps_id" not-null="true" />
+      <map-key type="java.lang.String" />
+      <element column="value" type="java.lang.Float" />
+    </map>
+    <map name="scalarElementMap" lazy="true"
+      table="test_hibernate_xml_mapping_generator_with_maps__scalar_element_map">
+      <key column="test_hibernate_xml_mapping_generator_with_maps_id" not-null="true" />
+      <map-key type="java.lang.String" />
+      <many-to-many column="item_id"
+        class="ecologylab.translators.hibernate.TestHibernateXmlMappingGeneratorWithMaps$Item" lazy="proxy" />
+    </map>
+  </class>
+</hibernate-mapping>

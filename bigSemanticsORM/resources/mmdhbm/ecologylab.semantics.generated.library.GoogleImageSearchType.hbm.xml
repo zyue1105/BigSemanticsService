@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="ecologylab.semantics.generated.library"><joined-subclass name="ecologylab.semantics.generated.library.GoogleImageSearchType" table="google_image_search_type" extends="ecologylab.semantics.metadata.builtins.CompoundDocument"><key column="orm_id" not-null="true"/><list name="imageResults" lazy="true" table="google_image_search_type__image_results"><key column="orm_id" not-null="true"/><index column="google_image_search_type__image_results__index"/><many-to-many column="image_result_id" class="ecologylab.semantics.generated.library.ImageResult" lazy="proxy"/></list></joined-subclass></hibernate-mapping>

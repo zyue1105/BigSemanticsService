@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="ecologylab.semantics.generated.library.bibManaging"><joined-subclass name="ecologylab.semantics.generated.library.bibManaging.CiteseerxRecord" table="citeseerx_record" extends="ecologylab.semantics.generated.library.scholarlyPublication.ScholarlyArticle"><key column="orm_id" not-null="true"/><many-to-one name="citationInfo" lazy="proxy" column="citation_info" class="ecologylab.semantics.generated.library.bibManaging.CitationInfo"/></joined-subclass></hibernate-mapping>

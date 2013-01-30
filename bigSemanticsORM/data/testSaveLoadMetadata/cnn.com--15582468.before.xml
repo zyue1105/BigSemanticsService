@@ -1,0 +1,212 @@
+<compound_document
+	location="http://news.blogs.cnn.com/2011/04/14/predator-dinosaurs-may-have-been-night-hunters/?hpt=C2"
+	title="Predator dinosaurs may have been night-hunters &#8211; This Just In - CNN.com Blogs"
+	page_structure="content_page" simpl:id="2049894373"
+	xmlns:simpl="http://ecologylab.net/research/simplGuide/serialization/index.html">
+	<clippings>
+		<image_clipping
+			context="&#10;Child rape charges against former football coach rock school, college sports"
+			xpath="/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img"
+			caption="Penn State scandal Child rape charges against former football coach rock school, college sports"
+			simpl:id="225265367">
+			<source_doc>
+				<compound_document simpl:ref="2049894373" />
+			</source_doc>
+			<outlink>
+				<compound_document
+					location="http://news.blogs.cnn.com/category/sports/football/college-football/penn-state/"></compound_document>
+			</outlink>
+			<media>
+				<image
+					location="http://i2.cdn.turner.com/cnn/dam/assets/111114100130-sandusky-charges-search-tease.jpg"
+					width="0" height="0">
+					<clippings>
+						<image_clipping simpl:ref="225265367" />
+					</clippings>
+				</image>
+			</media>
+		</image_clipping>
+		<image_clipping
+			context="&#10;Candidates debate and vie for the GOP nomination for U.S. president"
+			xpath="/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img"
+			caption="GOP nomination race Candidates debate and vie for the GOP nomination for U.S. president"
+			simpl:id="454015421">
+			<source_doc>
+				<compound_document simpl:ref="2049894373" />
+			</source_doc>
+			<outlink>
+				<compound_document
+					location="http://news.blogs.cnn.com/category/politics/republican-party/"></compound_document>
+			</outlink>
+			<media>
+				<image
+					location="http://i2.cdn.turner.com/cnn/2011/images/11/16/tzsrch.romney.cain.gingrich.gi.jpg"
+					width="0" height="0">
+					<clippings>
+						<image_clipping simpl:ref="454015421" />
+					</clippings>
+				</image>
+			</media>
+		</image_clipping>
+		<image_clipping
+			context="&#10;Syrian deserters strike military target as pressure for al-Assad to step down increases"
+			xpath="/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img"
+			caption="Pressure on Syria Syrian deserters strike military target as pressure for al-Assad to step down increases"
+			simpl:id="1001196937">
+			<source_doc>
+				<compound_document simpl:ref="2049894373" />
+			</source_doc>
+			<outlink>
+				<compound_document location="http://news.blogs.cnn.com/category/world/syria/"></compound_document>
+			</outlink>
+			<media>
+				<image
+					location="http://i2.cdn.turner.com/cnn/dam/assets/111028033202-bashar-al-assad-search-tease.jpg"
+					width="0" height="0">
+					<clippings>
+						<image_clipping simpl:ref="1001196937" />
+					</clippings>
+				</image>
+			</media>
+		</image_clipping>
+		<image_clipping
+			context="&#10;Michael Jackson&#8217;s doctor found guilty of involuntary manslaughter, remanded into custody"
+			xpath="/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img"
+			caption="Conrad Murray trial Michael Jackson&#8217;s doctor found guilty of involuntary manslaughter, remanded into custody"
+			simpl:id="349106503">
+			<source_doc>
+				<compound_document simpl:ref="2049894373" />
+			</source_doc>
+			<outlink>
+				<compound_document
+					location="http://news.blogs.cnn.com/category/world/united-nations/"></compound_document>
+			</outlink>
+			<media>
+				<image
+					location="http://i2.cdn.turner.com/cnn/2011/images/11/01/tzsrch.conrad.murray.gi.jpg"
+					width="0" height="0">
+					<clippings>
+						<image_clipping simpl:ref="349106503" />
+					</clippings>
+				</image>
+			</media>
+		</image_clipping>
+		<image_clipping
+			context="&#10;Collections of comments from CNN.com readers on the biggest stories of the day"
+			xpath="/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img"
+			caption="Overheard on CNN.com Collections of comments from CNN.com readers on the biggest stories of the day"
+			simpl:id="1459636762">
+			<source_doc>
+				<compound_document simpl:ref="2049894373" />
+			</source_doc>
+			<outlink>
+				<compound_document
+					location="http://news.blogs.cnn.com/category/ireport/overheard-on-cnn-com/"></compound_document>
+			</outlink>
+			<media>
+				<image
+					location="http://i2.cdn.turner.com/cnn/dam/assets/111115031100-facebook-porn-attack-search-tease.jpg"
+					width="0" height="0">
+					<clippings>
+						<image_clipping simpl:ref="1459636762" />
+					</clippings>
+				</image>
+			</media>
+		</image_clipping>
+		<image_clipping context="3:49 pm ET November 22, 2011"
+			xpath="/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img"
+			caption="Twitter icon" simpl:id="1801148291">
+			<source_doc>
+				<compound_document simpl:ref="2049894373" />
+			</source_doc>
+			<outlink>
+				<compound_document
+					location="http://twitter.com/CNNMoney/statuses/139083153779339265"></compound_document>
+			</outlink>
+			<media>
+				<image
+					location="http://a0.twimg.com/profile_images/1344702851/fb_cnnmoney_new_logo_avatar_normal.jpg"
+					width="35" height="35" simpl:id="678570345">
+					<clippings>
+						<image_clipping simpl:ref="1801148291" />
+						<image_clipping context="2:46 pm ET November 22, 2011"
+							xpath="/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img"
+							caption="Twitter icon" simpl:id="1593622845">
+							<source_doc>
+								<compound_document simpl:ref="2049894373" />
+							</source_doc>
+							<outlink>
+								<compound_document
+									location="http://twitter.com/CNNMoney/statuses/139067148122341376"></compound_document>
+							</outlink>
+							<media>
+								<image simpl:ref="678570345" />
+							</media>
+						</image_clipping>
+					</clippings>
+				</image>
+			</media>
+		</image_clipping>
+		<image_clipping context="2:50 pm ET November 22, 2011"
+			xpath="/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img"
+			caption="Twitter icon" simpl:id="355880677">
+			<source_doc>
+				<compound_document simpl:ref="2049894373" />
+			</source_doc>
+			<outlink>
+				<compound_document
+					location="http://twitter.com/cnni/statuses/139068308723990528"></compound_document>
+			</outlink>
+			<media>
+				<image
+					location="http://a0.twimg.com/profile_images/840325508/cnn.twitter.avatar_normal.jpg"
+					width="35" height="35">
+					<clippings>
+						<image_clipping simpl:ref="355880677" />
+					</clippings>
+				</image>
+			</media>
+		</image_clipping>
+		<image_clipping simpl:ref="1593622845" />
+		<image_clipping context="2:35 pm ET November 22, 2011"
+			xpath="/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img"
+			caption="Twitter icon" simpl:id="1304749970">
+			<source_doc>
+				<compound_document simpl:ref="2049894373" />
+			</source_doc>
+			<outlink>
+				<compound_document
+					location="http://twitter.com/CarolCNN/statuses/139064373053358081"></compound_document>
+			</outlink>
+			<media>
+				<image
+					location="http://a3.twimg.com/profile_images/776616377/costello.carol_normal.jpg"
+					width="35" height="35">
+					<clippings>
+						<image_clipping simpl:ref="1304749970" />
+					</clippings>
+				</image>
+			</media>
+		</image_clipping>
+		<image_clipping context="2:31 pm ET November 22, 2011"
+			xpath="/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img/img"
+			caption="Twitter icon" simpl:id="1000319223">
+			<source_doc>
+				<compound_document simpl:ref="2049894373" />
+			</source_doc>
+			<outlink>
+				<compound_document
+					location="http://twitter.com/CNNkimsegal/statuses/139063561992409088"></compound_document>
+			</outlink>
+			<media>
+				<image
+					location="http://a2.twimg.com/profile_images/795096559/s502477866_1070913_1267_normal.jpg"
+					width="35" height="35">
+					<clippings>
+						<image_clipping simpl:ref="1000319223" />
+					</clippings>
+				</image>
+			</media>
+		</image_clipping>
+	</clippings>
+</compound_document>

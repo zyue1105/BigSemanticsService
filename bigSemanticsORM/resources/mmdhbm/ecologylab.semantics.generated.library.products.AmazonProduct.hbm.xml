@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="ecologylab.semantics.generated.library.products"><joined-subclass name="ecologylab.semantics.generated.library.products.AmazonProduct" table="amazon_product" extends="ecologylab.semantics.generated.library.products.Product"><key column="orm_id" not-null="true"/><many-to-one name="department" lazy="proxy" column="department" class="ecologylab.semantics.metadata.builtins.Document"/><many-to-one name="bestsellerList" lazy="proxy" column="bestseller_list" class="ecologylab.semantics.generated.library.products.BestsellerList"/></joined-subclass></hibernate-mapping>

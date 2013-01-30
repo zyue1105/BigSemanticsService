@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="ecologylab.semantics.generated.library.icdl"><joined-subclass name="ecologylab.semantics.generated.library.icdl.IcdlImageResult" table="icdl_image_result" extends="ecologylab.semantics.metadata.builtins.Document"><key column="orm_id" not-null="true"/><list name="books" lazy="true" table="icdl_image_result__books"><key column="orm_id" not-null="true"/><index column="icdl_image_result__books__index"/><many-to-many column="icdl_book_id" class="ecologylab.semantics.generated.library.icdl.IcdlBook" lazy="proxy"/></list></joined-subclass></hibernate-mapping>

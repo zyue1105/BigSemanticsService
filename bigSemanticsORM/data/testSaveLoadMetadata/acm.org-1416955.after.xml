@@ -1,0 +1,861 @@
+<scholarly_article mm_name="acm_portal"
+	location="http://portal.acm.org/ft_gateway.cfm?id=1416955&amp;type=pdf&amp;CFID=54870256&amp;CFTOKEN=43143093"
+	title="combinFormation: Mixed-initiative composition of image and text surrogates promotes information discovery"
+	metadata_page="http://portal.acm.org/ft_gateway.cfm?id=1416955&amp;type=pdf&amp;CFID=54870256&amp;CFTOKEN=43143093"
+	simpl:id="1446427658"
+	xmlns:simpl="http://ecologylab.net/research/simplGuide/serialization/index.html">
+	<additional_locations>
+		<location></location>
+		<location></location>
+	</additional_locations>
+	<clippings>
+		<text_clipping
+			context="combinFormation: Mixed-initiative composition of image and text surrogates promotes information discovery"
+			text="combinFormation: Mixed-initiative composition of image and text surrogates">
+			<source_doc>
+				<scholarly_article simpl:ref="1446427658" />
+			</source_doc>
+		</text_clipping>
+	</clippings>
+	<abstract>combinFormation is a mixed-initiative creativity support tool
+		for searching, browsing, organizing, and integrating information.
+		Images and text are connected to represent surrogates (enhanced
+		bookmarks), optimizing the use of human cognitive facilities.
+		Composition, an alternative to lists and spatial hypertext, is used to
+		represent a collection of surrogates as a connected whole, using
+		principles from art and design. This facilitates the creative process
+		of information discovery, in which humans develop new ideas while
+		finding and collecting information. To provoke the user to think about
+		the large space of potentially relevant information resources, a
+		generative agent proactively engages in collecting information
+		resources, forming image and text surrogates, and composing them
+		visually. The agent develops the collection and its visual
+		representation over time, enabling the user to see ideas and
+		relationships. To keep the human in control, we develop interactive
+		mechanisms for authoring the composition and directing the agent. In a
+		field study in an interdisciplinary course on The Design Process, over
+		a hundred students alternated using combinFormation and Google+Word to
+		collect prior work on information discovery invention assignments. The
+		students that used combinFormation&#39;s mixed-initiative composition
+		of image and text surrogates performed better.</abstract>
+	<authors>
+		<author
+			location="http://portal.acm.org/author_page.cfm?id=81100203284&amp;coll=DL&amp;dl=ACM&amp;trk=0&amp;cfid=54870256&amp;cftoken=43143093"
+			title="Andruid Kerne" affiliation="Texas A&amp;M University, College Station, TX"></author>
+		<author
+			location="http://portal.acm.org/author_page.cfm?id=81310489834&amp;coll=DL&amp;dl=ACM&amp;trk=0&amp;cfid=54870256&amp;cftoken=43143093"
+			title="Eunyee Koh"></author>
+		<author
+			location="http://portal.acm.org/author_page.cfm?id=81100077011&amp;coll=DL&amp;dl=ACM&amp;trk=0&amp;cfid=54870256&amp;cftoken=43143093"
+			title="Steven M. Smith" affiliation="Texas A&amp;M University, College Station, TX"></author>
+		<author
+			location="http://portal.acm.org/author_page.cfm?id=81100016271&amp;coll=DL&amp;dl=ACM&amp;trk=0&amp;cfid=54870256&amp;cftoken=43143093"
+			title="Andrew Webb" affiliation="Texas A&amp;M University, College Station, TX"></author>
+		<author
+			location="http://portal.acm.org/author_page.cfm?id=81372592305&amp;coll=DL&amp;dl=ACM&amp;trk=0&amp;cfid=54870256&amp;cftoken=43143093"
+			title="Blake Dworaczyk" affiliation="Texas A&amp;M University, College Station, TX"></author>
+	</authors>
+	<source mm_name="source" location="http://portal.acm.org/TOIS Homepage"
+		title="ACM Transactions on Information Systems (TOIS) TOIS Homepage           &#10;		           table&#160;of&#160;contents&#10;			    &#10;              archive"></source>
+	<references>
+		<reference
+			location="http://portal.acm.org/citation.cfm?id=1038793&amp;CFID=54870256&amp;CFTOKEN=43143093"
+			title="BEST PAPER: A Knowledge Task-Based Framework for Design and Evaluation of Information Visualizations">
+			<authors>
+				<author title="Robert Amar"></author>
+				<author title="John Stasko"></author>
+			</authors>
+			<source mm_name="source"
+				title="Proceedings of the IEEE Symposium on Information Visualization, p.143-150, October 10-12, 2004  &#160;[doi&gt;10.1109/INFOVIS.2004.10]"
+				year="2004"></source>
+		</reference>
+		<reference title="1992">
+			<authors>
+				<author title="Baddeley, A. D."></author>
+			</authors>
+			<source mm_name="source"></source>
+		</reference>
+		<reference
+			location="http://portal.acm.org/citation.cfm?id=927608&amp;CFID=54870256&amp;CFTOKEN=43143093"
+			title="Learning to surf: multiagent systems for adaptive web page recommendation">
+			<authors>
+				<author title="Marko Balabanovic"></author>
+				<author title="Yoav Shoham"></author>
+			</authors>
+			<source mm_name="source" title="Stanford University, Stanford, CA, 1998"
+				year="1998"></source>
+		</reference>
+		<reference
+			location="http://portal.acm.org/citation.cfm?id=258563&amp;CFID=54870256&amp;CFTOKEN=43143093"
+			title="SenseMaker: an information-exploration interface supporting the contextual evolution of a user&#39;s interests">
+			<authors>
+				<author title="Michelle Q. Wang Baldonado"></author>
+				<author title="Terry Winograd"></author>
+			</authors>
+			<source mm_name="source"
+				title="Proceedings of the SIGCHI conference on Human factors in computing systems, p.11-18, March 22-27, 1997, Atlanta, Georgia, United States  &#160;[doi&gt;10.1145/258549.258563]"
+				year="8563"></source>
+		</reference>
+		<reference title="1982">
+			<authors>
+				<author title="Belkin, N."></author>
+			</authors>
+			<source mm_name="source"></source>
+		</reference>
+		<reference
+			location="http://portal.acm.org/citation.cfm?id=1065508&amp;CFID=54870256&amp;CFTOKEN=43143093"
+			title="Icon abacus and ghost icons">
+			<authors>
+				<author title="Eric A. Bier"></author>
+				<author title="Adam Perer"></author>
+			</authors>
+			<source mm_name="source"
+				title="Proceedings of the 5th ACM/IEEE-CS joint conference on Digital libraries, June 07-11, 2005, Denver, CO, USA  &#160;[doi&gt;10.1145/1065385.1065508]"
+				year="5508"></source>
+		</reference>
+		<reference
+			location="http://portal.acm.org/citation.cfm?id=515422&amp;CFID=54870256&amp;CFTOKEN=43143093"
+			title="Designing Sociable Robots">
+			<authors>
+				<author title="Cynthia Breazeal"></author>
+			</authors>
+			<source mm_name="source" title="MIT Press, Cambridge, MA, 2002"
+				year="2002"></source>
+		</reference>
+		<reference title="1999">
+			<authors>
+				<author title="Burke, M."></author>
+			</authors>
+			<source mm_name="source"></source>
+		</reference>
+		<reference
+			location="http://portal.acm.org/citation.cfm?id=1107492&amp;CFID=54870256&amp;CFTOKEN=43143093"
+			title="Searching to eliminate personal information management">
+			<authors>
+				<author title="Edward Cutrell"></author>
+				<author title="Susan T. Dumais"></author>
+				<author title="Jaime Teevan"></author>
+			</authors>
+			<source mm_name="source"
+				title="Communications of the ACM, v.49 n.1, January 2006  &#160;[doi&gt;10.1145/1107458.1107492]"
+				year="7492"></source>
+		</reference>
+		<reference
+			location="http://portal.acm.org/citation.cfm?id=133214&amp;CFID=54870256&amp;CFTOKEN=43143093"
+			title="Scatter/Gather: a cluster-based approach to browsing large document collections">
+			<authors>
+				<author title="Douglass R. Cutting"></author>
+				<author title="David R. Karger"></author>
+				<author title="Jan O. Pedersen"></author>
+				<author title="John W. Tukey"></author>
+			</authors>
+			<source mm_name="source"
+				title="Proceedings of the 15th annual international ACM SIGIR conference on Research and development in information retrieval, p.318-329, June 21-24, 1992, Copenhagen, Denmark  &#160;[doi&gt;10.1145/133160.133214]"
+				year="3214"></source>
+		</reference>
+		<reference
+			location="http://portal.acm.org/citation.cfm?id=671854&amp;CFID=54870256&amp;CFTOKEN=43143093"
+			title="Focused Crawling Using Context Graphs">
+			<authors>
+				<author title="Michelangelo Diligenti"></author>
+				<author title="Frans Coetzee"></author>
+				<author title="Steve Lawrence"></author>
+				<author title="C. Lee Giles"></author>
+				<author title="Marco Gori"></author>
+			</authors>
+			<source mm_name="source"
+				title="Proceedings of the 26th International Conference on Very Large Data Bases, p.527-534, September 10-14, 2000"
+				year="2000"></source>
+		</reference>
+		<reference
+			location="http://portal.acm.org/citation.cfm?id=313266&amp;CFID=54870256&amp;CFTOKEN=43143093"
+			title="Multimodal surrogates for video browsing">
+			<authors>
+				<author title="Wei Ding"></author>
+				<author title="Gary Marchionini"></author>
+				<author title="Dagobert Soergel"></author>
+			</authors>
+			<source mm_name="source"
+				title="Proceedings of the fourth ACM conference on Digital libraries, p.85-93, August 11-14, 1999, Berkeley, California, United States  &#160;[doi&gt;10.1145/313238.313266]"
+				year="3266"></source>
+		</reference>
+		<reference
+			location="http://portal.acm.org/citation.cfm?id=860451&amp;CFID=54870256&amp;CFTOKEN=43143093"
+			title="Stuff I&#39;ve seen: a system for personal information retrieval and re-use">
+			<authors>
+				<author title="Susan Dumais"></author>
+				<author title="Edward Cutrell"></author>
+				<author title="JJ Cadiz"></author>
+				<author title="Gavin Jancke"></author>
+				<author title="Raman Sarin"></author>
+				<author title="Daniel C. Robbins"></author>
+			</authors>
+			<source mm_name="source"
+				title="Proceedings of the 26th annual international ACM SIGIR conference on Research and development in informaion retrieval, July 28-August 01, 2003, Toronto, Canada  &#160;[doi&gt;10.1145/860435.860451]"
+				year="451"></source>
+		</reference>
+		<reference title="1975">
+			<authors>
+				<author title="Eisenstein, S. M."></author>
+			</authors>
+			<source mm_name="source"></source>
+		</reference>
+		<reference title="1992">
+			<authors>
+				<author title="Finke, R."></author>
+				<author title="Ward, T."></author>
+				<author title="Smith, S. M."></author>
+			</authors>
+			<source mm_name="source"></source>
+		</reference>
+		<reference
+			location="http://portal.acm.org/citation.cfm?id=22342&amp;CFID=54870256&amp;CFTOKEN=43143093"
+			title="Generalized fisheye views">
+			<authors>
+				<author title="G. W. Furnas"></author>
+			</authors>
+			<source mm_name="source"
+				title="Proceedings of the SIGCHI conference on Human factors in computing systems, p.16-23, April 13-17, 1986, Boston, Massachusetts, United States  &#160;[doi&gt;10.1145/22627.22342]"
+				year="2342"></source>
+		</reference>
+		<reference
+			location="http://portal.acm.org/citation.cfm?id=1124921&amp;CFID=54870256&amp;CFTOKEN=43143093"
+			title="A fisheye follow-up: further reflections on focus + context">
+			<authors>
+				<author title="George W. Furnas"></author>
+			</authors>
+			<source mm_name="source"
+				title="Proceedings of the SIGCHI conference on Human Factors in computing systems, April 22-27, 2006, Montr&#233;al, Qu&#233;bec, Canada  &#160;[doi&gt;10.1145/1124772.1124921]"
+				year="4921"></source>
+		</reference>
+		<reference title="2002">
+			<authors>
+				<author title="Glenberg, A. M."></author>
+			</authors>
+			<source mm_name="source"></source>
+		</reference>
+		<reference title="1992">
+			<authors>
+				<author title="Glenberg, A. M."></author>
+				<author title="Langston, W. E."></author>
+			</authors>
+			<source mm_name="source"></source>
+		</reference>
+		<reference title="1996">
+			<authors>
+				<author title="Hearst, M. A."></author>
+				<author title="Pederson, J. O."></author>
+			</authors>
+			<source mm_name="source"></source>
+		</reference>
+		<reference
+			location="http://portal.acm.org/citation.cfm?id=142751&amp;CFID=54870256&amp;CFTOKEN=43143093"
+			title="Edit wear and read wear">
+			<authors>
+				<author title="William C. Hill"></author>
+				<author title="James D. Hollan"></author>
+				<author title="Dave Wroblewski"></author>
+				<author title="Tim McCandless"></author>
+			</authors>
+			<source mm_name="source"
+				title="Proceedings of the SIGCHI conference on Human factors in computing systems, p.3-9, May 03-07, 1992, Monterey, California, United States  &#160;[doi&gt;10.1145/142750.142751]"
+				year="2751"></source>
+		</reference>
+		<reference title="Uncertainty, action">
+			<authors>
+				<author title="Horvitz, E."></author>
+			</authors>
+			<source mm_name="source"></source>
+		</reference>
+		<reference title="2005">
+			<authors>
+				<author title="Huynh, D."></author>
+				<author title="Mazzocchi, S."></author>
+				<author title="Karger, D."></author>
+			</authors>
+			<source mm_name="source"
+				title="Piggy Bank: Experience the semantic Web inside your Web browser. In Proceedings of the 2005 International Semantic Web Conference. 413--430."
+				year="2005"></source>
+		</reference>
+		<reference
+			title="Interface Ecology Lab. 2007. combinFormation. http://ecologylab.cs.tamu.edu/combin Formation/."></reference>
+		<reference title="2002">
+			<authors>
+				<author title="Jones, W."></author>
+				<author title="Dumais, S."></author>
+				<author title="Bruce, H."></author>
+			</authors>
+			<source mm_name="source"></source>
+		</reference>
+		<reference
+			location="http://portal.acm.org/citation.cfm?id=1056952&amp;CFID=54870256&amp;CFTOKEN=43143093"
+			title="Don&#39;t take my folders away!: organizing personal information to get ghings done">
+			<authors>
+				<author title="William Jones"></author>
+				<author title="Ammy Jiranida Phuwanartnurak"></author>
+				<author title="Rajdeep Gill"></author>
+				<author title="Harry Bruce"></author>
+			</authors>
+			<source mm_name="source"
+				title="CHI &#39;05 extended abstracts on Human factors in computing systems, April 02-07, 2005, Portland, OR, USA  &#160;[doi&gt;10.1145/1056808.1056952]"
+				year="6952"></source>
+		</reference>
+		<reference
+			location="http://portal.acm.org/citation.cfm?id=959260&amp;CFID=54870256&amp;CFTOKEN=43143093"
+			title="Implicit feedback for inferring user preference: a bibliography">
+			<authors>
+				<author title="Diane Kelly"></author>
+				<author title="Jaime Teevan"></author>
+			</authors>
+			<source mm_name="source"
+				title="ACM SIGIR Forum, v.37 n.2, p.18-28, Fall 2003  &#160;[doi&gt;10.1145/959258.959260]"
+				year="9260"></source>
+		</reference>
+		<reference
+			location="http://portal.acm.org/citation.cfm?id=933268&amp;CFID=54870256&amp;CFTOKEN=43143093"
+			title="Collagemachine: a model of &#34;interface ecology&#34;">
+			<authors>
+				<author title="Andruid Kerne"></author>
+				<author title="Ken Perlin"></author>
+			</authors>
+			<source mm_name="source" title="New York University, New York, NY, 2001"
+				year="2001"></source>
+		</reference>
+		<reference
+			location="http://portal.acm.org/citation.cfm?id=900072&amp;CFID=54870256&amp;CFTOKEN=43143093"
+			title="Publishing evolving metadocuments on the web">
+			<authors>
+				<author title="Andruid Kerne"></author>
+				<author title="Madhur Khandelwal"></author>
+				<author title="Vikram Sundaram"></author>
+			</authors>
+			<source mm_name="source"
+				title="Proceedings of the fourteenth ACM conference on Hypertext and hypermedia, August 26-30, 2003, Nottingham, UK  &#160;[doi&gt;10.1145/900051.900072]"
+				year="72"></source>
+		</reference>
+		<reference
+			location="http://portal.acm.org/citation.cfm?id=1141756&amp;CFID=54870256&amp;CFTOKEN=43143093"
+			title="combinFormation: a mixed-initiative system for representing collections as compositions of image and text surrogates">
+			<authors>
+				<author title="Andruid Kerne"></author>
+				<author title="Eunyee Koh"></author>
+				<author title="Blake Dworaczyk"></author>
+				<author title="J. Michael Mistrot"></author>
+				<author title="Hyun Choi"></author>
+				<author title="Steven M. Smith"></author>
+				<author title="Ross Graeber"></author>
+				<author title="Daniel Caruso"></author>
+				<author title="Andrew Webb"></author>
+				<author title="Rodney Hill"></author>
+				<author title="Joel Albea"></author>
+			</authors>
+			<source mm_name="source"
+				title="Proceedings of the 6th ACM/IEEE-CS joint conference on Digital libraries, June 11-15, 2006, Chapel Hill, NC, USA  &#160;[doi&gt;10.1145/1141753.1141756]"
+				year="1756"></source>
+		</reference>
+		<reference
+			location="http://portal.acm.org/citation.cfm?id=1096624&amp;CFID=54870256&amp;CFTOKEN=43143093"
+			title="Generative semantic clustering in spatial hypertext">
+			<authors>
+				<author title="Andruid Kerne"></author>
+				<author title="Eunyee Koh"></author>
+				<author title="Vikram Sundaram"></author>
+				<author title="J. Michael Mistrot"></author>
+			</authors>
+			<source mm_name="source"
+				title="Proceedings of the 2005 ACM symposium on Document engineering, November 02-04, 2005, Bristol, United Kingdom  &#160;[doi&gt;10.1145/1096601.1096624]"
+				year="6624"></source>
+		</reference>
+		<reference title="2004a">
+			<authors>
+				<author title="Kerne, A."></author>
+				<author title="Mistrot, J. M."></author>
+				<author title="Khandelwal, M."></author>
+				<author title="Sundaram, V."></author>
+				<author title="Koh, E."></author>
+			</authors>
+			<source mm_name="source"></source>
+		</reference>
+		<reference
+			location="http://portal.acm.org/citation.cfm?id=1013179&amp;CFID=54870256&amp;CFTOKEN=43143093"
+			title="The information discovery framework">
+			<authors>
+				<author title="Andruid Kerne"></author>
+				<author title="Steven M. Smith"></author>
+			</authors>
+			<source mm_name="source"
+				title="Proceedings of the 5th conference on Designing interactive systems: processes, practices, methods, and techniques, August 01-04, 2004, Cambridge, MA, USA  &#160;[doi&gt;10.1145/1013115.1013179]"
+				year="3179"></source>
+		</reference>
+		<reference title="2004b">
+			<authors>
+				<author title="Kerne, A."></author>
+				<author title="Smith, S. M."></author>
+				<author title="Mistrot, J. M."></author>
+				<author title="Sundaram, V."></author>
+				<author title="Khandelwal, M."></author>
+			</authors>
+			<source mm_name="source"></source>
+		</reference>
+		<reference title="2003">
+			<authors>
+				<author title="Kerne, A."></author>
+				<author title="Sundaram, V."></author>
+			</authors>
+			<source mm_name="source"></source>
+		</reference>
+		<reference title="2008">
+			<authors>
+				<author title="Kerne, A."></author>
+				<author title="Toups, Z."></author>
+				<author title="Dworaczyk, B."></author>
+				<author title="Khandelwal, M."></author>
+			</authors>
+			<source mm_name="source"></source>
+		</reference>
+		<reference
+			location="http://portal.acm.org/citation.cfm?id=1012848&amp;CFID=54870256&amp;CFTOKEN=43143093"
+			title="Manipulating history in generative hypermedia">
+			<authors>
+				<author title="Madhur Khandelwal"></author>
+				<author title="Andruid Kerne"></author>
+				<author title="J. Michael Mistrot"></author>
+			</authors>
+			<source mm_name="source"
+				title="Proceedings of the fifteenth ACM conference on Hypertext and hypermedia, August 09-13, 2004, Santa Cruz, CA, USA  &#160;[doi&gt;10.1145/1012807.1012848]"
+				year="2848"></source>
+		</reference>
+		<reference title="2006">
+			<authors>
+				<author title="Koh, E."></author>
+				<author title="Kerne, A."></author>
+			</authors>
+			<source mm_name="source"></source>
+		</reference>
+		<reference title="Ed. 1971">
+			<authors>
+				<author title="Lippard, L."></author>
+			</authors>
+			<source mm_name="source"></source>
+		</reference>
+		<reference title="F. 1931">
+			<authors>
+				<author title="Maier, N. R."></author>
+			</authors>
+			<source mm_name="source"></source>
+		</reference>
+		<reference
+			location="http://portal.acm.org/citation.cfm?id=265164&amp;CFID=54870256&amp;CFTOKEN=43143093"
+			title="Information seeking in electronic environments">
+			<authors>
+				<author title="Gary Marchionini"></author>
+			</authors>
+			<source mm_name="source"
+				title="Cambridge University Press, New York, NY, 1997" year="1997"></source>
+		</reference>
+		<reference
+			location="http://portal.acm.org/citation.cfm?id=1054989&amp;CFID=54870256&amp;CFTOKEN=43143093"
+			title="Saving and using encountered information: implications for electronic periodicals">
+			<authors>
+				<author title="Catherine C. Marshall"></author>
+				<author title="Sara Bly"></author>
+			</authors>
+			<source mm_name="source"
+				title="Proceedings of the SIGCHI conference on Human factors in computing systems, April 02-07, 2005, Portland, Oregon, USA  &#160;[doi&gt;10.1145/1054972.1054989]"
+				year="4989"></source>
+		</reference>
+		<reference
+			location="http://portal.acm.org/citation.cfm?id=1107493&amp;CFID=54870256&amp;CFTOKEN=43143093"
+			title="Keeping encountered information">
+			<authors>
+				<author title="Catherine C. Marshall"></author>
+				<author title="William Jones"></author>
+			</authors>
+			<source mm_name="source"
+				title="Communications of the ACM, v.49 n.1, January 2006  &#160;[doi&gt;10.1145/1107458.1107493]"
+				year="7493"></source>
+		</reference>
+		<reference
+			location="http://portal.acm.org/citation.cfm?id=192759&amp;CFID=54870256&amp;CFTOKEN=43143093"
+			title="III">
+			<authors>
+				<author title="Catherine C. Marshall"></author>
+				<author title="Frank M. Shipman"></author>
+			</authors>
+			<source mm_name="source"
+				title="James H. Coombs, VIKI: spatial hypertext supporting emergent structure, Proceedings of the 1994 ACM European conference on Hypermedia technology, p.13-23, September 19-23, 1994, Edinburgh, Scotland  &#160;[doi&gt;10.1145/192757.192759]"
+				year="2759"></source>
+		</reference>
+		<reference title="2002">
+			<authors>
+				<author title="Mayer, R. E."></author>
+				<author title="Moreno, R."></author>
+			</authors>
+			<source mm_name="source"></source>
+		</reference>
+		<reference
+			title="McNee, S. M., Lam, S., Konstan, J. A., and Riedl, J. 2003. Interfaces for eliciting new user preferences in recommender systems. In Proceedings of User Modeling. 178--188."></reference>
+		<reference title="2006">
+			<authors>
+				<author title="Miller, G. A."></author>
+			</authors>
+			<source mm_name="source"></source>
+		</reference>
+		<reference
+			location="http://portal.acm.org/citation.cfm?id=634167&amp;CFID=54870256&amp;CFTOKEN=43143093"
+			title="A taxonomic analysis of what world wide web activities significantly impact people&#39;s decisions and actions">
+			<authors>
+				<author title="Julie B. Morrison"></author>
+				<author title="Peter Pirolli"></author>
+				<author title="Stuart K. Card"></author>
+			</authors>
+			<source mm_name="source"
+				title="CHI &#39;01 extended abstracts on Human factors in computing systems, March 31-April 05, 2001, Seattle, Washington  &#160;[doi&gt;10.1145/634067.634167]"
+				year="4167"></source>
+		</reference>
+		<reference
+			location="http://portal.acm.org/citation.cfm?id=248508&amp;CFID=54870256&amp;CFTOKEN=43143093"
+			title="&#8220;Finding and reminding&#8221; revisited: appropriate metaphors for file organization at the desktop">
+			<authors>
+				<author title="Bonnie Nardi"></author>
+				<author title="Deborah Barreau"></author>
+			</authors>
+			<source mm_name="source"
+				title="ACM SIGCHI Bulletin, v.29 n.1, p.76-78, January 1997  &#160;[doi&gt;10.1145/251761.248508]"
+				year="8508"></source>
+		</reference>
+		<reference
+			title="Oxford English Dictionary. 1992. 2nd ed., on compact disk. Oxford University Press, Oxford, U.K."></reference>
+		<reference title="1999">
+			<authors>
+				<author title="Pirolli, P."></author>
+				<author title="Card, S. K."></author>
+			</authors>
+			<source mm_name="source"></source>
+		</reference>
+		<reference title="1980">
+			<authors>
+				<author title="Porter, M. F."></author>
+			</authors>
+			<source mm_name="source"></source>
+		</reference>
+		<reference title="1971">
+			<authors>
+				<author title="Rocchio, J."></author>
+			</authors>
+			<source mm_name="source"></source>
+		</reference>
+		<reference
+			location="http://portal.acm.org/citation.cfm?id=576628&amp;CFID=54870256&amp;CFTOKEN=43143093"
+			title="Introduction to Modern Information Retrieval">
+			<authors>
+				<author title="Gerard Salton"></author>
+				<author title="Michael J. McGill"></author>
+			</authors>
+			<source mm_name="source" title="McGraw-Hill, Inc., New York, NY, 1986"
+				year="1986"></source>
+		</reference>
+		<reference
+			location="http://portal.acm.org/citation.cfm?id=511469&amp;CFID=54870256&amp;CFTOKEN=43143093"
+			title="Hunter gatherer: interaction support for the creation and management of within-web-page collections">
+			<authors>
+				<author title="M. C. schraefel"></author>
+				<author title="Yuxiang Zhu"></author>
+				<author title="David Modjeska"></author>
+				<author title="Daniel Wigdor"></author>
+				<author title="Shengdong Zhao"></author>
+			</authors>
+			<source mm_name="source"
+				title="Proceedings of the 11th international conference on World Wide Web, May 07-11, 2002, Honolulu, Hawaii, USA  &#160;[doi&gt;10.1145/511446.511469]"
+				year="1469"></source>
+		</reference>
+		<reference
+			location="http://portal.acm.org/citation.cfm?id=996433&amp;CFID=54870256&amp;CFTOKEN=43143093"
+			title="Supporting personal collections across digital libraries in spatial hypertext">
+			<authors>
+				<author title="Frank M. Shipman"></author>
+				<author title="Haowei Hsieh"></author>
+				<author title="J. Michael Moore"></author>
+				<author title="Anna Zacchi"></author>
+			</authors>
+			<source mm_name="source"
+				title="Proceedings of the 4th ACM/IEEE-CS joint conference on Digital libraries, June 07-11, 2004, Tuscon, AZ, USA  &#160;[doi&gt;10.1145/996350.996433]"
+				year="6433"></source>
+		</reference>
+		<reference
+			location="http://portal.acm.org/citation.cfm?id=267514&amp;CFID=54870256&amp;CFTOKEN=43143093"
+			title="Direct manipulation vs. interface agents, interactions, v.4 n.6, p.42-61">
+			<authors>
+				<author title="Ben Shneiderman"></author>
+				<author title="Pattie Maes"></author>
+			</authors>
+			<source mm_name="source"
+				title="Nov./Dec. 1997  &#160;[doi&gt;10.1145/267505.267514]" year="7514"></source>
+		</reference>
+		<reference title="1971">
+			<authors>
+				<author title="Simon, H. A."></author>
+			</authors>
+			<source mm_name="source"></source>
+		</reference>
+		<reference title="1994">
+			<authors>
+				<author title="Smith, S. M."></author>
+			</authors>
+			<source mm_name="source"></source>
+		</reference>
+		<reference title="2003">
+			<authors>
+				<author title="Shah, J. J."></author>
+				<author title="Smith, S. M."></author>
+				<author title="Vargas-Hernandez, N."></author>
+				<author title="Gerkens, R."></author>
+				<author title="Wulan, M."></author>
+			</authors>
+			<source mm_name="source"
+				title="Empirical studies of design ideation: Alignment of design experiments with laboratory experiments. In Proceedings of DETC 2003: ASME International Conference on Design Theory and Methodology."
+				year="2003"></source>
+		</reference>
+		<reference title="Ed. 2006">
+			<authors>
+				<author title="Spies, W."></author>
+			</authors>
+			<source mm_name="source"></source>
+		</reference>
+		<reference
+			title="Spooky, Dj That Subliminal Kid. 2004. Rhythm Science. Mediawork /MIT Press, Cambridge, MA."></reference>
+		<reference title="Sun Microsystems. 2006. Java. http://java.sun.com."></reference>
+		<reference
+			location="http://portal.acm.org/citation.cfm?id=78223&amp;CFID=54870256&amp;CFTOKEN=43143093"
+			title="Envisioning information">
+			<authors>
+				<author title="Edward Tufte"></author>
+			</authors>
+			<source mm_name="source" title="Graphics Press, Cheshire, CT, 1990"
+				year="1990"></source>
+		</reference>
+		<reference
+			location="http://portal.acm.org/citation.cfm?id=1121978&amp;CFID=54870256&amp;CFTOKEN=43143093"
+			title="Introduction">
+			<authors>
+				<author title="Ryen W. White"></author>
+				<author title="Bill Kules"></author>
+				<author title="Steven M. Drucker"></author>
+				<author title="m.c. schraefel"></author>
+			</authors>
+			<source mm_name="source"
+				title="Communications of the ACM, v.49 n.4, April 2006  &#160;[doi&gt;10.1145/1121949.1121978]"
+				year="1978"></source>
+		</reference>
+		<reference
+			location="http://portal.acm.org/citation.cfm?id=827176&amp;CFID=54870256&amp;CFTOKEN=43143093"
+			title="How fast is too fast?: evaluating fast forward surrogates for digital video">
+			<authors>
+				<author title="Barbara M. Wildemuth"></author>
+				<author title="Gary Marchionini"></author>
+				<author title="Meng Yang"></author>
+				<author title="Gary Geisler"></author>
+				<author title="Todd Wilkens"></author>
+				<author title="Anthony Hughes"></author>
+				<author title="Richard Gruss"></author>
+			</authors>
+			<source mm_name="source"
+				title="Proceedings of the 3rd ACM/IEEE-CS joint conference on Digital libraries, May 27-31, 2003, Houston, Texas"
+				year="2003"></source>
+		</reference>
+		<reference
+			location="http://portal.acm.org/citation.cfm?id=365098&amp;CFID=54870256&amp;CFTOKEN=43143093"
+			title="Using thumbnails to search the Web">
+			<authors>
+				<author title="Allison Woodruff"></author>
+				<author title="Andrew Faulring"></author>
+				<author title="Ruth Rosenholtz"></author>
+				<author title="Julie Morrsion"></author>
+				<author title="Peter Pirolli"></author>
+			</authors>
+			<source mm_name="source"
+				title="Proceedings of the SIGCHI conference on Human factors in computing systems, p.198-205, March 2001, Seattle, Washington, United States  &#160;[doi&gt;10.1145/365024.365098]"
+				year="5098"></source>
+		</reference>
+		<reference
+			location="http://portal.acm.org/citation.cfm?id=506081&amp;CFID=54870256&amp;CFTOKEN=43143093"
+			title="A comparison of the use of text summaries, plain thumbnails, and enhanced thumbnails for Web search tasks">
+			<authors>
+				<author title="Allison Woodruff"></author>
+				<author title="Ruth Rosenholtz"></author>
+				<author title="Julie B. Morrison"></author>
+				<author title="Andrew Faulring"></author>
+				<author title="Peter Pirolli"></author>
+			</authors>
+			<source mm_name="source"
+				title="Journal of the American Society for Information Science and Technology, v.53 n.2, p.172-185, January 15, 2002  &#160;[doi&gt;10.1002/asi.10029]"
+				year="29"></source>
+		</reference>
+		<reference
+			title="W3C. 2000. Document Object Model (DOM) Level 2 Core Specification. http://www.w3.org/TR/2000/REC-DOM-Level-2-Core-20001113/."></reference>
+		<reference
+			location="http://portal.acm.org/citation.cfm?id=1083378&amp;CFID=54870256&amp;CFTOKEN=43143093"
+			title="What is the space for?: the role of space in authoring hypertext representations">
+			<authors>
+				<author title="Yasuhiro Yamamoto"></author>
+				<author title="Kumiyo Nakakoji"></author>
+				<author title="Yoshiyuki Nishinaka"></author>
+				<author title="Mitsuhiro Asada"></author>
+				<author title="Ryouichi Matsuda"></author>
+			</authors>
+			<source mm_name="source"
+				title="Proceedings of the sixteenth ACM conference on Hypertext and hypermedia, September 06-09, 2005, Salzburg, Austria  &#160;[doi&gt;10.1145/1083356.1083378]"
+				year="3378"></source>
+		</reference>
+	</references>
+	<citations>
+		<citation
+			location="http://portal.acm.org/citation.cfm?id=1555491&amp;CFID=54870256&amp;CFTOKEN=43143093"
+			title="Toward automatic generation of image-text document surrogates to optimize cognition">
+			<authors>
+				<author title="Eunyee Koh"></author>
+				<author title="Andruid Kerne"></author>
+				<author title="Jon Moeller"></author>
+			</authors>
+			<source mm_name="source"
+				title="Proceedings of the 9th ACM/IEEE-CS joint conference on Digital libraries, June 15-19, 2009, Austin, TX, USA"
+				year="2009"></source>
+		</citation>
+		<citation
+			location="http://portal.acm.org/citation.cfm?id=1520702&amp;CFID=54870256&amp;CFTOKEN=43143093"
+			title="Synchronized communication and coordinated views: qualitative data discovery for team game user studies">
+			<authors>
+				<author title="William A. Hamilton"></author>
+				<author title="Zachary O. Toups"></author>
+				<author title="Andruid Kerne"></author>
+			</authors>
+			<source mm_name="source"
+				title="Proceedings of the 27th international conference extended abstracts on Human factors in computing systems, April 04-09, 2009, Boston, MA, USA"
+				year="2009"></source>
+		</citation>
+		<citation
+			location="http://portal.acm.org/citation.cfm?id=1573210&amp;CFID=54870256&amp;CFTOKEN=43143093"
+			title="Inventing Requirements with Creativity Support Tools">
+			<authors>
+				<author title="Inger Kristine Karlsen"></author>
+				<author title="Neil Maiden"></author>
+				<author title="Andruid Kerne"></author>
+			</authors>
+			<source mm_name="source"
+				title="Proceedings of the 15th International Working Conference on Requirements Engineering: Foundation for Software Quality, June 08-09, 2009, Amsterdam, The Netherlands"
+				year="2009"></source>
+		</citation>
+		<citation
+			location="http://portal.acm.org/citation.cfm?id=2034729&amp;CFID=54870256&amp;CFTOKEN=43143093"
+			title="Interoperable metadata semantics with meta-metadata: a use case integrating search engines">
+			<authors>
+				<author title="Yin Qu"></author>
+				<author title="Andruid Kerne"></author>
+				<author title="Andrew M. Webb"></author>
+				<author title="Aaron Herstein"></author>
+			</authors>
+			<source mm_name="source"
+				title="Proceedings of the 11th ACM symposium on Document engineering, September 19-22, 2011, Mountain View, California, USA"
+				year="2011"></source>
+		</citation>
+		<citation
+			location="http://portal.acm.org/citation.cfm?id=1871580&amp;CFID=54870256&amp;CFTOKEN=43143093"
+			title="Meta-metadata: a metadata semantics language for collection representation applications">
+			<authors>
+				<author title="Andruid Kerne"></author>
+				<author title="Yin Qu"></author>
+				<author title="Andrew M. Webb"></author>
+				<author title="Sashikanth Damaraju"></author>
+				<author title="Nic Lupfer"></author>
+				<author title="Abhinav Mathur"></author>
+			</authors>
+			<source mm_name="source"
+				title="Proceedings of the 19th ACM international conference on Information and knowledge management, October 26-30, 2010, Toronto, ON, Canada"
+				year="2010"></source>
+		</citation>
+		<citation
+			location="http://portal.acm.org/citation.cfm?id=1600212&amp;CFID=54870256&amp;CFTOKEN=43143093"
+			title="Deriving image-text document surrogates to optimize cognition">
+			<authors>
+				<author title="Eunyee Koh"></author>
+				<author title="Andruid Kerne"></author>
+			</authors>
+			<source mm_name="source"
+				title="Proceedings of the 9th ACM symposium on Document engineering, September 16-18, 2009, Munich, Germany"
+				year="2009"></source>
+		</citation>
+		<citation
+			location="http://portal.acm.org/citation.cfm?id=1998116&amp;CFID=54870256&amp;CFTOKEN=43143093"
+			title="Integrating implicit structure visualization with authoring promotes ideation">
+			<authors>
+				<author title="Andrew M. Webb"></author>
+				<author title="Andruid Kerne"></author>
+			</authors>
+			<source mm_name="source"
+				title="Proceeding of the 11th annual international ACM/IEEE joint conference on Digital libraries, June 13-17, 2011, Ottawa, Ontario, Canada"
+				year="2011"></source>
+		</citation>
+	</citations>
+	<classifications>
+		<tag tag_name="Information Systems"
+			link="http://portal.acm.org/results.cfm?query=PrimaryCCS%3AH&amp;querydisp=PrimaryCCS%3AH&amp;termshow=matchboolean&amp;CFID=54870256&amp;CFTOKEN=43143093"></tag>
+		<tag tag_name="INFORMATION STORAGE AND RETRIEVAL"
+			link="http://portal.acm.org/results.cfm?query=PrimaryCCS%3AH3&amp;querydisp=PrimaryCCS%3AH3&amp;termshow=matchboolean&amp;CFID=54870256&amp;CFTOKEN=43143093"></tag>
+		<tag tag_name="Information Search and Retrieval"
+			link="http://portal.acm.org/results.cfm?query=PrimaryCCS%3AH33&amp;querydisp=PrimaryCCS%3AH33&amp;termshow=matchboolean&amp;CFID=54870256&amp;CFTOKEN=43143093"></tag>
+		<tag tag_name="Search process"
+			link="http://portal.acm.org/results.cfm?query=PrimarySubject%3A%22Search%20process%22&amp;querydisp=PrimarySubject%3A%22Search%20process%22&amp;termshow=matchboolean&amp;CFID=54870256&amp;CFTOKEN=43143093"></tag>
+		<tag tag_name="Information Systems"
+			link="http://portal.acm.org/results.cfm?query=CCS%3AH&amp;querydisp=CCS%3AH&amp;termshow=matchboolean&amp;CFID=54870256&amp;CFTOKEN=43143093"></tag>
+		<tag tag_name="INFORMATION STORAGE AND RETRIEVAL"
+			link="http://portal.acm.org/results.cfm?query=CCS%3AH3&amp;querydisp=CCS%3AH3&amp;termshow=matchboolean&amp;CFID=54870256&amp;CFTOKEN=43143093"></tag>
+		<tag tag_name="Digital Libraries"
+			link="http://portal.acm.org/results.cfm?query=CCS%3AH37&amp;querydisp=CCS%3AH37&amp;termshow=matchboolean&amp;CFID=54870256&amp;CFTOKEN=43143093"></tag>
+		<tag tag_name="User issues"
+			link="http://portal.acm.org/results.cfm?query=Subject%3A%22User%20issues%22&amp;querydisp=Subject%3A%22User%20issues%22&amp;termshow=matchboolean&amp;CFID=54870256&amp;CFTOKEN=43143093"></tag>
+		<tag tag_name="Collection"
+			link="http://portal.acm.org/results.cfm?query=Subject%3A%22Collection%22&amp;querydisp=Subject%3A%22Collection%22&amp;termshow=matchboolean&amp;CFID=54870256&amp;CFTOKEN=43143093"></tag>
+		<tag tag_name="INFORMATION INTERFACES AND PRESENTATION (I.7)"
+			link="http://portal.acm.org/results.cfm?query=CCS%3AH5&amp;querydisp=CCS%3AH5&amp;termshow=matchboolean&amp;CFID=54870256&amp;CFTOKEN=43143093"></tag>
+		<tag tag_name="Multimedia Information Systems"
+			link="http://portal.acm.org/results.cfm?query=CCS%3AH51&amp;querydisp=CCS%3AH51&amp;termshow=matchboolean&amp;CFID=54870256&amp;CFTOKEN=43143093"></tag>
+	</classifications>
+	<keywords>
+		<tag tag_name="clustering"
+			link="http://portal.acm.org/results.cfm?query=%22clustering%22&amp;querydisp=%22clustering%22&amp;termshow=matchall&amp;cfid=54870256&amp;cftoken=43143093"></tag>
+		<tag tag_name="collection"
+			link="http://portal.acm.org/results.cfm?query=%22collection%22&amp;querydisp=%22collection%22&amp;termshow=matchall&amp;cfid=54870256&amp;cftoken=43143093"></tag>
+		<tag tag_name="collections"
+			link="http://portal.acm.org/results.cfm?query=%22collections%22&amp;querydisp=%22collections%22&amp;termshow=matchall&amp;cfid=54870256&amp;cftoken=43143093"></tag>
+		<tag tag_name="creative cognition"
+			link="http://portal.acm.org/results.cfm?query=%22creative%20cognition%22&amp;querydisp=%22creative%20cognition%22&amp;termshow=matchall&amp;cfid=54870256&amp;cftoken=43143093"></tag>
+		<tag tag_name="creativity support tools"
+			link="http://portal.acm.org/results.cfm?query=%22creativity%20support%20tools%22&amp;querydisp=%22creativity%20support%20tools%22&amp;termshow=matchall&amp;cfid=54870256&amp;cftoken=43143093"></tag>
+		<tag tag_name="design"
+			link="http://portal.acm.org/results.cfm?query=%22design%22&amp;querydisp=%22design%22&amp;termshow=matchall&amp;cfid=54870256&amp;cftoken=43143093"></tag>
+		<tag tag_name="experimentation"
+			link="http://portal.acm.org/results.cfm?query=%22experimentation%22&amp;querydisp=%22experimentation%22&amp;termshow=matchall&amp;cfid=54870256&amp;cftoken=43143093"></tag>
+		<tag tag_name="exploratory search"
+			link="http://portal.acm.org/results.cfm?query=%22exploratory%20search%22&amp;querydisp=%22exploratory%20search%22&amp;termshow=matchall&amp;cfid=54870256&amp;cftoken=43143093"></tag>
+		<tag tag_name="field study"
+			link="http://portal.acm.org/results.cfm?query=%22field%20study%22&amp;querydisp=%22field%20study%22&amp;termshow=matchall&amp;cfid=54870256&amp;cftoken=43143093"></tag>
+		<tag tag_name="focused crawler"
+			link="http://portal.acm.org/results.cfm?query=%22focused%20crawler%22&amp;querydisp=%22focused%20crawler%22&amp;termshow=matchall&amp;cfid=54870256&amp;cftoken=43143093"></tag>
+		<tag tag_name="human factors"
+			link="http://portal.acm.org/results.cfm?query=%22human%20factors%22&amp;querydisp=%22human%20factors%22&amp;termshow=matchall&amp;cfid=54870256&amp;cftoken=43143093"></tag>
+		<tag tag_name="information discovery"
+			link="http://portal.acm.org/results.cfm?query=%22information%20discovery%22&amp;querydisp=%22information%20discovery%22&amp;termshow=matchall&amp;cfid=54870256&amp;cftoken=43143093"></tag>
+		<tag tag_name="mixed-initiative systems"
+			link="http://portal.acm.org/results.cfm?query=%22mixed%2Dinitiative%20systems%22&amp;querydisp=%22mixed%2Dinitiative%20systems%22&amp;termshow=matchall&amp;cfid=54870256&amp;cftoken=43143093"></tag>
+		<tag tag_name="relevance feedback"
+			link="http://portal.acm.org/results.cfm?query=%22relevance%20feedback%22&amp;querydisp=%22relevance%20feedback%22&amp;termshow=matchall&amp;cfid=54870256&amp;cftoken=43143093"></tag>
+		<tag tag_name="search process"
+			link="http://portal.acm.org/results.cfm?query=%22search%20process%22&amp;querydisp=%22search%20process%22&amp;termshow=matchall&amp;cfid=54870256&amp;cftoken=43143093"></tag>
+		<tag tag_name="semantics"
+			link="http://portal.acm.org/results.cfm?query=%22semantics%22&amp;querydisp=%22semantics%22&amp;termshow=matchall&amp;cfid=54870256&amp;cftoken=43143093"></tag>
+		<tag tag_name="software agents"
+			link="http://portal.acm.org/results.cfm?query=%22software%20agents%22&amp;querydisp=%22software%20agents%22&amp;termshow=matchall&amp;cfid=54870256&amp;cftoken=43143093"></tag>
+		<tag tag_name="user issues"
+			link="http://portal.acm.org/results.cfm?query=%22user%20issues%22&amp;querydisp=%22user%20issues%22&amp;termshow=matchall&amp;cfid=54870256&amp;cftoken=43143093"></tag>
+	</keywords>
+</scholarly_article>

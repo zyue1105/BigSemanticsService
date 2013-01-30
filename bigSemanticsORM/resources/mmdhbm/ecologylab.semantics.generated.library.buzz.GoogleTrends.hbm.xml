@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="ecologylab.semantics.generated.library.buzz"><joined-subclass name="ecologylab.semantics.generated.library.buzz.GoogleTrends" table="google_trends" extends="ecologylab.semantics.metadata.builtins.CompoundDocument"><key column="orm_id" not-null="true"/><list name="hotSearches" lazy="true" table="google_trends__hot_searches"><key column="orm_id" not-null="true"/><index column="google_trends__hot_searches__index"/><many-to-many column="hot_search_id" class="ecologylab.semantics.generated.library.buzz.HotSearch" lazy="proxy"/></list></joined-subclass></hibernate-mapping>

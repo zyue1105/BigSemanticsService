@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="ecologylab.semantics.compiler.orm.example">
+  <joined-subclass name="ecologylab.semantics.compiler.orm.example.AcmPaper" table="acm_paper"
+    extends="ecologylab.semantics.compiler.orm.example.Paper">
+    <key column="id" not-null="true" />
+    <property name="acmId" lazy="false" type="java.lang.String" column="acm_id" />
+  </joined-subclass>
+</hibernate-mapping>

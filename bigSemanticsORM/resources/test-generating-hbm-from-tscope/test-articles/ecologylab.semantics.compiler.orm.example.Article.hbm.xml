@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="ecologylab.semantics.compiler.orm.example">
+  <joined-subclass name="ecologylab.semantics.compiler.orm.example.Article" table="article"
+    extends="ecologylab.semantics.compiler.orm.example.BaseEntity">
+    <key column="id" not-null="true" />
+    <property name="title" lazy="false" type="java.lang.String" column="title" />
+    <list name="authors" lazy="true" table="article__authors">
+      <key column="id" not-null="true" />
+      <index column="article__authors__index" />
+      <many-to-many column="author_id" class="ecologylab.semantics.compiler.orm.example.Author"
+        lazy="proxy" />
+    </list>
+  </joined-subclass>
+</hibernate-mapping>

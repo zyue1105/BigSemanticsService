@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="ecologylab.semantics.generated.library"><joined-subclass name="ecologylab.semantics.generated.library.DeliciousHomepage" table="delicious_homepage" extends="ecologylab.semantics.metadata.builtins.CompoundDocument"><key column="orm_id" not-null="true"/><list name="bookmarks" lazy="true" table="delicious_homepage__bookmarks"><key column="orm_id" not-null="true"/><index column="delicious_homepage__bookmarks__index"/><many-to-many column="bookmark_id" class="ecologylab.semantics.generated.library.Bookmark" lazy="proxy"/></list></joined-subclass></hibernate-mapping>

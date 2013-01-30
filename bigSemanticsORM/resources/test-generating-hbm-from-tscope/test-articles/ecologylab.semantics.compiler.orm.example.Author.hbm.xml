@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="ecologylab.semantics.compiler.orm.example">
+  <joined-subclass name="ecologylab.semantics.compiler.orm.example.Author" table="author"
+    extends="ecologylab.semantics.compiler.orm.example.BaseEntity">
+    <key column="id" not-null="true" />
+    <property name="firstName" lazy="false" type="java.lang.String" column="first_name" />
+    <property name="lastName" lazy="false" type="java.lang.String" column="last_name" />
+  </joined-subclass>
+</hibernate-mapping>

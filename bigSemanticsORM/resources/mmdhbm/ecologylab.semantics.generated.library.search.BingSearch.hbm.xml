@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="ecologylab.semantics.generated.library.search"><joined-subclass name="ecologylab.semantics.generated.library.search.BingSearch" table="bing_search" extends="ecologylab.semantics.metadata.builtins.CompoundDocument"><key column="orm_id" not-null="true"/><many-to-one name="webSection" lazy="proxy" column="web_section" class="ecologylab.semantics.generated.library.search.BingSearchWebSection"/><many-to-one name="imageSection" lazy="proxy" column="image_section" class="ecologylab.semantics.generated.library.search.BingSearchImageSection"/></joined-subclass></hibernate-mapping>

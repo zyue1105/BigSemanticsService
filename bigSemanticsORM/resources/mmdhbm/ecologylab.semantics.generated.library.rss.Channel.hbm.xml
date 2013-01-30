@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="ecologylab.semantics.generated.library.rss"><joined-subclass name="ecologylab.semantics.generated.library.rss.Channel" table="channel" extends="ecologylab.semantics.metadata.Metadata"><key column="orm_id" not-null="true"/><property name="title" lazy="false" access="ecologylab.semantics.compiler.orm.scalartypes.MetadataScalarAccessor" type="ecologylab.semantics.compiler.orm.scalartypes.MetadataStringHibernateType" column="title" length="1024"/><list name="items" lazy="true" table="channel__items"><key column="orm_id" not-null="true"/><index column="channel__items__index"/><many-to-many column="item_id" class="ecologylab.semantics.generated.library.rss.Item" lazy="proxy"/></list></joined-subclass></hibernate-mapping>

@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="ecologylab.semantics.generated.library.political_cartoon"><joined-subclass name="ecologylab.semantics.generated.library.political_cartoon.PoliticalCartoon" table="political_cartoon" extends="ecologylab.semantics.metadata.builtins.Document"><key column="orm_id" not-null="true"/><property name="cartoonist" lazy="false" access="ecologylab.semantics.compiler.orm.scalartypes.MetadataScalarAccessor" type="ecologylab.semantics.compiler.orm.scalartypes.MetadataStringHibernateType" column="cartoonist" length="1024"/><property name="cartoonImg" lazy="false" access="ecologylab.semantics.compiler.orm.scalartypes.MetadataScalarAccessor" type="ecologylab.semantics.compiler.orm.scalartypes.MetadataParsedURLHibernateType" column="cartoon_img" length="1024"/></joined-subclass></hibernate-mapping>

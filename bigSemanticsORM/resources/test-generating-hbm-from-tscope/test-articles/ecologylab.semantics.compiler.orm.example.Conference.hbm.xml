@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="ecologylab.semantics.compiler.orm.example">
+  <joined-subclass name="ecologylab.semantics.compiler.orm.example.Conference"
+    table="conference" extends="ecologylab.semantics.compiler.orm.example.BaseEntity">
+    <key column="id" not-null="true" />
+    <property name="name" lazy="false" type="java.lang.String" column="name" />
+    <property name="year" lazy="false" type="int" column="simpl_column__year" />
+  </joined-subclass>
+</hibernate-mapping>

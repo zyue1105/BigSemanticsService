@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="ecologylab.semantics.generated.library.artwork"><joined-subclass name="ecologylab.semantics.generated.library.artwork.Artist" table="artist" extends="ecologylab.semantics.generated.library.creativeWork.Author"><key column="orm_id" not-null="true"/><list name="artworks" lazy="true" table="artist__artworks"><key column="orm_id" not-null="true"/><index column="artist__artworks__index"/><many-to-many column="artwork_id" class="ecologylab.semantics.generated.library.artwork.Artwork" lazy="proxy"/></list></joined-subclass></hibernate-mapping>

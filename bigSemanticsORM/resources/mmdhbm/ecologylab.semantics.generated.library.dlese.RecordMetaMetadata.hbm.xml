@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="ecologylab.semantics.generated.library.dlese"><joined-subclass name="ecologylab.semantics.generated.library.dlese.RecordMetaMetadata" table="record_meta_metadata" extends="ecologylab.semantics.metadata.Metadata"><key column="orm_id" not-null="true"/><many-to-one name="dateInfo" lazy="proxy" column="date_info" class="ecologylab.semantics.generated.library.dlese.DateInfo"/><list name="catalogs" lazy="true" table="record_meta_metadata__catalogs"><key column="record_meta_metadata_id" not-null="true"/><index column="record_meta_metadata__catalogs__index"/><element column="value" type="ecologylab.semantics.compiler.orm.scalartypes.MetadataStringHibernateType"/></list></joined-subclass></hibernate-mapping>

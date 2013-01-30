@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="ecologylab.semantics.compiler.orm.example">
+  <joined-subclass name="ecologylab.semantics.compiler.orm.example.Paper" table="paper"
+    extends="ecologylab.semantics.compiler.orm.example.Article">
+    <key column="id" not-null="true" />
+    <many-to-one name="conference" lazy="proxy" column="conference"
+      class="ecologylab.semantics.compiler.orm.example.Conference" />
+    <list name="keywords" lazy="true" table="paper__keywords">
+      <key column="paper_id" not-null="true" />
+      <index column="paper__keywords__index" />
+      <element column="value" type="java.lang.String" />
+    </list>
+    <list name="references" lazy="true" table="paper__simpl_column__references">
+      <key column="id" not-null="true" />
+      <index column="paper__simpl_column__references__index" />
+      <many-to-many column="paper_id" class="ecologylab.semantics.compiler.orm.example.Paper"
+        lazy="proxy" />
+    </list>
+  </joined-subclass>
+</hibernate-mapping>
