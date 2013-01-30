@@ -6,6 +6,7 @@
 
 # eclipse
 .metadata
+Servers
 
 # java
 *.class
