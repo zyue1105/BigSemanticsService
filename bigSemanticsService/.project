@@ -3,14 +3,13 @@
 	<name>bigSemanticsService</name>
 	<comment></comment>
 	<projects>
-		<project>ecologylabSemantics</project>
-		<project>ecologylabGeneratedSemantics</project>
+		<project>bigSemanticsSDK</project>
 		<project>cyberneko</project>
-		<project>ecologylabSemanticsCyberneko</project>
-		<project>ecologylabSemanticsORM</project>
-		<project>ecologylabSemanticsSun</project>
-		<project>ecologylabFundamentalSun</project>
-		<project>ecologylabFundamental</project>
+		<project>bigSemanticsSunSpecifics</project>
+		<project>bigSemanticsCybernekoWrapper</project>
+		<project>bigSemanticsORM</project>
+		<project>bigSemanticsCore</project>
+		<project>imageMetadataExtractor</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

@@ -17,7 +17,9 @@ then the default configuration of jetty.xml would discover the test
 webapplication with a WebAppDeployer.  By specifying a context in this
 directory, additional configuration may be specified and hot deployments 
 detected.
-===================================================================== --><Configure class="org.eclipse.jetty.webapp.WebAppContext">
+===================================================================== -->
+
+<Configure class="org.eclipse.jetty.webapp.WebAppContext">
 
 
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
@@ -25,8 +27,8 @@ detected.
   <!--  + contextPath                                                  -->
   <!--  + war OR resourceBase                                          -->
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-  <Set name="contextPath">/ecologylabSemanticService</Set>
-  <Set name="war"><SystemProperty default="." name="jetty.home"/>/webapps/ecologylabSemanticService.war</Set>
+  <Set name="contextPath">/bigSemanticsService</Set>
+  <Set name="war"><SystemProperty default="." name="jetty.home"/>/webapps/bigSemanticsService.war</Set>
 
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <!-- Optional context configuration                                  -->
