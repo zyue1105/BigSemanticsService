@@ -1,6 +1,17 @@
+# OS
+.DS_Store
+
+# editor
+*~
+
+# eclipse
+.metadata
+
+# java
 *.class
 
 # Package Files #
-*.jar
+# *.jar
 *.war
 *.ear
+
