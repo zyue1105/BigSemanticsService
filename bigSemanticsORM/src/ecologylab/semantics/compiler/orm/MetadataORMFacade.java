@@ -38,6 +38,7 @@ import ecologylab.serialization.ClassDescriptor;
 import ecologylab.serialization.DeserializationHookStrategy;
 import ecologylab.serialization.ElementState;
 import ecologylab.serialization.FieldDescriptor;
+import ecologylab.serialization.FieldType;
 import ecologylab.serialization.FieldTypes;
 import ecologylab.serialization.SIMPLTranslationException;
 import ecologylab.serialization.SimplTypesScope;
@@ -184,10 +185,10 @@ public class MetadataORMFacade extends ElementState
 		ClassDescriptor<? extends FieldDescriptor> cd = ClassDescriptor.getClassDescriptor(state);
 		for (FieldDescriptor fd : cd)
 		{
-			int type = fd.getType();
+			FieldType type = fd.getType();
 			switch (type)
 			{
-			case FieldTypes.COMPOSITE_ELEMENT:
+			case COMPOSITE_ELEMENT:
 				Object stateValue = fd.getNested(state);
 				Object savedValue = null;
 				if (stateValue != null)
@@ -195,7 +196,7 @@ public class MetadataORMFacade extends ElementState
 				if (savedValue != stateValue)
 					fd.setField(state, savedValue);
 				break;
-			case FieldTypes.COLLECTION_ELEMENT:
+			case COLLECTION_ELEMENT:
 				Collection stateCollection = fd.getCollection(state);
 				Collection savedCollection = stateCollection == null ? null : fd.getCollectionType().getCollection();
 				if (stateCollection != null && stateCollection.size() > 0)
@@ -215,7 +216,7 @@ public class MetadataORMFacade extends ElementState
 				if (savedCollection != stateCollection)
 					fd.setField(state, savedCollection);
 				break;
-			case FieldTypes.MAP_ELEMENT:
+			case MAP_ELEMENT:
 				Map stateMap = fd.getMap(state);
 				Map savedMap = stateMap == null ? null : fd.getCollectionType().getMap();
 				if (stateMap != null && stateMap.size() > 0)
@@ -254,10 +255,10 @@ public class MetadataORMFacade extends ElementState
 		ClassDescriptor<? extends FieldDescriptor> cd = ClassDescriptor.getClassDescriptor(cached);
 		for (FieldDescriptor fd : cd)
 		{
-			int type = fd.getType();
+			FieldType type = fd.getType();
 			switch (type)
 			{
-			case FieldTypes.COMPOSITE_ELEMENT:
+			case COMPOSITE_ELEMENT:
 				Object stateValue = fd.getNested(state);
 				if (stateValue != null)
 				{
@@ -267,7 +268,7 @@ public class MetadataORMFacade extends ElementState
 						fd.setField(cached, savedValue);
 				}
 				break;
-			case FieldTypes.COLLECTION_ELEMENT:
+			case COLLECTION_ELEMENT:
 				Collection stateCollection = fd.getCollection(state);
 				if (stateCollection != null && stateCollection.size() > 0)
 				{
@@ -289,7 +290,7 @@ public class MetadataORMFacade extends ElementState
 						fd.setField(cached, savedCollection);
 				}
 				break;
-			case FieldTypes.MAP_ELEMENT:
+			case MAP_ELEMENT:
 				Map stateMap = fd.getMap(state);
 				if (stateMap != null || stateMap.size() > 0)
 				{
@@ -312,7 +313,7 @@ public class MetadataORMFacade extends ElementState
 			default:
 				// for scalar, collection of scalars, or map of scalars, just copy the value
 				Object value = fd.getValue(state);
-				if (fd.getType() == SCALAR)
+				if (fd.getType() == FieldType.SCALAR)
 				{
 					ScalarType scalarType = fd.getScalarType();
 					if (value != null && scalarType != null && !scalarType.isDefaultValue(value.toString()))

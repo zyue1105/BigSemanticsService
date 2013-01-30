@@ -23,7 +23,21 @@ public class TestHibernateXmlMappingGeneratorForMetaMetadata extends TestHiberna
 	@Override
 	protected HibernateXmlMappingGenerator getHibernateXmlMappingGenerator()
 	{
-		return new HibernateXmlMappingGeneratorForMetaMetadata();
+		try
+    {
+      return new HibernateXmlMappingGeneratorForMetaMetadata();
+    }
+    catch (FileNotFoundException e)
+    {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    catch (SIMPLTranslationException e)
+    {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+		return null;
 	}
 	
 	protected void doTest(String hbmFolderPath, String testName, File testingRepository) throws FileNotFoundException, SIMPLTranslationException

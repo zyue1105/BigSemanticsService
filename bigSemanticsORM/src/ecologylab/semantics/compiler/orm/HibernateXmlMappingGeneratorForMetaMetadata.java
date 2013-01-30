@@ -11,6 +11,7 @@ import org.hibernate.usertype.UserType;
 import ecologylab.collections.MultiAncestorScope;
 import ecologylab.generic.HashMapArrayList;
 import ecologylab.semantics.collecting.MetaMetadataRepositoryInit;
+import ecologylab.semantics.collecting.MetaMetadataRepositoryLocator;
 import ecologylab.semantics.compiler.orm.scalartypes.HibernateUserTypeRegistry;
 import ecologylab.semantics.compiler.orm.scalartypes.MetadataParsedURLHibernateType;
 import ecologylab.semantics.compiler.orm.scalartypes.MetadataScalarAccessor;
@@ -49,7 +50,7 @@ import ecologylab.translators.hibernate.hbmxml.HibernateProperty;
 public class HibernateXmlMappingGeneratorForMetaMetadata extends HibernateXmlMappingGenerator
 {
 
-	public static final File								REPOSITORY_LOCATION		= MetaMetadataRepositoryInit.findRepositoryLocation();
+	public static final File								REPOSITORY_LOCATION		= MetaMetadataRepositoryLocator.locateRepositoryByDefaultLocations();
 
 	public static final Map<String, String>	CLASS_NAME_ORM_ID_MAP	= new HashMap<String, String>();
 
@@ -70,7 +71,7 @@ public class HibernateXmlMappingGeneratorForMetaMetadata extends HibernateXmlMap
 	
 	private MetadataBuiltinDeclarationNamesHelper namesHelper = new MetadataBuiltinDeclarationNamesHelper();
 
-	public HibernateXmlMappingGeneratorForMetaMetadata()
+	public HibernateXmlMappingGeneratorForMetaMetadata() throws FileNotFoundException, SIMPLTranslationException
 	{
 		super(new MmdCachedDbNameGenerator());
 
