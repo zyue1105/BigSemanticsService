@@ -2,13 +2,13 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="test"/>
-	<classpathentry kind="lib" path="/cyberneko/lib/xercesMinimal.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/BigSemanticsCore"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/BigSemanticsCybernekoWrapper"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/BigSemanticsORM"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/BigSemanticsSunSpecifics"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/cyberneko"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/bigSemanticsCore"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/bigSemanticsCybernekoWrapper"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/bigSemanticsORM"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/bigSemanticsSunSpecifics"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/imageMetadataExtractor"/>
+	<classpathentry exported="true" kind="lib" path="/cyberneko/lib/xercesMinimal.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
 	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">

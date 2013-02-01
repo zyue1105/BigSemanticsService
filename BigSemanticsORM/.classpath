@@ -3,10 +3,10 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="resources"/>
 	<classpathentry kind="src" path="test"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/bigSemanticsCore"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/bigSemanticsSDK"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/bigSemanticsSunSpecifics"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/bigSemanticsCybernekoWrapper"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/BigSemanticsCore"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/BigSemanticsCybernekoWrapper"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/BigSemanticsSDK"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/BigSemanticsSunSpecifics"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/cyberneko"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/imageMetadataExtractor"/>
 	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">

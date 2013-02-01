@@ -1,24 +1,8 @@
 package ecologylab.semantics.compiler.orm.old;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import ecologylab.semantics.compiler.MetaMetadataCompiler;
 
-import ecologylab.collections.MultiAncestorScope;
-import ecologylab.semantics.compiler.CompilerConfig;
-import ecologylab.semantics.compiler.NewMetaMetadataCompiler;
-import ecologylab.semantics.metadata.Metadata;
-import ecologylab.semantics.metametadata.MetaMetadata;
-import ecologylab.semantics.metametadata.MetaMetadataRepository;
-import ecologylab.serialization.SIMPLTranslationException;
-import ecologylab.serialization.SimplTypesScope;
-import ecologylab.translators.hibernate.HibernateXmlMappingGenerator;
-import ecologylab.translators.java.JavaTranslationException;
-
-public class NewMetaMetadataCompilerWithORM extends NewMetaMetadataCompiler
+public class MetaMetadataCompilerWithORM extends MetaMetadataCompiler
 {
 
 //	public static final Map<String, String>											CLASS_NAME_ORM_ID_MAP;

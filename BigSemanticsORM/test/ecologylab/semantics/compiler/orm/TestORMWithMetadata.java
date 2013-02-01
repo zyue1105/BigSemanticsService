@@ -14,7 +14,7 @@ import ecologylab.semantics.metadata.builtins.Document;
 import ecologylab.semantics.metadata.builtins.DocumentClosure;
 import ecologylab.semantics.metadata.scalar.MetadataParsedURL;
 import ecologylab.semantics.metametadata.MetaMetadataRepository;
-import ecologylab.semantics.metametadata.test.NewMmTest;
+import ecologylab.semantics.tools.MmTest;
 import ecologylab.serialization.SIMPLTranslationException;
 import ecologylab.serialization.SimplTypesScope;
 import ecologylab.serialization.TranslationContext;
@@ -26,7 +26,7 @@ import ecologylab.serialization.formatenums.Format;
  * @author quyin
  * 
  */
-public class TestORMWithMetadata extends NewMmTest
+public class TestORMWithMetadata extends MmTest
 {
 
 	private MetadataORMFacade	ormFacade	= MetadataORMFacade.defaultSingleton();
