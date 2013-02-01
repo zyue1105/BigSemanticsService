@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>bigSemanticsService</name>
+	<name>BigSemanticsService</name>
 	<comment></comment>
 	<projects>
-		<project>bigSemanticsSDK</project>
+		<project>BigSemanticsSDK</project>
 		<project>cyberneko</project>
-		<project>bigSemanticsSunSpecifics</project>
-		<project>bigSemanticsCybernekoWrapper</project>
-		<project>bigSemanticsORM</project>
-		<project>bigSemanticsCore</project>
+		<project>BigSemanticsSunSpecifics</project>
+		<project>BigSemanticsCybernekoWrapper</project>
+		<project>BigSemanticsORM</project>
+		<project>BigSemanticsCore</project>
 		<project>imageMetadataExtractor</project>
 	</projects>
 	<buildSpec>
