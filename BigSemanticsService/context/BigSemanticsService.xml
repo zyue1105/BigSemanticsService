@@ -27,8 +27,8 @@ detected.
   <!--  + contextPath                                                  -->
   <!--  + war OR resourceBase                                          -->
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-  <Set name="contextPath">/bigSemanticsService</Set>
-  <Set name="war"><SystemProperty default="." name="jetty.home"/>/webapps/bigSemanticsService.war</Set>
+  <Set name="contextPath">/BigSemanticsService</Set>
+  <Set name="war"><SystemProperty default="." name="jetty.home"/>/webapps/BigSemanticsService.war</Set>
 
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
   <!-- Optional context configuration                                  -->
