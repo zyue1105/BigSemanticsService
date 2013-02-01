@@ -23,7 +23,7 @@
 	
 	<property name="mmdrepository.dir" value="${workspace.dir}/MetaMetadataRepository/MmdRepository" />
 		
-	<property name="fundamental.dir" value="${workspace.dir}/ecologylabFundamental" />
+	<property name="simplcore.dir" value="${workspace.dir}/simpleCore" />
 	
 	<property name="cyberneko.dir" value="${workspace.dir}/cyberneko" />
 		
@@ -39,18 +39,18 @@
 	<!-- declare ant4eclipse -->
 	<taskdef resource="net/sf/ant4eclipse/antlib.xml">
 		<classpath>
-			<pathelement location="${fundamental.dir}/lib/ant4eclipse-0.5.0.rc1.jar" />
-			<pathelement location="${fundamental.dir}/lib/ecj.jar" />
-			<pathelement location="${fundamental.dir}/lib/org.eclipse.osgi_3.2.0.v20060601.jar" />
+			<pathelement location="${simplcore.dir}/lib/ant4eclipse-0.5.0.rc1.jar" />
+			<pathelement location="${simplcore.dir}/lib/ecj.jar" />
+			<pathelement location="${simplcore.dir}/lib/org.eclipse.osgi_3.2.0.v20060601.jar" />
 		</classpath>
 	</taskdef>
 	
-	<taskdef name="antform" classname="com.sardak.antform.AntForm" classpath="${fundamental.dir}/lib/antform.jar"/>
+	<taskdef name="antform" classname="com.sardak.antform.AntForm" classpath="${simplcore.dir}/lib/antform.jar"/>
 	
 	<!-- optional: declare ant-contrib -->
 	<taskdef resource="net/sf/antcontrib/antlib.xml">
 		<classpath>
-			<pathelement location="${fundamental.dir}/lib/ant-contrib-1.0b3.jar" />
+			<pathelement location="${simplcore.dir}/lib/ant-contrib-1.0b3.jar" />
 		</classpath>
 	</taskdef>
 	<!-- declare maven -->
@@ -129,7 +129,7 @@
 		</javac>
 		
 		<echo>  mySourcepath is ${mySourcepath}</echo>
-		<foreach list="${mySourcepath}" target="copy-xml" param="resource.dir" delimiter=";" />
+		<foreach list="${mySourcepath}" target="copy-xml" param="resource.dir" delimiter=":" />
 		
 		<echo>  source is at ${mySourcepath}</echo>
 		<echo>  destination is ${myOutputpath}</echo>
