@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- requires: (1) ant4eclipse installed as an eclipse plugin; (2) ant-contrib installed; (3) jarsigner.exe be on the path -->
 
-<project name="ecologylabSemanticService" default="buildwar" xmlns:artifact="antlib:org.apache.maven.artifact.ant">
+<project name="BigSemanticsService" default="buildwar" xmlns:artifact="antlib:org.apache.maven.artifact.ant">
 	
 	<!-- semantic service project directory-->
 	<property name="service.dir" value="${basedir}/.." />
@@ -21,18 +21,23 @@
 	<!-- the Eclipse workspace directory -->
 	<property name="workspace.dir" value="${service.dir}/.." />
 	
-	<property name="mmdrepository.dir" value="${workspace.dir}/MetaMetadataRepository/MmdRepository" />
+	<!-- <property name="mmdrepository.dir" value="${workspace.dir}/MetaMetadataRepository/MmdRepository" /> -->
 		
-	<property name="simplcore.dir" value="${workspace.dir}/simpleCore" />
+	<property name="simplcore.dir" value="${workspace.dir}/../simplJava/simplCore" />
 	
-	<property name="cyberneko.dir" value="${workspace.dir}/cyberneko" />
+	<property name="cyberneko.dir" value="${workspace.dir}/../bigSemanticsJava/cyberneko" />
+	
+	<property name="bsSunSpecifics.dir" value="${workspace.dir}/../bigSemanticsJava/BigSemanticsSunSpecifics" />
+	
+	<property name="bsSDK.dir" value="${workspace.dir}/../bigSemanticsJava/BigSemanticsSDK" />
 		
 	<!-- the projects necessary to run service, based on the project set -->
 	<property name="project.set" value="${service.dir}/projectSet.psf" />
+	<property name="project.names" value="cyberneko,simplCore,BigSemanticsCore,BigSemanticsCybernekoWrapper,imageMetadataExtractor,BigSemanticsSunSpecifics,BigSemanticsSDK,BigSemanticsORM" />
 	
-	<property name="sftp.host" value="ecology-service" />
+	<property name="sftp.host" value="ecoarray0" />
 	<property name="sftp.user" value="ecologylab" />
-	<property name="sftp.port" value="22" />
+	<property name="sftp.port" value="2022" />
 	
 	<property name="jetty.dir" value="/home/ecologylab/jetty-distribution-8.1.4.v20120524" />
 	
@@ -71,8 +76,11 @@
 		
 		<echo>adding additional jar(s)</echo>
 		<copy todir="${distlib.dir}">
-			<fileset dir="${fundamental.dir}/lib/" includes="json_simple-1.1.jar" />
+			<fileset dir="${simplcore.dir}/lib/" includes="json_simple-1.1.jar" />
 			<fileset dir="${cyberneko.dir}/lib" includes="xercesMinimal.jar" />
+			<fileset dir="${bsSunSpecifics.dir}/lib/" includes="simplSunSpecifics.jar" />
+			<fileset dir="${bsSunSpecifics.dir}/lib/" includes="BigSemanticsGeneratedClassesJava.jar" />
+			<fileset dir="${bsSDK.dir}/lib/" includes="bigSemanticsWrappers.jar" />
 		</copy>
 		<echo>...done.</echo>
 		
@@ -91,7 +99,7 @@
 	<!-- contains more than required set through ORM project components not used by service -->
 	<target name="build-project-libraries">
 		<!-- get the build order for your projects according to their deps -->
-		<getBuildOrder buildorderProperty="buildorder" projectSet="${project.set}" workspace="${workspace.dir}" />
+		<getBuildOrder buildorderProperty="buildorder" projectNames="${project.names}" workspace="${workspace.dir}" />
 
 		<echo>list of projects to build: ${buildorder}</echo>
 
@@ -162,13 +170,13 @@
 	            <include name="**/*.class" />
 	        </fileset>
 	    </copy>
-	    <copy todir="${distclasses.dir}">
+	    <!-- <copy todir="${distclasses.dir}">
 	        <fileset dir="${mmdrepository.dir}">
 	            <include name="**/*.xml" />
 	        </fileset>
-	    </copy>
+	    </copy> -->
 		<copy file="${config.dir}/service.properties" todir="${distclasses.dir}"/>
-		<copy file="${fundamental.dir}/config/log4j/log4j.configuration" todir="${distclasses.dir}"/>
+		<copy file="${simplcore.dir}/config/log4j/log4j.configuration" todir="${distclasses.dir}"/>
 	</target>
 	
 	<target name="buildwar" depends="compile">
