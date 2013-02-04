@@ -94,6 +94,7 @@ public class BasicCrawlerApp
           {
             bw.write(locString);
             bw.newLine();
+            bw.flush();
           }
           catch (IOException e)
           {
