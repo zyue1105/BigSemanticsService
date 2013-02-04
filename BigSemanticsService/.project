@@ -4,11 +4,11 @@
 	<comment></comment>
 	<projects>
 		<project>BigSemanticsSDK</project>
+		<project>BigSemanticsORM</project>
+		<project>BigSemanticsCore</project>
 		<project>cyberneko</project>
 		<project>BigSemanticsSunSpecifics</project>
 		<project>BigSemanticsCybernekoWrapper</project>
-		<project>BigSemanticsORM</project>
-		<project>BigSemanticsCore</project>
 		<project>imageMetadataExtractor</project>
 	</projects>
 	<buildSpec>
