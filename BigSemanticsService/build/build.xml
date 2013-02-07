@@ -25,11 +25,11 @@
 		
 	<property name="simplcore.dir" value="${workspace.dir}/../simplJava/simplCore" />
 	
-	<property name="cyberneko.dir" value="${workspace.dir}/../bigSemanticsJava/cyberneko" />
+	<property name="cyberneko.dir" value="${workspace.dir}/../BigSemanticsJava/cyberneko" />
 	
-	<property name="bsSunSpecifics.dir" value="${workspace.dir}/../bigSemanticsJava/BigSemanticsSunSpecifics" />
+	<property name="bsSunSpecifics.dir" value="${workspace.dir}/../BigSemanticsJava/BigSemanticsSunSpecifics" />
 	
-	<property name="bsSDK.dir" value="${workspace.dir}/../bigSemanticsJava/BigSemanticsSDK" />
+	<property name="bsSDK.dir" value="${workspace.dir}/../BigSemanticsJava/BigSemanticsSDK" />
 		
 	<!-- the projects necessary to run service, based on the project set -->
 	<property name="project.set" value="${service.dir}/projectSet.psf" />
@@ -176,7 +176,7 @@
 	        </fileset>
 	    </copy> -->
 		<copy file="${config.dir}/service.properties" todir="${distclasses.dir}"/>
-		<copy file="${simplcore.dir}/config/log4j/log4j.configuration" todir="${distclasses.dir}"/>
+		<copy file="${service.dir}/config/log4j.configuration" todir="${distclasses.dir}"/>
 	</target>
 	
 	<target name="buildwar" depends="compile">
