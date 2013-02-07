@@ -5,6 +5,7 @@ package ecologylab.bigsemantics.service.metadata;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -101,6 +102,11 @@ public class MetadataServiceHelper extends Debug implements Continuation<Documen
   {
     this.span = span;
     this.reload = reload;
+    Response resp = null;
+    
+    long beginTime = System.currentTimeMillis();
+    logRecord.setBeginTime(new Date(beginTime));
+    
     synchronized (urlSpanMap)
     {
       // asynchronous metadata request
@@ -122,23 +128,35 @@ public class MetadataServiceHelper extends Debug implements Continuation<Documen
       {
         long millis = System.currentTimeMillis();
         String responseBody = SimplTypesScope.serialize(document, format).toString();
-        logRecord.setSecondsInSerialization((System.currentTimeMillis() - millis) / 1000);
-        servicePerfLog.debug(SimplTypesScope.serialize(logRecord, StringFormat.JSON).toString());
-        // serviceLog.debug("document serialized in " + (System.currentTimeMillis() - millis) +
-        // "(ms)");
-        return Response.status(Status.OK).entity(responseBody).build();
+        logRecord.setmSecInSerialization(System.currentTimeMillis() - millis);
+        resp = Response.status(Status.OK).entity(responseBody).build();
       }
       catch (SIMPLTranslationException e)
       {
         e.printStackTrace();
         serviceLog.error("exception while serializing document");
-        return Response.status(Status.INTERNAL_SERVER_ERROR)
+        resp = Response.status(Status.INTERNAL_SERVER_ERROR)
             .entity(SemanticServiceErrorCodes.INTERNAL_ERROR).type(MediaType.TEXT_PLAIN).build();
       }
     }
-    serviceLog.error("metadata couldn't be obtained");
-    return Response.status(Status.NOT_FOUND).entity(SemanticServiceErrorCodes.METADATA_NOT_FOUND)
-        .type(MediaType.TEXT_PLAIN).build();
+    else
+    {
+	    serviceLog.error("metadata couldn't be obtained");
+	    resp = Response.status(Status.NOT_FOUND).entity(SemanticServiceErrorCodes.METADATA_NOT_FOUND)
+	        .type(MediaType.TEXT_PLAIN).build();
+    }
+    
+    logRecord.setMsTotal(System.currentTimeMillis() - beginTime);
+    try
+    {
+    	servicePerfLog.debug(SimplTypesScope.serialize(logRecord, StringFormat.JSON).toString());
+    } 
+    catch (SIMPLTranslationException e) 
+    {
+    	serviceLog.error("exception serializing perf log");
+    }    
+    
+    return resp;
   }
 
   private void requestMetadata(ParsedURL thatPurl, int level)
@@ -214,7 +232,6 @@ public class MetadataServiceHelper extends Debug implements Continuation<Documen
         if (document.getDownloadStatus() == DownloadStatus.UNPROCESSED)
         {
           documentClosure.setLogRecord(logRecord);
-          logRecord.setEnQueueTimestamp(System.currentTimeMillis());
           documentClosure.queueDownload();
         }
         // semanticsServiceScope.getDownloadMonitors().requestStops();
