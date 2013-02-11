@@ -2,6 +2,7 @@ package ecologylab.bigsemantics.service.dbinterface;
 
 import java.io.File;
 
+import ecologylab.appframework.PropertiesAndDirectories;
 import ecologylab.bigsemantics.collecting.SemanticsGlobalScope;
 import ecologylab.bigsemantics.dbinterface.IDocumentCache;
 import ecologylab.bigsemantics.filestorage.FileMetadata;
@@ -37,6 +38,8 @@ public class SimpleDiskDocumentCache extends Debug implements IDocumentCache
     storage = FileSystemStorage.getStorageProvider();
 
     semanticsDir = new File(FileSystemStorage.semanticsFileDirectory);
+    if (!semanticsDir.exists())
+      PropertiesAndDirectories.createDirsAsNeeded(semanticsDir);
     if (!semanticsDir.exists())
       throw new RuntimeException("The directory to cache extracted semantics does not exist: "
           + semanticsDir);
