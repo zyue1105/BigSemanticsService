@@ -177,23 +177,27 @@ public class MetadataServiceHelper extends Debug implements Continuation<Documen
     	
     	ParsedURL docUrl = document.getLocation();
     	if (document.isRecycled() || noCache || reload)
-        {
+      {
     	  //do we need to remove both?
-          semanticsServiceScope.getGlobalCollection().removed(thatPurl);
-          semanticsServiceScope.getGlobalCollection().removed(docUrl);
-          if (reload)
-          {
-          	semanticsServiceScope.getDBDocumentProvider().removeDocument(docUrl);
-          	FileSystemStorage.getStorageProvider().removeFileAndMetadata(docUrl);
-          }
-          document = semanticsServiceScope.getOrConstructDocument(thatPurl);
+    	  serviceLog.debug("removing document [%s] from service global collection", thatPurl);
+        semanticsServiceScope.getGlobalCollection().removed(thatPurl);
+    	  serviceLog.debug("removing document [%s] from service global collection", docUrl);
+        semanticsServiceScope.getGlobalCollection().removed(docUrl);
+        if (reload)
+        {
+      	  serviceLog.debug("removing document [%s] from caches", docUrl);
+        	semanticsServiceScope.getDBDocumentProvider().removeDocument(docUrl);
+        	FileSystemStorage.getStorageProvider().removeFileAndMetadata(docUrl);
         }
-        logRecord.setDocumentUrl(docUrl);
-        serviceLog.debug("Document received from the service scope for URL[" + thatPurl + "]: "
-            + document);
+        document = semanticsServiceScope.getOrConstructDocument(thatPurl);
+      }
+    	
+      logRecord.setDocumentUrl(docUrl);
+      serviceLog.debug("Document received from the service scope for URL[" + thatPurl + "]: "
+          + document);
 
-        // add entry to hashmap
-        urlSpanMap.put(decodeUrl(thatPurl.toString()), level);
+      // add entry to hashmap
+      urlSpanMap.put(decodeUrl(thatPurl.toString()), level);
    	}
     
     // document might already be present in GlobalCollection
@@ -201,6 +205,7 @@ public class MetadataServiceHelper extends Debug implements Continuation<Documen
     {
       final Document theDoc = document;
       logRecord.setDocumentCollectionCacheHit(true);
+      serviceLog.debug("Cache hit for document[%s]", document.getLocation());
       // metadataCacheLog.debug("Cache hit: " + document +
       // " document obtained from global document collection");
 
@@ -232,6 +237,7 @@ public class MetadataServiceHelper extends Debug implements Continuation<Documen
         if (document.getDownloadStatus() == DownloadStatus.UNPROCESSED)
         {
           documentClosure.setLogRecord(logRecord);
+          serviceLog.debug("Queueing document[%s] for downloading", document.getLocation());
           documentClosure.queueDownload();
         }
         // semanticsServiceScope.getDownloadMonitors().requestStops();

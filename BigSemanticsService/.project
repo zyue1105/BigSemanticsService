@@ -4,13 +4,15 @@
 	<comment></comment>
 	<projects>
 		<project>BigSemanticsSDK</project>
+		<project>simplCore</project>
 		<project>BigSemanticsORM</project>
 		<project>BigSemanticsCore</project>
 		<project>cyberneko</project>
+		<project>BigSemanticsWrappers</project>
 		<project>BigSemanticsSunSpecifics</project>
 		<project>BigSemanticsCybernekoWrapper</project>
+		<project>BigSemanticsGeneratedClassesJava</project>
 		<project>imageMetadataExtractor</project>
-		<project>simplCore</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
