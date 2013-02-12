@@ -55,15 +55,5 @@
 			<type>2</type>
 			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/MetaMetadataRepository/MmdRepository</locationURI>
 		</link>
-		<link>
-			<name>log4j</name>
-			<type>2</type>
-			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/ecologylabFundamental/config/log4j</locationURI>
-		</link>
-		<link>
-			<name>resources</name>
-			<type>2</type>
-			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/ecologylabSemanticsORM/resources</locationURI>
-		</link>
 	</linkedResources>
 </projectDescription>
