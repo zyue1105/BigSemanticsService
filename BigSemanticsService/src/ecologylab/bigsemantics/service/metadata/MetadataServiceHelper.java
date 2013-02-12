@@ -147,6 +147,7 @@ public class MetadataServiceHelper extends Debug implements Continuation<Documen
     }
     
     logRecord.setMsTotal(System.currentTimeMillis() - beginTime);
+    logRecord.setResponseCode(resp.getStatus());
     try
     {
     	servicePerfLog.debug(SimplTypesScope.serialize(logRecord, StringFormat.JSON).toString());

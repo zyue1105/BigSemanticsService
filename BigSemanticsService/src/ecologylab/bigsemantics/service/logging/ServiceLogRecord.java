@@ -21,6 +21,9 @@ public class ServiceLogRecord extends DocumentLogRecord
 	
 	@simpl_scalar
 	ParsedURL requestUrl;
+	
+	@simpl_scalar
+	int responseCode;
 
 	public Date getBeginTime()
 	{
@@ -60,5 +63,15 @@ public class ServiceLogRecord extends DocumentLogRecord
 	public void setRequestUrl(ParsedURL requestUrl)
 	{
 		this.requestUrl = requestUrl;
+	}
+
+	public int getResponseCode()
+	{
+		return responseCode;
+	}
+
+	public void setResponseCode(int responseCode)
+	{
+		this.responseCode = responseCode;
 	}
 }
