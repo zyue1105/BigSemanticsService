@@ -42,6 +42,7 @@ public class ServicePerfLogAnalyzer extends Debug
 		this.logFiles = logFiles;
 		this.fromTime = fromTime;
 		this.toTime = toTime;
+		this.logRecords = new ArrayList<ServiceLogRecord>();
 	}
 
 	private void readPerfLogs() throws IOException
@@ -101,6 +102,7 @@ public class ServicePerfLogAnalyzer extends Debug
 		{
 			float avgLatency = 0, avgLatencyWoQueuedWait = 0, nSuccessful = 0;
 			float avgTimeInDownloading = 0, avgTimeInExtraction = 0, avgTimeInSerialization = 0;
+			float avgLatencyS = 0, avgLatencyWoQueuedWaitS = 0, avgTimeInDownloadingS = 0, avgTimeInExtractionS = 0, avgTimeInSerializationS = 0;
 
 			for (ServiceLogRecord logRecord : logRecords)
 			{
@@ -108,34 +110,63 @@ public class ServicePerfLogAnalyzer extends Debug
 				avgLatency += latency;
 
 				ArrayList<Long> queuePeekIntervals = logRecord.getQueuePeekIntervals();
-				if (queuePeekIntervals != null)
+				if (queuePeekIntervals.size() > 0)
 					avgLatencyWoQueuedWait += (latency - queuePeekIntervals
 							.get(queuePeekIntervals.size() - 1));
 				else
 					avgLatencyWoQueuedWait += latency;
 
-				if (logRecord.getResponseCode() == STATUS_OK)
-					nSuccessful++;
-
 				avgTimeInDownloading += logRecord.getmSecInHtmlDownload();
 				avgTimeInExtraction += logRecord.getmSecInExtraction();
 				avgTimeInSerialization += logRecord.getmSecInSerialization();
+				
+				if (logRecord.getResponseCode() == STATUS_OK)
+				{
+					nSuccessful++;
+					avgLatencyS += latency;
+					
+					if (queuePeekIntervals.size() > 0)
+						avgLatencyWoQueuedWaitS += (latency - queuePeekIntervals
+								.get(queuePeekIntervals.size() - 1));
+					else
+						avgLatencyWoQueuedWaitS += latency;
+					
+					avgTimeInDownloadingS += logRecord.getmSecInHtmlDownload();
+					avgTimeInExtractionS += logRecord.getmSecInExtraction();
+					avgTimeInSerializationS += logRecord.getmSecInSerialization();					
+				}
 			}
 
 			int size = logRecords.size();
+			
 			debug("================= Service Metrics =================\n");
-			debug("From : " + fromTime + "  To : " + toTime + "\n");
+			debug("From : " + fromTime + "  To : " + toTime);
+			debug("Time span (ms): " + (toTime.getTime() - fromTime.getTime()) + "\n");
 			debug("No. of Requests : " + size);
 			debug("Success Rate (%) : " + ((nSuccessful / size) * 100));
 			debug("Throughput (successful requests / second) : "
-					+ (nSuccessful / (toTime.getTime() - fromTime.getTime())) + "\n");
+					+ (nSuccessful * 1000 / (toTime.getTime() - fromTime.getTime())) + "\n");
+			
 			debug("Average Latency (ms): " + (avgLatency / size));
 			debug("Average Latency (exluding download queue waiting period) (ms): "
 					+ (avgLatencyWoQueuedWait / size) + "\n\n");
+			
 			debug("-------------- Component-wise Summary --------------\n");
 			debug("Average Downloading time (ms) : " + (avgTimeInDownloading / size) + "\n");
 			debug("Average Extraction time (ms) :" + (avgTimeInExtraction / size) + "\n");
 			debug("Average Serialization time (ms) :" + (avgTimeInSerialization / size) + "\n\n");
+			
+			debug("********* Successful Requests **********\n");
+			debug("Average Latency (ms): " + (avgLatencyS / nSuccessful));
+			debug("Average Latency (exluding download queue waiting period) (ms): "
+					+ (avgLatencyWoQueuedWaitS / nSuccessful) + "\n\n");
+			
+			debug("-------------- Component-wise Summary --------------\n");
+			debug("Average Downloading time (ms) : " + (avgTimeInDownloadingS / nSuccessful) + "\n");
+			debug("Average Extraction time (ms) :" + (avgTimeInExtractionS / nSuccessful) + "\n");
+			debug("Average Serialization time (ms) :" + (avgTimeInSerializationS / nSuccessful) + "\n\n");
+			debug("****************************************\n");
+			
 			debug("===================================================\n");
 		}
 	}
