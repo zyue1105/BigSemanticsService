@@ -176,6 +176,8 @@ public class MetadataServiceHelper extends Debug implements Continuation<Documen
     	else
     		serviceLog.warn("mmd no_cache couldn't be determined for document");
     	
+    	serviceLog.debug("Download status of %s: %s", document, document.getDownloadStatus());
+    	
     	ParsedURL docUrl = document.getLocation();
     	if (document.isRecycled() || noCache || reload)
       {
@@ -194,8 +196,9 @@ public class MetadataServiceHelper extends Debug implements Continuation<Documen
       }
     	
       logRecord.setDocumentUrl(docUrl);
-      serviceLog.debug("Document received from the service scope for URL[" + thatPurl + "]: "
-          + document);
+      serviceLog.debug("Document received from the service scope for URL[%s]: %s",
+                       thatPurl,
+                       document);
 
       // add entry to hashmap
       urlSpanMap.put(decodeUrl(thatPurl.toString()), level);

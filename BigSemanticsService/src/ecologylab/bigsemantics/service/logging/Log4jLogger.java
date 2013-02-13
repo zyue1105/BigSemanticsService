@@ -34,7 +34,17 @@ public class Log4jLogger extends AbstractLogger
   @Override
   public void log(LogLevel level, String fmt, Object... args)
   {
-    logger.log(transLevel.get(level), String.format(fmt, args));
+    try
+    {
+      logger.log(transLevel.get(level), String.format(fmt, args));
+    }
+    catch (Throwable e)
+    {
+      logger.error(String.format("Cannot log message: %s\n    format string: %s\n    args: %s\n",
+                                 e.getMessage(),
+                                 fmt,
+                                 args.toString()));
+    }
   }
 
 }
