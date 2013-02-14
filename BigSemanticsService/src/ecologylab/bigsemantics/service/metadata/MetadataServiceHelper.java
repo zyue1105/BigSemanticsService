@@ -204,8 +204,10 @@ public class MetadataServiceHelper extends Debug implements Continuation<Documen
       urlSpanMap.put(decodeUrl(thatPurl.toString()), level);
    	}
     
+  	serviceLog.debug("Again, download status of %s: %s", document, document.getDownloadStatus());
+    
     // document might already be present in GlobalCollection
-    if (document != null && document.isDownloadDone() && !document.isRecycled())
+    if (document != null && document.getDownloadStatus() == DownloadStatus.DOWNLOAD_DONE && !document.isRecycled())
     {
       final Document theDoc = document;
       logRecord.setDocumentCollectionCacheHit(true);
