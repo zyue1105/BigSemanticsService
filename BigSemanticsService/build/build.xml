@@ -30,10 +30,12 @@
 	<property name="bsSunSpecifics.dir" value="${workspace.dir}/../BigSemanticsJava/BigSemanticsSunSpecifics" />
 	
 	<property name="bsSDK.dir" value="${workspace.dir}/../BigSemanticsJava/BigSemanticsSDK" />
+
+	<property name="bsCore.dir" value="${workspace.dir}/../BigSemanticsJava/BigSemanticsCore" />
 		
 	<!-- the projects necessary to run service, based on the project set -->
 	<property name="project.set" value="${service.dir}/projectSet.psf" />
-	<property name="project.names" value="cyberneko,simplCore,BigSemanticsCore,BigSemanticsCybernekoWrapper,imageMetadataExtractor,BigSemanticsSunSpecifics,BigSemanticsSDK,BigSemanticsORM" />
+	<property name="project.names" value="cyberneko,BigSemanticsCore,BigSemanticsCybernekoWrapper,imageMetadataExtractor,BigSemanticsSunSpecifics,BigSemanticsSDK,BigSemanticsORM" />
 	
 	<property name="sftp.host" value="ecoarray0" />
 	<property name="sftp.user" value="ecologylab" />
@@ -76,7 +78,7 @@
 		
 		<echo>adding additional jar(s)</echo>
 		<copy todir="${distlib.dir}">
-			<fileset dir="${simplcore.dir}/lib/" includes="json_simple-1.1.jar" />
+			<fileset dir="${bsCore.dir}/lib/" includes="simplCore.jar" />
 			<fileset dir="${cyberneko.dir}/lib" includes="xercesMinimal.jar" />
 			<fileset dir="${bsSunSpecifics.dir}/lib/" includes="simplSunSpecifics.jar" />
 			<fileset dir="${bsSunSpecifics.dir}/lib/" includes="BigSemanticsGeneratedClassesJava.jar" />
@@ -137,7 +139,7 @@
 		</javac>
 		
 		<echo>  mySourcepath is ${mySourcepath}</echo>
-		<foreach list="${mySourcepath}" target="copy-xml" param="resource.dir" delimiter=":" />
+		<foreach list="${mySourcepath}" target="copy-xml" param="resource.dir" delimiter=";" />
 		
 		<echo>  source is at ${mySourcepath}</echo>
 		<echo>  destination is ${myOutputpath}</echo>
