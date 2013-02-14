@@ -1,31 +1,15 @@
-/**
- * 
- */
 package ecologylab.bigsemantics.service.metadata;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import ecologylab.bigsemantics.collecting.DownloadStatus;
 import ecologylab.bigsemantics.downloaders.controllers.DownloadControllerType;
 import ecologylab.bigsemantics.filestorage.FileSystemStorage;
-import ecologylab.bigsemantics.html.utils.StringBuilderUtils;
-import ecologylab.bigsemantics.metadata.Metadata;
-import ecologylab.bigsemantics.metadata.MetadataBase;
 import ecologylab.bigsemantics.metadata.builtins.Document;
 import ecologylab.bigsemantics.metadata.builtins.DocumentClosure;
-import ecologylab.bigsemantics.metadata.builtins.Image;
-import ecologylab.bigsemantics.metadata.output.DocumentLogRecord;
-import ecologylab.bigsemantics.metadata.scalar.MetadataParsedURL;
-import ecologylab.bigsemantics.metametadata.ClassAndCollectionIterator;
 import ecologylab.bigsemantics.metametadata.MetaMetadata;
 import ecologylab.bigsemantics.service.SemanticServiceErrorCodes;
 import ecologylab.bigsemantics.service.SemanticServiceScope;
@@ -49,7 +33,9 @@ import ecologylab.serialization.formatenums.StringFormat;
 public class MetadataServiceHelper extends Debug implements Continuation<DocumentClosure>
 {
 
-  public static int                   CONTINUATION_TIMOUT_MILLI = 60000;
+  public static final long            CONTINUATION_CHECK_INTERVAL = 1000;
+
+  public static int                   CONTINUATION_TIMOUT_MILLI   = 60000;
 
   static ILogger                      serviceLog;
 
@@ -57,71 +43,83 @@ public class MetadataServiceHelper extends Debug implements Continuation<Documen
 
   private static SemanticServiceScope semanticsServiceScope;
 
-  /**
-   * used by document iterator
-   */
-  private static HashSet<Metadata>    visitedMetadata;
-
   static
   {
     ILoggerFactory loggerFactory = SemanticServiceScope.get().getLoggerFactory();
     serviceLog = loggerFactory.getLogger(MetadataServiceHelper.class);
     servicePerfLog = loggerFactory.getLogger("ecologylab.bigsemantics.service.PERF");
     semanticsServiceScope = SemanticServiceScope.get();
-    visitedMetadata = new HashSet<Metadata>();
+//    visitedMetadata = new HashSet<Metadata>();
   }
-
-  private StringFormat                format;
-
-  private int                         span;
 
   /**
    * main document to be returned corresponding to request url
    */
   private Document                    document;
 
-  private Document                    origDoc                   = null;
-
   private ServiceLogRecord            logRecord;
-  
-  private boolean											reload;
 
-  /**
-   * url to graph level map
-   */
-  private HashMap<String, Integer>    urlSpanMap;
+  private boolean                     finished;
 
-  public MetadataServiceHelper(StringFormat format)
+  private Object                      lockFinished                = new Object();
+
+  public MetadataServiceHelper()
   {
-    this.format = format;
-    this.urlSpanMap = new HashMap<String, Integer>();
+//    this.urlSpanMap = new HashMap<String, Integer>();
     this.logRecord = new ServiceLogRecord();
   }
 
-  public Response getMetadata(ParsedURL url, int span, boolean reload)
+  private void waitForFinish()
   {
-    this.span = span;
-    this.reload = reload;
-    Response resp = null;
-    
-    long beginTime = System.currentTimeMillis();
-    logRecord.setBeginTime(new Date(beginTime));
-    
-    synchronized (urlSpanMap)
+    if (!finished)
     {
-      // asynchronous metadata request
-      requestMetadata(url, 0);
-      try
+      synchronized (lockFinished)
       {
-        // notified when the graph span is completed
-        urlSpanMap.wait(CONTINUATION_TIMOUT_MILLI);
-      }
-      catch (InterruptedException e)
-      {
-        e.printStackTrace();
+        while (!finished)
+        {
+          try
+          {
+            lockFinished.wait(CONTINUATION_CHECK_INTERVAL);
+          }
+          catch (InterruptedException e)
+          {
+            e.printStackTrace();
+          }
+        }
       }
     }
+  }
 
+  private void setFinished(boolean finished)
+  {
+    synchronized (lockFinished)
+    {
+      this.finished = finished;
+    }
+  }
+
+  private void queueDocumentForDownload(Document document)
+  {
+    DocumentClosure closure = document.getOrConstructClosure(DownloadControllerType.OODSS);
+    closure.addContinuation(this);
+    closure.setLogRecord(logRecord);
+    serviceLog.debug("Queueing %s for downloading.", document);
+    closure.queueDownload();
+  }
+
+  /**
+   * The entry method that accepts a URL and returns a Response with extracted metadata.
+   * 
+   * @param url
+   * @param format
+   * @param reload
+   * @return
+   */
+  public Response getMetadataResponse(ParsedURL url, StringFormat format, boolean reload)
+  {
+    Response resp = null;
+    
+    Document document = getMetadata(url, reload);
     if (document != null)
     {
       try
@@ -129,254 +127,266 @@ public class MetadataServiceHelper extends Debug implements Continuation<Documen
         long millis = System.currentTimeMillis();
         String responseBody = SimplTypesScope.serialize(document, format).toString();
         logRecord.setmSecInSerialization(System.currentTimeMillis() - millis);
+        
         resp = Response.status(Status.OK).entity(responseBody).build();
       }
       catch (SIMPLTranslationException e)
       {
         e.printStackTrace();
-        serviceLog.error("exception while serializing document");
+        serviceLog.error("exception while serializing document: %s", e.getMessage());
         resp = Response.status(Status.INTERNAL_SERVER_ERROR)
             .entity(SemanticServiceErrorCodes.INTERNAL_ERROR).type(MediaType.TEXT_PLAIN).build();
       }
     }
     else
     {
-	    serviceLog.error("metadata couldn't be obtained");
-	    resp = Response.status(Status.NOT_FOUND).entity(SemanticServiceErrorCodes.METADATA_NOT_FOUND)
-	        .type(MediaType.TEXT_PLAIN).build();
+	    serviceLog.error("metadata couldn't be obtained for [%s]", url);
+      resp = Response.status(Status.NOT_FOUND).entity(SemanticServiceErrorCodes.METADATA_NOT_FOUND)
+          .type(MediaType.TEXT_PLAIN).build();
     }
     
-    logRecord.setMsTotal(System.currentTimeMillis() - beginTime);
+    logRecord.setMsTotal(System.currentTimeMillis() - logRecord.getBeginTime().getTime());
     logRecord.setResponseCode(resp.getStatus());
-    try
-    {
-    	servicePerfLog.debug(SimplTypesScope.serialize(logRecord, StringFormat.JSON).toString());
-    } 
-    catch (SIMPLTranslationException e) 
-    {
-    	serviceLog.error("exception serializing perf log");
-    }    
+  	servicePerfLog.info(serializeToString(logRecord, StringFormat.JSON));
     
     return resp;
   }
 
-  private void requestMetadata(ParsedURL thatPurl, int level)
+  Document getMetadata(ParsedURL url, boolean reload)
   {
-    DocumentLogRecord docLogRecord = new DocumentLogRecord();
+    this.finished = false;
 
-    logRecord.setRequestUrl(thatPurl);
-    Document document = semanticsServiceScope.getOrConstructDocument(thatPurl);
+    logRecord.setBeginTime(new Date());
+    requestMetadata(url, reload);
+    waitForFinish();
     
-    boolean noCache = false;
-    if (document != null)
-    {
-    	MetaMetadata mmd = ((MetaMetadata)document.getMetaMetadata());
-    	if (mmd != null)
-    		noCache = mmd.isNoCache();
-    	else
-    		serviceLog.warn("mmd no_cache couldn't be determined for document");
-    	
-    	serviceLog.debug("Download status of %s: %s", document, document.getDownloadStatus());
-    	
-    	ParsedURL docUrl = document.getLocation();
-    	if (document.isRecycled() || noCache || reload)
-      {
-    	  //do we need to remove both?
+    return this.document;
+  }
+
+  private void requestMetadata(ParsedURL thatPurl, boolean reload)
+  {
+    logRecord.setRequestUrl(thatPurl);
+    
+    // get or construct the document
+    Document document = semanticsServiceScope.getOrConstructDocument(thatPurl);
+    logRecord.setDocumentUrl(document.getLocation());
+    serviceLog.debug("Document received from the service scope for URL[%s]: %s",
+                     thatPurl,
+                     document);
+  	serviceLog.debug("Download status of %s: %s", document, document.getDownloadStatus());
+  	
+    // check for <meta_metadata>.no_cache
+  	MetaMetadata mmd = (MetaMetadata) document.getMetaMetadata();
+		reload = reload || mmd == null ? false : mmd.isNoCache();
+		
+  	// take actions based on the status of the document
+		DocumentClosure closure = null;
+		ParsedURL docPurl = document.getLocation();
+  	switch (document.getDownloadStatus())
+  	{
+  	case UNPROCESSED:
+  	  queueDocumentForDownload(document);
+  	  break;
+  	case QUEUED:
+  	case CONNECTING:
+  	case PARSING:
+      logRecord.setDocumentCollectionCacheHit(true);
+      serviceLog.debug("%s has been cached in service global document collection", document);
+      
+      serviceLog.debug("adding continuation to the closure of %s", document);
+  	  closure = document.getOrConstructClosure(DownloadControllerType.OODSS);
+  	  closure.addContinuation(this);
+    	this.document = document;
+  	  setFinished(true);
+  	  break;
+  	case IOERROR:
+  	case RECYCLED:
+  	  reload = true;
+  	case DOWNLOAD_DONE:
+      logRecord.setDocumentCollectionCacheHit(true);
+      serviceLog.debug("%s has been cached in service global document collection", document);
+      
+  	  if (reload)
+  	  {
+  	    // remove from caches
     	  serviceLog.debug("removing document [%s] from service global collection", thatPurl);
         semanticsServiceScope.getGlobalCollection().removed(thatPurl);
-    	  serviceLog.debug("removing document [%s] from service global collection", docUrl);
-        semanticsServiceScope.getGlobalCollection().removed(docUrl);
-        if (reload)
+        if (!docPurl.equals(thatPurl))
         {
-      	  serviceLog.debug("removing document [%s] from caches", docUrl);
-        	semanticsServiceScope.getDBDocumentProvider().removeDocument(docUrl);
-        	FileSystemStorage.getStorageProvider().removeFileAndMetadata(docUrl);
+      	  serviceLog.debug("removing document [%s] from service global collection", docPurl);
+          semanticsServiceScope.getGlobalCollection().removed(docPurl);
         }
+    	  serviceLog.debug("removing document [%s] from caches", docPurl);
+      	semanticsServiceScope.getDBDocumentProvider().removeDocument(docPurl);
+      	FileSystemStorage.getStorageProvider().removeFileAndMetadata(docPurl);
+        
         document = semanticsServiceScope.getOrConstructDocument(thatPurl);
-      }
-    	
-      logRecord.setDocumentUrl(docUrl);
-      serviceLog.debug("Document received from the service scope for URL[%s]: %s",
-                       thatPurl,
-                       document);
-
-      // add entry to hashmap
-      urlSpanMap.put(decodeUrl(thatPurl.toString()), level);
-   	}
-    
-    // document might already be present in GlobalCollection
-    if (document != null && document.isDownloadDone() && !document.isRecycled())
-    {
-      final Document theDoc = document;
-      logRecord.setDocumentCollectionCacheHit(true);
-      serviceLog.debug("Cache hit for document[%s]", document.getLocation());
-      // metadataCacheLog.debug("Cache hit: " + document +
-      // " document obtained from global document collection");
-
-      new Thread(new Runnable()
-      {
-        @Override
-        public void run()
-        {
-          generateSpan(theDoc);
-        }
-      }).start();
-    }
-    else if (document != null)
-    {
-      // we can remove this synchronized after careful consideration
-      // but nonetheless it prevents generateSpan occurring twice with
-      // addContinuation callback and queueDownload fail
-      synchronized (this)
-      {
-        DocumentClosure documentClosure;
-        if (noCache)
-        	documentClosure = document.getOrConstructClosure(DownloadControllerType.DEFAULT);
-        else
-        	documentClosure = document.getOrConstructClosure(DownloadControllerType.OODSS);
-
-        documentClosure.addContinuation(this);
-        documentClosure.setLogRecord(docLogRecord);
-        origDoc = document;
-        if (document.getDownloadStatus() == DownloadStatus.UNPROCESSED)
-        {
-          documentClosure.setLogRecord(logRecord);
-          serviceLog.debug("Queueing document[%s] for downloading", document.getLocation());
-          documentClosure.queueDownload();
-        }
-        // semanticsServiceScope.getDownloadMonitors().requestStops();
-        // metadataCacheLog.debug("Uncached doc: " + document + " document queued for download at "
-        // + (new Date()));
-      }
-    }
-    else
-    {
-      serviceLog.error("getOrConstructDocument() returns null -- this should never happen!");
-    }
+        this.document = document;
+      	queueDocumentForDownload(document);
+  	  }
+  	  else
+  	  {
+      	this.document = document;
+    	  setFinished(true);
+  	  }
+  	  break;
+  	}
   }
 
   @Override
   public synchronized void callback(DocumentClosure incomingClosure)
   {
-    // semanticsServiceScope.getDownloadMonitors().stop(false);
     Document newDoc = incomingClosure.getDocument();
-    if (origDoc != newDoc)
+    if (document != null && document != newDoc)
     {
-      semanticsServiceScope.getGlobalCollection().remap(origDoc, newDoc);
+      serviceLog.debug("remapping old %s to new %s", document, newDoc);
+      semanticsServiceScope.getGlobalCollection().remap(document, newDoc);
     }
-    generateSpan(newDoc);
+    document = newDoc;
+//    if (origDoc != newDoc)
+//    {
+//      semanticsServiceScope.getGlobalCollection().remap(origDoc, newDoc);
+//    }
+//    generateSpan(newDoc);
+    
+    setFinished(true);
 
     DownloadableLogRecord docLogRecord = incomingClosure.getLogRecord();
     if (docLogRecord != null)
-      try
-      {
-        serviceLog.info(SimplTypesScope.serialize(docLogRecord, StringFormat.JSON).toString());
-      }
-      catch (SIMPLTranslationException e)
-      {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-      }
+      serviceLog.info("%s", serializeToString(docLogRecord, StringFormat.JSON));
+  }
+  
+  ServiceLogRecord getServiceLogRecord()
+  {
+    return logRecord;
   }
 
-  private void generateSpan(Document document)
+  private static String serializeToString(Object obj, StringFormat format)
   {
-    // locallocation not required in response
-    document.setLocalLocationMetadata(null);
-
-    int level = -1;
-    String loc = getLocationInMap(document);
-    if (loc == null)
-      return;
-    else
-      level = urlSpanMap.get(loc);
-
-    serviceLog.debug("span: " + level + " document: " + document);
-
-    // set the document that is to be returned
-    if (level == 0)
-      this.document = document;
-
-    if (level++ < this.span)
+    try
     {
-      MetadataBase md;
-      ClassAndCollectionIterator iter;
-
-      iter = document.metadataIterator(visitedMetadata);
-      while (iter.hasNext())
-      {
-        md = iter.next();
-        // System.out.println("metadata: " + md);
-        if (md instanceof Document)
-        {
-          Document doc1 = (Document) md;
-          if (doc1.getLocation() != null)
-            requestMetadata(doc1.getLocation(), level);
-          else
-            serviceLog.warn("location is null for document: " + doc1);
-          // don't track linked documents as they get added to GlobalDocumentCollection
-        }
-      }
+      return SimplTypesScope.serialize(obj, format).toString();
     }
-
-    // notify main thread to return response if queue is empty
-    synchronized (urlSpanMap)
+    catch (SIMPLTranslationException e)
     {
-      urlSpanMap.remove(loc);
-      if (urlSpanMap.isEmpty())
-        urlSpanMap.notify();
+      e.printStackTrace();
+      return "Cannot serialize " + obj + " to string: " + e.getMessage();
     }
   }
 
-  private String getLocationInMap(Document document)
-  {
-    // check level by getting span from the hashmap
-    String loc = (document instanceof Image) ? ((Image) document).getInternetLocation().toString()
-        : document.getLocation().toString();
-    loc = decodeUrl(loc);
-    if (!urlSpanMap.containsKey(loc))
-    {
-      List<MetadataParsedURL> additionalLocations = document.getAdditionalLocations();
-      if (additionalLocations != null)
-      {
-        for (MetadataParsedURL additionalLocation : additionalLocations)
-        {
-          loc = additionalLocation.getValue().toString();
-          loc = decodeUrl(loc);
-          if (urlSpanMap.containsKey(loc))
-          {
-            return loc;
-          }
-        }
-      }
+//  private static String decodeUrl(String url)
+//  {
+//    if (url != null)
+//    {
+//      try
+//      {
+//        return URLDecoder.decode(url, "UTF-8");
+//      }
+//      catch (UnsupportedEncodingException e)
+//      {
+//        e.printStackTrace();
+//      }
+//    }
+//    return url;
+//  }
 
-      StringBuilder sb = StringBuilderUtils.acquire();
-      for (String existingUrl : urlSpanMap.keySet())
-        sb.append("    ").append(existingUrl).append("\n");
-      String content = sb.toString();
-      StringBuilderUtils.release(sb);
-      serviceLog.warn(document
-          + " location doesn't match with the queued location! recorded locations:\n"
-          + content);
-      return null;
-    }
-    else
-      return loc;
-  }
+//  /**
+//   * used by document iterator
+//   */
+//  private static HashSet<Metadata>    visitedMetadata;
 
-  String decodeUrl(String url)
-  {
-    if (url != null)
-      try
-      {
-        return URLDecoder.decode(url, "UTF-8");
-      }
-      catch (UnsupportedEncodingException e)
-      {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-      }
-    return url;
-  }
+//  private int                         span;
+
+//  private Document                    origDoc                   = null;
+
+//  /**
+//   * url to graph level map
+//   */
+//  private HashMap<String, Integer>    urlSpanMap;
+  
+//  private void generateSpan(Document document)
+//  {
+//    // locallocation not required in response
+//    document.setLocalLocationMetadata(null);
+//
+//    int level = -1;
+//    String loc = getLocationInMap(document);
+//    if (loc == null)
+//      return;
+//    else
+//      level = urlSpanMap.get(loc);
+//
+//    serviceLog.debug("span: " + level + " document: " + document);
+//
+//    // set the document that is to be returned
+//    if (level == 0)
+//      this.document = document;
+//
+//    if (level++ < this.span)
+//    {
+//      MetadataBase md;
+//      ClassAndCollectionIterator iter;
+//
+//      iter = document.metadataIterator(visitedMetadata);
+//      while (iter.hasNext())
+//      {
+//        md = iter.next();
+//        // System.out.println("metadata: " + md);
+//        if (md instanceof Document)
+//        {
+//          Document doc1 = (Document) md;
+//          if (doc1.getLocation() != null)
+//            requestMetadata(doc1.getLocation(), level);
+//          else
+//            serviceLog.warn("location is null for document: " + doc1);
+//          // don't track linked documents as they get added to GlobalDocumentCollection
+//        }
+//      }
+//    }
+//
+//    // notify main thread to return response if queue is empty
+//    synchronized (urlSpanMap)
+//    {
+//      urlSpanMap.remove(loc);
+//      if (urlSpanMap.isEmpty())
+//        urlSpanMap.notify();
+//    }
+//  }
+
+//  private String getLocationInMap(Document document)
+//  {
+//    // check level by getting span from the hashmap
+//    String loc = (document instanceof Image) ? ((Image) document).getInternetLocation().toString()
+//        : document.getLocation().toString();
+//    loc = decodeUrl(loc);
+//    if (!urlSpanMap.containsKey(loc))
+//    {
+//      List<MetadataParsedURL> additionalLocations = document.getAdditionalLocations();
+//      if (additionalLocations != null)
+//      {
+//        for (MetadataParsedURL additionalLocation : additionalLocations)
+//        {
+//          loc = additionalLocation.getValue().toString();
+//          loc = decodeUrl(loc);
+//          if (urlSpanMap.containsKey(loc))
+//          {
+//            return loc;
+//          }
+//        }
+//      }
+//
+//      StringBuilder sb = StringBuilderUtils.acquire();
+//      for (String existingUrl : urlSpanMap.keySet())
+//        sb.append("    ").append(existingUrl).append("\n");
+//      String content = sb.toString();
+//      StringBuilderUtils.release(sb);
+//      serviceLog.warn(document
+//          + " location doesn't match with the queued location! recorded locations:\n"
+//          + content);
+//      return null;
+//    }
+//    else
+//      return loc;
+//  }
 
 }
