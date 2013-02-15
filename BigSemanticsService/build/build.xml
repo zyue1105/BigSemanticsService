@@ -139,7 +139,7 @@
 		</javac>
 		
 		<echo>  mySourcepath is ${mySourcepath}</echo>
-		<foreach list="${mySourcepath}" target="copy-xml" param="resource.dir" delimiter=";" />
+		<foreach list="${mySourcepath}" target="copy-xml" param="resource.dir" delimiter="${path.separator}" />
 		
 		<echo>  source is at ${mySourcepath}</echo>
 		<echo>  destination is ${myOutputpath}</echo>
