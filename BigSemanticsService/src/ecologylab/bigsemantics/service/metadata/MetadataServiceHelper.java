@@ -35,7 +35,7 @@ public class MetadataServiceHelper extends Debug implements Continuation<Documen
 
   public static final long            CONTINUATION_CHECK_INTERVAL = 1000;
 
-  public static int                   CONTINUATION_TIMOUT_MILLI   = 60000;
+  public static int                   CONTINUATION_TIMOUT_CYCLES   = 60;
 
   static ILogger                      serviceLog;
 
@@ -75,7 +75,7 @@ public class MetadataServiceHelper extends Debug implements Continuation<Documen
     {
       synchronized (lockFinished)
       {
-        while (!finished)
+        for (int i = 0; !finished && i < CONTINUATION_TIMOUT_CYCLES; ++i)
         {
           try
           {
@@ -85,6 +85,10 @@ public class MetadataServiceHelper extends Debug implements Continuation<Documen
           {
             e.printStackTrace();
           }
+        }
+        if (!finished)
+        {
+          serviceLog.error("Request timed out%s.", document != null ? document : "");
         }
       }
     }
