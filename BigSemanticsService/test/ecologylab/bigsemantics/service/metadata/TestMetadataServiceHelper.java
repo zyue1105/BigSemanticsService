@@ -41,7 +41,20 @@ public class TestMetadataServiceHelper
   @Test
   public void testConstruction()
   {
-    // empty
+    // mainly for testing if the helper can be constructed correctly, without exceptions
+    assertNotNull(msh);
+    assertTrue(!msh.isFinished());
+    assertNotNull(msh.getServiceLogRecord());
+  }
+
+  void checkExtractedSemantics(Document doc, Class<? extends Document> type)
+  {
+    assertNotNull(doc);
+    assertTrue(type.isAssignableFrom(doc.getClass()));
+    assertNotNull(doc.getTitle());
+    assertTrue(doc.getTitle().length() > 0);
+    assertNotNull(doc.getLocation());
+    assertTrue(doc.getLocation().toString().length() > 0);
   }
 
   @Test(timeout = 30000)
@@ -50,10 +63,7 @@ public class TestMetadataServiceHelper
     ParsedURL purl = ParsedURL
         .getAbsolute("http://www.amazon.com/Washburn-Series-WG35SCE-Acoustic-Electric/dp/B003EYV89Q/");
     Document doc = msh.getMetadata(purl, false);
-    assertNotNull(doc);
-    assertTrue(doc instanceof AmazonProduct);
-    assertNotNull(doc.getTitle());
-    assertTrue(doc.getTitle().length() > 0);
+    checkExtractedSemantics(doc, AmazonProduct.class);
   }
 
   @Test(timeout = 60000)
@@ -65,10 +75,7 @@ public class TestMetadataServiceHelper
     {
       sleep(100);
       doc = msh.getMetadata(purl, false);
-      assertNotNull(doc);
-      assertTrue(doc instanceof AmazonProduct);
-      assertNotNull(doc.getTitle());
-      assertTrue(doc.getTitle().length() > 0);
+      checkExtractedSemantics(doc, AmazonProduct.class);
     }
   }
 
@@ -114,10 +121,7 @@ public class TestMetadataServiceHelper
     for (int i = 0; i < n; ++i)
     {
       Document doc = docs.get(i);
-      assertNotNull(doc);
-      assertTrue(doc instanceof AmazonProduct);
-      assertNotNull(doc.getTitle());
-      assertTrue(doc.getTitle().length() > 0);
+      checkExtractedSemantics(doc, AmazonProduct.class);
     }
   }
 

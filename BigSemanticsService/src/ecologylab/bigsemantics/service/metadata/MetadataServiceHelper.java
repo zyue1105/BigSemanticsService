@@ -200,11 +200,12 @@ public class MetadataServiceHelper extends Debug implements Continuation<Documen
 			closure = document.getOrConstructClosure(DownloadControllerType.OODSS);
 			closure.addContinuation(this);
 			this.document = document;
-			setFinished(true);
 			break;
 		case IOERROR:
 		case RECYCLED:
 			reload = true;
+			// intentionally fall through the next case.
+			// the idea is: when the document is in state IOERROR or RECYCLED, it should be reloaded.
 		case DOWNLOAD_DONE:
 			logRecord.setDocumentCollectionCacheHit(true);
 			serviceLog.debug("%s has been cached in service global document collection", document);
@@ -223,12 +224,15 @@ public class MetadataServiceHelper extends Debug implements Continuation<Documen
 				semanticsServiceScope.getDBDocumentProvider().removeDocument(docPurl);
 				FileSystemStorage.getStorageProvider().removeFileAndMetadata(docPurl);
 
+				// redownload and parse document
 				document = semanticsServiceScope.getOrConstructDocument(thatPurl);
 				this.document = document;
 				queueDocumentForDownload(document);
 			}
 			else
 			{
+			  // document is already in global document collection and we don't have to redownload
+			  // use it directly and return results immediately
 				this.document = document;
 				setFinished(true);
 			}
@@ -257,6 +261,14 @@ public class MetadataServiceHelper extends Debug implements Continuation<Documen
 		DownloadableLogRecord docLogRecord = incomingClosure.getLogRecord();
 		if (docLogRecord != null)
 			serviceLog.info("%s", serializeToString(docLogRecord, StringFormat.JSON));
+	}
+	
+	boolean isFinished()
+	{
+	  synchronized (lockFinished)
+	  {
+  	  return finished;
+	  }
 	}
 
 	ServiceLogRecord getServiceLogRecord()
