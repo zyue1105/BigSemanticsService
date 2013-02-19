@@ -6,6 +6,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import ecologylab.bigsemantics.collecting.DownloadStatus;
 import ecologylab.bigsemantics.downloaders.controllers.DownloadControllerType;
 import ecologylab.bigsemantics.filestorage.FileSystemStorage;
 import ecologylab.bigsemantics.metadata.builtins.Document;
@@ -178,13 +179,26 @@ public class MetadataServiceHelper extends Debug implements Continuation<Documen
 				.debug("Document received from the service scope for URL[%s]: %s", thatPurl, document);
 		serviceLog.debug("Download status of %s: %s", document, document.getDownloadStatus());
 
-		// check for <meta_metadata>.no_cache
-		MetaMetadata mmd = (MetaMetadata) document.getMetaMetadata();
-		reload = reload || mmd == null ? false : mmd.isNoCache();
-
-		// take actions based on the status of the document
 		DocumentClosure closure = null;
 		ParsedURL docPurl = document.getLocation();
+		
+		// deal with reload and noCache
+		MetaMetadata mmd = (MetaMetadata) document.getMetaMetadata();
+		assert mmd != null;
+		boolean noCache = mmd.isNoCache();
+		reload = reload
+		         || document.getDownloadStatus() == DownloadStatus.IOERROR
+		         || document.getDownloadStatus() == DownloadStatus.RECYCLED;
+		if (noCache || reload)
+		{
+			removeFromServiceDocumentCollection(thatPurl, docPurl);
+		}
+		if (reload)
+		{
+			removeFromCache(docPurl);
+		}
+
+		// take actions based on the status of the document
 		switch (document.getDownloadStatus())
 		{
 		case UNPROCESSED:
@@ -203,26 +217,11 @@ public class MetadataServiceHelper extends Debug implements Continuation<Documen
 			break;
 		case IOERROR:
 		case RECYCLED:
-			reload = true;
 			// intentionally fall through the next case.
 			// the idea is: when the document is in state IOERROR or RECYCLED, it should be reloaded.
 		case DOWNLOAD_DONE:
-			logRecord.setDocumentCollectionCacheHit(true);
-			serviceLog.debug("%s has been cached in service global document collection", document);
-
 			if (reload)
 			{
-				// remove from caches
-				serviceLog.debug("removing document [%s] from service global collection", thatPurl);
-				semanticsServiceScope.getGlobalCollection().removed(thatPurl);
-				if (!docPurl.equals(thatPurl))
-				{
-					serviceLog.debug("removing document [%s] from service global collection", docPurl);
-					semanticsServiceScope.getGlobalCollection().removed(docPurl);
-				}
-				serviceLog.debug("removing document [%s] from caches", docPurl);
-				semanticsServiceScope.getDBDocumentProvider().removeDocument(docPurl);
-				FileSystemStorage.getStorageProvider().removeFileAndMetadata(docPurl);
 
 				// redownload and parse document
 				document = semanticsServiceScope.getOrConstructDocument(thatPurl);
@@ -231,6 +230,9 @@ public class MetadataServiceHelper extends Debug implements Continuation<Documen
 			}
 			else
 			{
+  			logRecord.setDocumentCollectionCacheHit(true);
+  			serviceLog.debug("%s has been cached in service global document collection", document);
+
 			  // document is already in global document collection and we don't have to redownload
 			  // use it directly and return results immediately
 				this.document = document;
@@ -240,7 +242,33 @@ public class MetadataServiceHelper extends Debug implements Continuation<Documen
 		}
 	}
 
-	@Override
+  /**
+   * @param thatPurl
+   * @param docPurl
+   */
+  private void removeFromServiceDocumentCollection(ParsedURL thatPurl, ParsedURL docPurl)
+  {
+    serviceLog.debug("removing document [%s] from service global collection", thatPurl);
+    semanticsServiceScope.getGlobalCollection().removed(thatPurl);
+    if (!docPurl.equals(thatPurl))
+    {
+    	serviceLog.debug("removing document [%s] from service global collection", docPurl);
+    	semanticsServiceScope.getGlobalCollection().removed(docPurl);
+    }
+  }
+
+  /**
+   * @param docPurl
+   */
+  private void removeFromCache(ParsedURL docPurl)
+  {
+    // remove from caches
+    serviceLog.debug("removing document [%s] from caches", docPurl);
+    semanticsServiceScope.getDBDocumentProvider().removeDocument(docPurl);
+    FileSystemStorage.getStorageProvider().removeFileAndMetadata(docPurl);
+  }
+
+  @Override
 	public synchronized void callback(DocumentClosure incomingClosure)
 	{
 		Document newDoc = incomingClosure.getDocument();
