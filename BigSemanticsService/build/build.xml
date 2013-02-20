@@ -41,7 +41,7 @@
 	<property name="sftp.user" value="ecologylab" />
 	<property name="sftp.port" value="2022" />
 	
-	<property name="jetty.dir" value="/home/ecologylab/jetty-distribution-8.1.4.v20120524" />
+	<property name="jetty.dir" value="/bigsemantics-service/jetty-dist" />
 	
 	<!-- declare ant4eclipse -->
 	<taskdef resource="net/sf/ant4eclipse/antlib.xml">
