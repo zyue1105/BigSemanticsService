@@ -101,8 +101,8 @@ public class HTTPDownloaderInstance
 			resp = Response.status(Status.BAD_REQUEST).entity(SemanticServiceErrorCodes.BAD_REQUEST)
 					.type(MediaType.TEXT_PLAIN).build();
 
-		logger.debug("Total Time taken for url : " + url + (System.currentTimeMillis() - millis)
-				+ " ms.");
+		logger.debug("Total Time taken for url : " + url + " - "
+				+ (System.currentTimeMillis() - millis) + " ms.");
 
 		NDC.remove();
 		return resp;
