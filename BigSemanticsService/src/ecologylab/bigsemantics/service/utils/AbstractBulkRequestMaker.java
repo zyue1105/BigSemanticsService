@@ -73,7 +73,7 @@ public abstract class AbstractBulkRequestMaker
     logger.info(String.format("Total: %s,  Success: %d (%.2f%%)\n",
                               success + failure,
                               success,
-                              success * 100.0 / failure));
+                              success * 100.0 / (success + failure)));
   }
 
   protected void reportSuccess(String url, int responseCode, long ms)
