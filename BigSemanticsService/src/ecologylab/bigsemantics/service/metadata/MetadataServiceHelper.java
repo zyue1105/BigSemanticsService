@@ -34,9 +34,9 @@ import ecologylab.serialization.formatenums.StringFormat;
 public class MetadataServiceHelper extends Debug implements Continuation<DocumentClosure>
 {
 
-	public static final long						CONTINUATION_CHECK_INTERVAL	= 1000;
+	public static final long						CONTINUATION_CHECK_INTERVAL	= 100;
 
-	public static int										CONTINUATION_TIMOUT_CYCLES	= 60;
+	public static int										CONTINUATION_TIMOUT_CYCLES	= 600;
 
 	static ILogger											serviceLog;
 

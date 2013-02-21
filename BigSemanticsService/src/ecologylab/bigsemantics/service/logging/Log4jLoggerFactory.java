@@ -10,7 +10,7 @@ import ecologylab.logging.ILoggerFactory;
 public class Log4jLoggerFactory implements ILoggerFactory
 {
 
-  private static String configurationFile = "/log4j.configuration";
+  private static String configurationFile = "/log4j.properties";
 
   static
   {
