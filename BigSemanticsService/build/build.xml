@@ -178,7 +178,7 @@
 	        </fileset>
 	    </copy> -->
 		<copy file="${config.dir}/service.properties" todir="${distclasses.dir}"/>
-		<copy file="${service.dir}/config/log4j.configuration" todir="${distclasses.dir}"/>
+		<copy file="${service.dir}/config/log4j.properties" todir="${distclasses.dir}"/>
 	</target>
 	
 	<target name="buildwar" depends="compile">

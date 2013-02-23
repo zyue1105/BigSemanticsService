@@ -12,6 +12,7 @@ import ecologylab.bigsemantics.cyberneko.CybernekoWrapper;
 import ecologylab.bigsemantics.dbinterface.IDocumentCache;
 import ecologylab.bigsemantics.dbinterface.IDocumentCacheFactory;
 import ecologylab.bigsemantics.documentparsers.ParserBase;
+import ecologylab.bigsemantics.downloaders.controllers.HTTPDownloadController;
 import ecologylab.bigsemantics.filestorage.FileSystemStorage;
 import ecologylab.bigsemantics.generated.library.RepositoryMetadataTranslationScope;
 import ecologylab.bigsemantics.html.dom.IDOMProvider;
@@ -95,6 +96,9 @@ public class SemanticServiceScope extends SemanticsGlobalScope
         documentCacheFactory = new DBDocumentCacheFactory();
 
       FileSystemStorage.setDownloadDirectory(serviceProps);
+      
+      HTTPDownloadController.SERVICE_LOC =
+          getProperty(serviceProps, "DOWNLOAD_SERVICE_LOCATION", null);
     }
     catch (Exception e)
     {
