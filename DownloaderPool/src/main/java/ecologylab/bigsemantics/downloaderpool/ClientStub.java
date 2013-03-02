@@ -1,4 +1,6 @@
-package ecologylab.bigsemantics.service.downloaderpool;
+package ecologylab.bigsemantics.downloaderpool;
+
+import ecologylab.serialization.annotations.simpl_scalar;
 
 /**
  * 
@@ -8,6 +10,7 @@ package ecologylab.bigsemantics.service.downloaderpool;
 public class ClientStub
 {
 
+  @simpl_scalar
   private String id;
 
   public ClientStub()

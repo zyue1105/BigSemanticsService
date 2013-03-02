@@ -1,9 +1,11 @@
-package ecologylab.bigsemantics.service.downloaderpool;
+package ecologylab.bigsemantics.downloaderpool;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import ecologylab.net.ParsedURL;
+import ecologylab.serialization.annotations.simpl_collection;
+import ecologylab.serialization.annotations.simpl_scalar;
 
 /**
  * 
@@ -16,8 +18,10 @@ public class DownloaderRequest
   /**
    * Blacklisted domains.
    */
+  @simpl_collection("domain")
   private List<String> blacklist;
 
+  @simpl_scalar
   private int          maxTaskCount;
   
   public DownloaderRequest()

@@ -1,4 +1,4 @@
-package ecologylab.bigsemantics.service.downloaderpool;
+package ecologylab.bigsemantics.downloaderpool;
 
 import java.util.ArrayList;
 import java.util.List;

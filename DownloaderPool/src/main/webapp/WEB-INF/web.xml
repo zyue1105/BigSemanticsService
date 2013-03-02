@@ -16,7 +16,7 @@
     <servlet-class>com.sun.jersey.spi.spring.container.servlet.SpringServlet</servlet-class>
     <init-param>
       <param-name>com.sun.jersey.config.property.packages</param-name>
-      <param-value>ecologylab.bigsemantics.service.downloaderpool</param-value>
+      <param-value>ecologylab.bigsemantics.downloaderpool</param-value>
     </init-param>
     <load-on-startup>1</load-on-startup>
   </servlet>

@@ -1,9 +1,10 @@
-package ecologylab.bigsemantics.service.downloaderpool;
+package ecologylab.bigsemantics.downloaderpool;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import ecologylab.net.ParsedURL;
+import ecologylab.serialization.annotations.simpl_scalar;
 
 /**
  * 
@@ -13,23 +14,34 @@ import ecologylab.net.ParsedURL;
 public class Task
 {
 
+  @simpl_scalar
   private String           id;
 
+  @simpl_scalar
   private String           uri;
 
+  @simpl_scalar
   private TaskState        state;
 
   /**
    * In milliseconds.
    */
+  @simpl_scalar
   private int              domainInterval;
+  
+  @simpl_scalar
+  private int              domainLongInterval;
 
+  @simpl_scalar
   private int              maxAttempts;
 
+  @simpl_scalar
   private int              maxCounter;
 
+  @simpl_scalar
   private String           failRegex;
 
+  @simpl_scalar
   private String           banRegex;
 
   // Runtime properties:
@@ -104,6 +116,16 @@ public class Task
   public void setDomainInterval(int domainInterval)
   {
     this.domainInterval = domainInterval;
+  }
+
+  public int getDomainLongInterval()
+  {
+    return domainLongInterval;
+  }
+
+  public void setDomainLongInterval(int domainLongInterval)
+  {
+    this.domainLongInterval = domainLongInterval;
   }
 
   public int getMaxAttempts()

@@ -1,4 +1,4 @@
-package ecologylab.bigsemantics.service.downloaderpool;
+package ecologylab.bigsemantics.downloaderpool;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;

@@ -1,4 +1,4 @@
-package ecologylab.bigsemantics.service.downloaderpool;
+package ecologylab.bigsemantics.downloaderpool;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -7,6 +7,12 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import ecologylab.bigsemantics.downloaderpool.ClientStub;
+import ecologylab.bigsemantics.downloaderpool.Controller;
+import ecologylab.bigsemantics.downloaderpool.DownloaderRequest;
+import ecologylab.bigsemantics.downloaderpool.Task;
+import ecologylab.bigsemantics.downloaderpool.TaskState;
 
 /**
  * 
