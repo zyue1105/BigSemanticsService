@@ -82,7 +82,7 @@
 			<fileset dir="${cyberneko.dir}/lib" includes="xercesMinimal.jar" />
 			<fileset dir="${bsSunSpecifics.dir}/lib/" includes="simplSunSpecifics.jar" />
 			<fileset dir="${bsSunSpecifics.dir}/lib/" includes="BigSemanticsGeneratedClassesJava.jar" />
-			<fileset dir="${bsSDK.dir}/lib/" includes="bigSemanticsWrappers.jar" />
+			<fileset dir="${bsSDK.dir}/lib/" includes="BigSemanticsWrappers.jar" />
 		</copy>
 		<echo>...done.</echo>
 		
