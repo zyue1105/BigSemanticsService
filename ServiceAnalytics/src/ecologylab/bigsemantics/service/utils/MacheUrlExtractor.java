@@ -5,16 +5,21 @@ package ecologylab.bigsemantics.service.utils;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import ecologylab.bigsemantics.filestorage.SHA256FileNameGenerator;
@@ -30,23 +35,23 @@ import ecologylab.net.ParsedURL;
 
 public class MacheUrlExtractor
 {
-	ArrayList<String>	macheUrls						= new ArrayList<String>();
+	ArrayList<URL>	macheUrls						= new ArrayList<URL>();
 
-	ArrayList<String>	clippingSourceUrls	= new ArrayList<String>();																																												;
+	ArrayList<URL>	clippingSourceUrls	= new ArrayList<URL>();
 
-	OutputStream			outputStream				= System.out;
+	OutputStream		outputStream				= System.out;
 
-	static String			userAgent						= "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1312.60 Safari/537.17";
+	static String		userAgent						= "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1312.60 Safari/537.17";
 
-	boolean						bExtracted;
+	boolean					bExtracted;
 
-	MacheUrlExtractor(String macheUrl, OutputStream outputStream)
+	MacheUrlExtractor(URL macheUrl, OutputStream outputStream)
 	{
 		this(macheUrl);
 		this.outputStream = outputStream;
 	}
 
-	MacheUrlExtractor(List<String> macheUrls, OutputStream outputStream)
+	MacheUrlExtractor(List<URL> macheUrls, OutputStream outputStream)
 	{
 		this(macheUrls);
 		this.outputStream = outputStream;
@@ -58,14 +63,14 @@ public class MacheUrlExtractor
 		this.outputStream = outputStream;
 	}
 
-	MacheUrlExtractor(String macheUrl) // ParsedUrl?
+	MacheUrlExtractor(URL macheUrl) // ParsedUrl?
 	{
 		macheUrls.add(macheUrl);
 	}
 
-	MacheUrlExtractor(List<String> macheUrls)
+	MacheUrlExtractor(List<URL> macheUrls)
 	{
-		for (String macheUrl : macheUrls)
+		for (URL macheUrl : macheUrls)
 			macheUrls.add(macheUrl);
 	}
 
@@ -75,65 +80,81 @@ public class MacheUrlExtractor
 		String macheUrl;
 		while ((macheUrl = reader.readLine()) != null)
 		{
-			macheUrls.add(macheUrl);
+			macheUrls.add(new URL(macheUrl));
 		}
 		if (reader != null)
 			reader.close();
 	}
 
-	List<String> getMacheSourceUrls()
+	List<URL> getMacheSourceUrls()
 	{
 		bExtracted = true;
 		if (macheUrls != null)
 		{
-			for (String macheUrl : macheUrls)
+			for (URL macheUrl : macheUrls)
 			{
-				// get the mache metadata into a local file
-				String fn = "/tmp/cache/"
-						+ SHA256FileNameGenerator.getName(ParsedURL.getAbsolute(macheUrl)) + ".html";
-				ProcessBuilder pb = new ProcessBuilder();
-				pb.command("/usr/bin/wget", "-O", fn, "-U", userAgent, macheUrl);
-				Process p = null;
 				try
 				{
-					p = pb.start();
-					p.waitFor();
-					if (p.exitValue() == 0)
+					// map json response to get clipping source_doc
+					ObjectMapper m = new ObjectMapper();
+					JsonNode rootNode = m.readValue(macheUrl, JsonNode.class);
+
+					LinkedList<JsonNode> list = new LinkedList<JsonNode>();
+					list.add(rootNode);
+
+					JsonNode currentNode;
+					while ((currentNode = list.poll()) != null)
 					{
-						File f = new File(fn);
-						if (f.exists() && f.length() > 0)
+						JsonNode srcDocNode = currentNode.get("source_doc");
+						if (srcDocNode != null)
 						{
-							// map json response to get clipping source_doc
-							ObjectMapper m = new ObjectMapper();
-							JsonNode rootNode = m.readValue(f, JsonNode.class);
-
-							LinkedList<JsonNode> list = new LinkedList<JsonNode>();
-							list.add(rootNode);
-
-							JsonNode currentNode;
-							while ((currentNode = list.poll()) != null)
+							JsonNode locNode = srcDocNode.get("location");
+							if (locNode != null)
 							{
-								Iterator<JsonNode> it = currentNode.getElements();
-								while (it.hasNext())
+								try
 								{
-									JsonNode node = it.next();
-									String nodeName = node.toString();
-									if (nodeName.equals("source_doc")) // || nodeName.equals("outlinks")
+									clippingSourceUrls.add(new URL(locNode.getTextValue()));
+								}
+								catch (MalformedURLException e)
+								{
+									System.err.println("malformed url: " + locNode.getTextValue());
+									e.printStackTrace();
+								}
+							}
+						}
+
+						JsonNode outlinksNode = currentNode.get("outlinks");
+						if (outlinksNode != null)
+						{
+							int arrIndex = 0;
+							JsonNode arrNode;
+							while ((arrNode = outlinksNode.get(arrIndex++)) != null)
+							{
+								JsonNode locNode = arrNode.get("location");
+								if (locNode != null)
+								{
+									try
 									{
-										clippingSourceUrls.add(node.getTextValue());
+										clippingSourceUrls.add(new URL(locNode.getTextValue()));
+									}
+									catch (MalformedURLException e)
+									{
+										System.err.println("malformed url: " + locNode.getTextValue());
+										e.printStackTrace();
 									}
 								}
 							}
+						}
 
-							f.delete();
+						Iterator<JsonNode> it = currentNode.getElements();
+						while (it.hasNext())
+						{
+							JsonNode node = it.next();
+							list.add(node);
 						}
 					}
 				}
-				catch (InterruptedException e)
-				{
-					e.printStackTrace();
-				}
-				catch (IOException e)
+				catch (Exception e)
 				{
 					e.printStackTrace();
 				}
@@ -150,7 +171,7 @@ public class MacheUrlExtractor
 		if (clippingSourceUrls != null)
 		{
 			PrintWriter pw = new PrintWriter(outputStream);
-			for (String clippingSourceUrl : clippingSourceUrls)
+			for (URL clippingSourceUrl : clippingSourceUrls)
 				pw.println(clippingSourceUrl);
 			pw.close();
 		}
@@ -161,7 +182,8 @@ public class MacheUrlExtractor
 		try
 		{
 			MacheUrlExtractor m = new MacheUrlExtractor(new File(
-					"/home/ajit/ServiceTest/urls/macheURLs.lst"));
+					"/home/ajit/ServiceTest/urls/macheURLs.lst"), new FileOutputStream(
+					"/home/ajit/ServiceTest/urls/macheSourceURLs.lst"));
 			m.outputMacheSourceUrls();
 		}
 		catch (IOException e)
