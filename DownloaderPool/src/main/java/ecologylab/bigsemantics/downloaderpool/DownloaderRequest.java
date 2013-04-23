@@ -20,7 +20,7 @@ public class DownloaderRequest
    */
   @simpl_collection("domain")
   private List<String> blacklist;
-
+  
   @simpl_scalar
   private int          maxTaskCount;
   
@@ -49,10 +49,18 @@ public class DownloaderRequest
     this.maxTaskCount = maxTaskCount;
   }
   
-  protected List<String> blacklist()
+  private List<String> blacklist()
   {
-    if(blacklist == null)
-      blacklist = new ArrayList<String>();
+    if (blacklist == null)
+    {
+      synchronized (this)
+      {
+        if (blacklist == null)
+        {
+          blacklist = new ArrayList<String>();
+        }
+      }
+    }
     return blacklist;
   }
   

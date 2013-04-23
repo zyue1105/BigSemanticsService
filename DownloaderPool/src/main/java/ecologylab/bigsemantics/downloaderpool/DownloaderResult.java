@@ -8,7 +8,7 @@ import ecologylab.serialization.annotations.simpl_scalar;
 /**
  * 
  * @author quyin
- *
+ * 
  */
 public class DownloaderResult
 {
@@ -17,16 +17,23 @@ public class DownloaderResult
   private String       taskId;
 
   @simpl_scalar
-  private int          httpResponseCode;
+  private int          httpRespCode;
 
   @simpl_scalar
-  private String       httpResponseMessage;
+  private String       httpRespMsg;
 
   @simpl_scalar
   private String       mimeType;
 
   @simpl_scalar
-  private String       pageContent;
+  private String       content;
+
+  /**
+   * Describes how page content is compressed (e.g. zipped or not) and/or encoded (e.g. bse64 or
+   * not).
+   */
+  @simpl_scalar
+  private String       contentDescription;
 
   @simpl_collection("location")
   private List<String> otherLocations;
@@ -41,24 +48,24 @@ public class DownloaderResult
     this.taskId = taskId;
   }
 
-  public int getHttpResponseCode()
+  public int getHttpRespCode()
   {
-    return httpResponseCode;
+    return httpRespCode;
   }
 
-  public void setHttpResponseCode(int httpResponseCode)
+  public void setHttpRespCode(int httpRespCode)
   {
-    this.httpResponseCode = httpResponseCode;
+    this.httpRespCode = httpRespCode;
   }
 
-  public String getHttpResponseMessage()
+  public String getHttpRespMsg()
   {
-    return httpResponseMessage;
+    return httpRespMsg;
   }
 
-  public void setHttpResponseMessage(String httpResponseMessage)
+  public void setHttpRespMsg(String httpRespMsg)
   {
-    this.httpResponseMessage = httpResponseMessage;
+    this.httpRespMsg = httpRespMsg;
   }
 
   public String getMimeType()
@@ -71,14 +78,24 @@ public class DownloaderResult
     this.mimeType = mimeType;
   }
 
-  public String getPageContent()
+  public String getContent()
   {
-    return pageContent;
+    return content;
   }
 
-  public void setPageContent(String pageContent)
+  public void setContent(String content)
   {
-    this.pageContent = pageContent;
+    this.content = content;
+  }
+
+  public String getContentDescription()
+  {
+    return contentDescription;
+  }
+
+  public void setContentDescription(String contentDescription)
+  {
+    this.contentDescription = contentDescription;
   }
 
   public List<String> getOtherLocations()
