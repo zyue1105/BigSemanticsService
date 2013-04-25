@@ -15,8 +15,8 @@ public class MockDownloaderResponder extends DownloaderResponder
   @Override
   public void callback(Page page)
   {
-    super.callback(page);
     numCallbacks++;
+    System.err.println("callback(): " + page);
     lastCallbackPage = page;
   }
 

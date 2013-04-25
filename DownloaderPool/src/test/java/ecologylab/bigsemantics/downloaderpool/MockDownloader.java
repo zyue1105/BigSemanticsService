@@ -11,24 +11,37 @@ import java.util.List;
 public class MockDownloader extends Downloader
 {
 
-  int        numTasksRequested = 0;
+  int        numTasksRequested  = 0;
 
-  int        numPagesQueued    = 0;
+  int        numPagesQueued     = 0;
 
-  List<Task> presetTasks;
+  List<Task> presetTasks        = new ArrayList<Task>();
+
+  boolean    usePresetTasksOnce = false;
 
   @Override
   public List<Task> requestTasks()
   {
     numTasksRequested++;
+    List<Task> result = presetTasks;
+    if (usePresetTasksOnce)
+    {
+      presetTasks = null;
+    }
+    return result;
+  }
 
-    return presetTasks;
+  @Override
+  protected Page createPage()
+  {
+    return new MockPage();
   }
 
   @Override
   protected void queuePageToDownload(Page pageToDownload)
   {
     super.queuePageToDownload(pageToDownload);
+    System.err.println("Queued page to download: " + pageToDownload);
     numPagesQueued++;
   }
 

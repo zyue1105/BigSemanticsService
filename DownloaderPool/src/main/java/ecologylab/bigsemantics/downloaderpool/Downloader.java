@@ -1,8 +1,10 @@
 package ecologylab.bigsemantics.downloaderpool;
 
 import java.util.List;
+import java.util.Set;
 
 import ecologylab.concurrent.DownloadMonitor;
+import ecologylab.concurrent.Site;
 import ecologylab.net.ParsedURL;
 
 /**
@@ -31,8 +33,10 @@ public class Downloader implements Runnable
   DownloadMonitor<Page> downloadMonitor;
 
   Status                status;
-  
-  Object                lockStatus = new Object();
+
+  Object                lockStatus         = new Object();
+
+  SimpleSiteTable       sst;
 
   public Downloader()
   {
@@ -53,6 +57,11 @@ public class Downloader implements Runnable
   {
     DownloaderRequest req = new DownloaderRequest();
     req.setMaxTaskCount(maxTaskCount);
+    Set<Site> busySites = sst.getBusySites();
+    for (Site site : busySites)
+    {
+      req.addToBlacklist(site.domain());
+    }
     return req;
   }
 
@@ -76,13 +85,17 @@ public class Downloader implements Runnable
       if (downloadMonitor.toDownloadSize() <= 0)
       {
         List<Task> tasks = requestTasks();
-        for (Task task : tasks)
+        if (tasks != null)
         {
-          Page pageToDownload = createDownloadable(task.getUri());
-          queuePageToDownload(pageToDownload);
+          for (Task task : tasks)
+          {
+            Page pageToDownload = createPage();
+            preparePageToDownload(pageToDownload, task);
+            queuePageToDownload(pageToDownload);
+          }
         }
       }
-      
+
       Utils.sleep(sleepBetweenLoop);
     }
 
@@ -93,14 +106,29 @@ public class Downloader implements Runnable
     }
   }
 
-  protected Page createDownloadable(String uri)
+  protected void preparePageToDownload(Page pageToDownload, Task task)
   {
-    ParsedURL purl = ParsedURL.getAbsolute(uri);
-    Page pageToDownload = new Page();
+    ParsedURL purl = ParsedURL.getAbsolute(task.getUri());
     pageToDownload.setDownloadLocation(purl);
-    return pageToDownload;
+
+    pageToDownload.sst = this.sst;
+    Site site = pageToDownload.getSite();
+    if (site != null && site instanceof SimpleSite)
+    {
+      ((SimpleSite) site).setDownloadInterval(task.getDomainInterval());
+    }
+    else
+    {
+      // TODO LOG error
+    }
+    System.err.println("Page prepared: " + pageToDownload);
   }
-  
+
+  protected Page createPage()
+  {
+    return new Page();
+  }
+
   protected DownloaderResponder createDownloaderResponder()
   {
     return new DownloaderResponder();
@@ -149,5 +177,5 @@ public class Downloader implements Runnable
       }
     }
   }
-  
+
 }
