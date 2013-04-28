@@ -8,44 +8,58 @@ import ecologylab.concurrent.Site;
 import ecologylab.net.ParsedURL;
 
 /**
+ * A downloader that actively retrieves tasks from the controller, downloads pages, and sends
+ * results back to the controller. The downloader gets all the necessary information, such as the
+ * task URL, user agent, and time to wait between requests.
  * 
  * @author quyin
  * 
  */
-public class Downloader implements Runnable
+public class Downloader extends Routine
 {
 
-  static enum Status
-  {
-    NEW, READY, RUNNING, STOP_PENDING, STOPPED
-  }
+  // configs:
+  // TODO should go into a config file
 
-  // TODO these need to be in the property file:
-
-  static int            numDownloadThreads = 10;
-
-  int                   sleepBetweenLoop   = 500;
-
-  String                name;
+  static int            numDownloadThreads = 4;
 
   int                   maxTaskCount       = 10;
 
+  // collaborating objects:
+
   DownloadMonitor<Page> downloadMonitor;
-
-  Status                status;
-
-  Object                lockStatus         = new Object();
 
   SimpleSiteTable       sst;
 
-  public Downloader()
+  HttpClientPool        clientPool;
+
+  // runtime properties:
+
+  private String        name;
+
+  public String getName()
   {
-    super();
-    status = Status.NEW;
-    downloadMonitor = new DownloadMonitor<Page>("Downloader: " + name, numDownloadThreads);
-    status = Status.READY;
+    return name;
   }
 
+  public void setName(String name)
+  {
+    this.name = name;
+  }
+
+  public void init()
+  {
+    downloadMonitor = new DownloadMonitor<Page>("Downloader: " + name, numDownloadThreads);
+    sst = new SimpleSiteTable();
+    clientPool = new HttpClientPool();
+  }
+
+  /**
+   * Request tasks from the controller. The request will consider ongoing work, in order not to hit
+   * the same website too frequently.
+   * 
+   * @return The list of retrieved tasks. If failed, null.
+   */
   public List<Task> requestTasks()
   {
     DownloaderRequest req = formRequest();
@@ -53,6 +67,11 @@ public class Downloader implements Runnable
     return null;
   }
 
+  /**
+   * Form a request to the controller to retrieve tasks.
+   * 
+   * @return The formed DownloaderRequest object.
+   */
   public DownloaderRequest formRequest()
   {
     DownloaderRequest req = new DownloaderRequest();
@@ -65,117 +84,96 @@ public class Downloader implements Runnable
     return req;
   }
 
-  public DownloaderResult formResult(Task task)
+  public void routineBody()
   {
-    // TODO
-    return null;
-  }
-
-  @Override
-  public void run()
-  {
-    downloaderLoop();
-  }
-
-  public void downloaderLoop()
-  {
-    // loop to form and send downloader requests
-    while (status == Status.RUNNING)
+    System.err.println("routineBody()");
+    if (downloadMonitor.toDownloadSize() <= 0)
     {
-      if (downloadMonitor.toDownloadSize() <= 0)
+      System.err.println("routineBody() if");
+      List<Task> tasks = requestTasks();
+      updateSiteIntervals(tasks);
+      createAndQueuePages(tasks);
+    }
+  }
+
+  /**
+   * Update waiting interval info for retrieved tasks.
+   * 
+   * @param tasks
+   *          The retrieved tasks.
+   */
+  protected void updateSiteIntervals(List<Task> tasks)
+  {
+    if (tasks != null)
+    {
+      for (Task task : tasks)
       {
-        List<Task> tasks = requestTasks();
-        if (tasks != null)
+        ParsedURL purl = task.getPurl();
+        if (purl != null)
         {
-          for (Task task : tasks)
-          {
-            Page pageToDownload = createPage();
-            preparePageToDownload(pageToDownload, task);
-            queuePageToDownload(pageToDownload);
-          }
+          String domain = purl.domain();
+          sst.getSite(domain, task.getDomainInterval());
         }
       }
-
-      Utils.sleep(sleepBetweenLoop);
     }
+  }
 
-    synchronized (lockStatus)
+  /**
+   * Create Page objects, which represent the pages to download, from retrieved tasks, and queue
+   * them to the DownloadMonitor for downloading.
+   * 
+   * @param tasks
+   */
+  protected void createAndQueuePages(List<Task> tasks)
+  {
+    if (tasks != null)
     {
-      status = Status.STOPPED;
-      lockStatus.notifyAll();
+      for (Task task : tasks)
+      {
+        if (task.getId() != null && task.getPurl() != null)
+        {
+          Page pageToDownload = createPage(task);
+          queuePageToDownload(pageToDownload, task);
+        }
+      }
     }
   }
 
-  protected void preparePageToDownload(Page pageToDownload, Task task)
+  /**
+   * Page object factory method.
+   * 
+   * @param task
+   * @return
+   */
+  protected Page createPage(Task task)
   {
-    ParsedURL purl = ParsedURL.getAbsolute(task.getUri());
-    pageToDownload.setDownloadLocation(purl);
-
-    pageToDownload.sst = this.sst;
-    Site site = pageToDownload.getSite();
-    if (site != null && site instanceof SimpleSite)
-    {
-      ((SimpleSite) site).setDownloadInterval(task.getDomainInterval());
-    }
-    else
-    {
-      // TODO LOG error
-    }
-    System.err.println("Page prepared: " + pageToDownload);
+    Page page = new Page(task.getId(), task.getPurl(), task.getUserAgent());
+    page.clientPool = this.clientPool;
+    page.sst = this.sst;
+    return page;
   }
 
-  protected Page createPage()
+  /**
+   * Queue the given Page object to DownloadMonitor.
+   * 
+   * @param pageToDownload
+   * @param associatedTask
+   */
+  protected void queuePageToDownload(Page pageToDownload, Task associatedTask)
   {
-    return new Page();
-  }
-
-  protected DownloaderResponder createDownloaderResponder()
-  {
-    return new DownloaderResponder();
-  }
-
-  protected void queuePageToDownload(Page pageToDownload)
-  {
-    DownloaderResponder responder = createDownloaderResponder();
+    DownloaderResponder responder = createDownloaderResponder(associatedTask);
     downloadMonitor.download(pageToDownload, responder);
   }
 
-  public synchronized void start()
+  /**
+   * DownloadResponder object factory method.
+   * 
+   * @param associatedTask
+   * @return
+   */
+  protected DownloaderResponder createDownloaderResponder(Task associatedTask)
   {
-    if (status == Status.READY)
-      status = Status.RUNNING;
-    Thread t = new Thread(this);
-    t.start();
-  }
-
-  public synchronized void stop()
-  {
-    if (status == Status.RUNNING)
-    {
-      synchronized (lockStatus)
-      {
-        if (status == Status.RUNNING)
-        {
-          status = Status.STOP_PENDING;
-          try
-          {
-            lockStatus.wait();
-            if (status == Status.STOPPED)
-            {
-              return;
-            }
-            else
-            {
-              throw new RuntimeException("Cannot stop downloader!");
-            }
-          }
-          catch (InterruptedException e)
-          {
-            e.printStackTrace();
-          }
-        }
-      }
-    }
+    return new DownloaderResponder(associatedTask);
   }
 
 }

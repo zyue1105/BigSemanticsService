@@ -7,6 +7,8 @@ import ecologylab.net.ParsedURL;
 import ecologylab.serialization.annotations.simpl_scalar;
 
 /**
+ * The representation of a downloading task. This representation is transferred from clients to the
+ * controller and then to distributed downloaders, for communication.
  * 
  * @author quyin
  * 
@@ -14,38 +16,123 @@ import ecologylab.serialization.annotations.simpl_scalar;
 public class Task
 {
 
+  /**
+   * The state of a task.
+   * 
+   * @author quyin
+   */
+  public enum State
+  {
+
+    /**
+     * The task is newly created.
+     */
+    INIT,
+
+    /**
+     * The task is a duplication of an existing task.
+     */
+    DEDUP,
+
+    /**
+     * The task is waiting in the queue for being assigned to a downloader.
+     */
+    WAITING,
+
+    /**
+     * The task is taken out of the queue and being matched with a downloader request.
+     */
+    MATCHING,
+
+    /**
+     * The task is matched with a downloader request and is sent to the downloader for execution.
+     */
+    ONGOING,
+
+    /**
+     * The task is attempted but failed for some reason, and will be reentered into the queue soon.
+     */
+    ATTEMPT_FAILED,
+
+    /**
+     * The task has been attempted for several times without success, thus marked as failed and
+     * terminated.
+     */
+    TERMINATED,
+
+  }
+
+  /**
+   * Globally unique identifier for this task.
+   */
   @simpl_scalar
   private String           id;
 
+  /**
+   * The state of this task.
+   */
+  @simpl_scalar
+  private State            state;
+
+  /**
+   * The URI to download.
+   */
   @simpl_scalar
   private String           uri;
 
+  /**
+   * The user agent string that should be used.
+   */
   @simpl_scalar
-  private TaskState        state;
+  private String           userAgent;
 
   /**
-   * In milliseconds.
+   * Normal interval waiting between requests to this domain, in milliseconds.
    */
   @simpl_scalar
   private int              domainInterval;
-  
+
+  /**
+   * Long interval waiting between requests to this domain, in milliseconds. This can be used for
+   * example after being banned from that domain.
+   */
   @simpl_scalar
   private int              domainLongInterval;
 
+  /**
+   * Maximum number of attempts that are allowed. In each attempt, the task is assigned to a
+   * downloader for accessing and downloading. If more than this number of attempts have been made
+   * and it didn't succeed, the task is seen as undoable, thus terminated.
+   */
   @simpl_scalar
   private int              maxAttempts;
 
+  /**
+   * The time for each attempt, in millisecond.
+   */
   @simpl_scalar
-  private int              maxCounter;
+  private int              attemptTime;
 
+  /**
+   * Some websites returns an error page with status code 200. This regex helps detect such cases,
+   * where the pattern will be searched in the downloaded page (in HTML) to determine if it is an
+   * error page.
+   */
   @simpl_scalar
   private String           failRegex;
 
+  /**
+   * Similar to failRegex, but specifically to detect a page that says we are banned from the site
+   * :(, so that we can back from the site.
+   */
   @simpl_scalar
   private String           banRegex;
 
   // Runtime properties:
 
+  /**
+   * The same as uri, for convenience.
+   */
   private ParsedURL        purl;
 
   // TODO we need locking around clients collection: when we are modifying this collection, the
@@ -54,10 +141,13 @@ public class Task
 
   private int              attempts;
 
-  private int              counter;
+  private int              timer;
 
   private Object           lockState;
 
+  /**
+   * (for simpl)
+   */
   public Task()
   {
     this(null, null);
@@ -68,7 +158,9 @@ public class Task
     super();
     this.id = id;
     this.uri = uri;
-    this.state = TaskState.INIT;
+    this.state = State.INIT;
+
+    this.clients = new ArrayList<ClientStub>();
     this.lockState = new Object();
   }
 
@@ -82,6 +174,22 @@ public class Task
     this.id = id;
   }
 
+  public State getState()
+  {
+    synchronized (lockState)
+    {
+      return state;
+    }
+  }
+
+  public void setState(State state)
+  {
+    synchronized (lockState)
+    {
+      this.state = state;
+    }
+  }
+
   public String getUri()
   {
     return uri;
@@ -92,20 +200,14 @@ public class Task
     this.uri = uri;
   }
 
-  public TaskState getState()
+  public String getUserAgent()
   {
-    synchronized (lockState)
-    {
-      return state;
-    }
+    return userAgent;
   }
 
-  public void setState(TaskState state)
+  public void setUserAgent(String userAgent)
   {
-    synchronized (lockState)
-    {
-      this.state = state;
-    }
+    this.userAgent = userAgent;
   }
 
   public int getDomainInterval()
@@ -136,17 +238,17 @@ public class Task
   public void setMaxAttempts(int attempts)
   {
     this.maxAttempts = attempts;
-    resetCounter();
+    resetTimer();
   }
 
-  public int getMaxCounter()
+  public int getAttemptTime()
   {
-    return maxCounter;
+    return attemptTime;
   }
 
-  public void setMaxCounter(int countDown)
+  public void setAttemptTime(int attemptTime)
   {
-    this.maxCounter = countDown;
+    this.attemptTime = attemptTime;
   }
 
   public String getFailRegex()
@@ -178,19 +280,14 @@ public class Task
 
   public List<ClientStub> getClients()
   {
-    return clients;
-  }
-
-  List<ClientStub> clients()
-  {
-    if (clients == null)
-      clients = new ArrayList<ClientStub>();
-    return clients;
+    synchronized (clients)
+    {
+      return clients;
+    }
   }
 
   public void addClient(ClientStub client)
   {
-    List<ClientStub> clients = clients();
     synchronized (clients)
     {
       clients.add(client);
@@ -199,7 +296,6 @@ public class Task
 
   public void addClients(List<ClientStub> moreClients)
   {
-    List<ClientStub> clients = clients();
     synchronized (clients)
     {
       clients.addAll(moreClients);
@@ -211,20 +307,20 @@ public class Task
     return attempts;
   }
 
-  public synchronized int getCounter()
+  public synchronized int getTimer()
   {
-    return this.counter;
+    return this.timer;
   }
 
-  public synchronized void resetCounter()
+  public synchronized void resetTimer()
   {
-    this.counter = this.maxCounter;
+    this.timer = this.attemptTime;
   }
 
-  public synchronized void countDown()
+  public synchronized void countDown(int passedTime)
   {
-    counter--;
-    if (counter <= 0)
+    timer -= passedTime;
+    if (timer <= 0)
       attempts++;
   }
 

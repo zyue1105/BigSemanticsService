@@ -6,9 +6,10 @@ import ecologylab.concurrent.Site;
 import ecologylab.net.ParsedURL;
 
 /**
+ * Represents a website and the waiting interval for this site. Records last downloading time and
+ * number of errors encountered etc.
  * 
  * @author quyin
- * 
  */
 public class SimpleSite implements Site
 {
@@ -17,26 +18,59 @@ public class SimpleSite implements Site
 
   private static Random    rand                   = new Random(System.currentTimeMillis());
 
+  /**
+   * The domain of this site.
+   */
   private String           domain;
 
+  /**
+   * If this site should be ignored.
+   */
   private boolean          ignored;
 
+  /**
+   * If this site is down.
+   */
   private boolean          down;
 
+  /**
+   * If this site is being downloaded.
+   */
   private boolean          downloading;
 
+  /**
+   * The last time this site has been downloaded.
+   */
   private long             lastDownloadingTime;
 
+  /**
+   * The minimum interval between downloading requests to this site.
+   */
   private long             downloadInterval;
 
+  /**
+   * The next time that this site will be available for downloading.
+   */
   private long             nextAvailableTime;
 
+  /**
+   * Number of normal downloads for this site.
+   */
   private int              cNormal;
 
+  /**
+   * Number of timed out downloads for this site.
+   */
   private int              cTimeout;
 
+  /**
+   * Number of file-not-found downloads for this site.
+   */
   private int              cNotFound;
 
+  /**
+   * Number of downloads with other errors for this site.
+   */
   private int              cOther;
 
   public SimpleSite(String domain)

@@ -6,21 +6,33 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import ecologylab.concurrent.Site;
 
+/**
+ * A table that records all the sites that we are accessing.
+ * 
+ * @author quyin
+ */
 public class SimpleSiteTable
 {
-  
-  ConcurrentHashMap<String, SimpleSite> sites = new ConcurrentHashMap<String, SimpleSite>();
-  
+
   /**
-   * Create a SimpleSite object.
+   * The real table, from domain to Site object.
+   */
+  private ConcurrentHashMap<String, SimpleSite> sites = new ConcurrentHashMap<String, SimpleSite>();
+
+  /**
+   * Get the Site object by domain. Lazily create the object with the given downloadInterval if
+   * needed.
    * 
    * @param domain
+   * @param downloadInterval
+   *          Interval between requests to this domain, in millisecond. Will be ignored if the Site
+   *          object for this domain already exists.
    * @return
    */
-  public Site getSite(String domain)
+  public Site getSite(String domain, long downloadInterval)
   {
     SimpleSite site;
-    if (sites.contains(domain))
+    if (sites.containsKey(domain))
     {
       site = sites.get(domain);
     }
@@ -32,18 +44,20 @@ public class SimpleSiteTable
       {
         site = existingSite;
       }
+      site.setDownloadInterval(downloadInterval);
     }
     return site;
   }
-  
+
   /**
    * Get the set of sites that are too busy to download from at this moment.
+   * 
    * @return
    */
   public Set<Site> getBusySites()
   {
     Set<Site> results = new HashSet<Site>();
-    
+
     long t = System.currentTimeMillis();
     for (SimpleSite site : sites.values())
     {
@@ -58,8 +72,8 @@ public class SimpleSiteTable
         results.add(site);
       }
     }
-    
+
     return results;
   }
-  
+
 }

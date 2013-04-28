@@ -10,17 +10,24 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
+/**
+ * Test downloader behaviors.
+ * 
+ * @author quyin
+ */
 public class TestDownloader
 {
 
+  /**
+   * A mock downloader for test.
+   */
   MockDownloader d;
 
   @Before
   public void init()
   {
     d = new MockDownloader();
-    d.sst = new SimpleSiteTable();
-    d.sleepBetweenLoop = 100;
+    d.setSleepBetweenLoop(100);
   }
 
   @Test
@@ -41,45 +48,59 @@ public class TestDownloader
   @Test
   public void testSendingRequest()
   {
+    long dt = d.getSleepBetweenLoop();
+
     d.presetTasks.add(new Task("1", "http://google.com"));
     d.presetTasks.add(new Task("2", "http://yahoo.com"));
     d.start();
 
-    Utils.sleep(d.sleepBetweenLoop * 3);
-    assertTrue(d.numTasksRequested >= 2 && d.numTasksRequested <= 3);
+    // d should keep sending requests, since 1) initially there is no tasks ongoing; 2) each task
+    // it gets can be processed and finished immediately because we are using a mock page which does
+    // not need to really download the page.
+    Utils.sleep(dt * 3);
+    // in approx. 3 cycles, it should do 3 requests.
+    assertEquals(3, d.numTasksRequested);
 
     d.stop();
     d.numTasksRequested = 0;
-    Utils.sleep(d.sleepBetweenLoop * 3);
+    Utils.sleep(dt * 3);
+    // when the downloader is stopped there should be no requests made.
     assertEquals(0, d.numTasksRequested);
   }
 
   @Test
   public void testQueuingReceivedTasks()
   {
+    long dt = d.getSleepBetweenLoop();
+
     d.presetTasks.add(new Task("1", "http://google.com"));
     d.presetTasks.add(new Task("2", "http://yahoo.com"));
     d.start();
 
-    Utils.sleep(d.sleepBetweenLoop * 3);
-    assertTrue(d.numPagesQueued >= 4 && d.numPagesQueued <= 6);
+    Utils.sleep(dt * 3);
+    // in approx. 3 cycles, the downloader should queue 6 pages (2 pages per cycle since there are 2
+    // tasks preset).
+    assertEquals(6, d.numPagesQueued);
 
     d.stop();
     d.numPagesQueued = 0;
-    Utils.sleep(d.sleepBetweenLoop * 3);
+    Utils.sleep(dt * 3);
+    // when the downloader is stopped there should be no pages queued.
     assertEquals(0, d.numPagesQueued);
   }
 
   @Test
   public void testFormingResult()
   {
+    long dt = d.getSleepBetweenLoop();
+
     d.presetTasks.add(new Task("1", "http://1.google.com"));
-    d.presetResponder = new MockDownloaderResponder();
     d.start();
-    Utils.sleep(d.sleepBetweenLoop + d.sleepBetweenLoop / 10);
+    Utils.sleep(dt);
     d.stop();
 
-    assertTrue(d.presetResponder.numCallbacks >= 1 && d.presetResponder.numCallbacks <= 2);
+    // in approx. 1 cycle, it should do 1 callback, but there chould 
+    assertEquals(1, d.presetResponder.numCallbacks);
     MockPage page = (MockPage) d.presetResponder.lastCallbackPage;
     assertNotNull(page);
     assertTrue(page.performed);
@@ -88,35 +109,39 @@ public class TestDownloader
   @Test
   public void testFormingBlacklist()
   {
-    int dt = d.sleepBetweenLoop;
+    long dt = d.getSleepBetweenLoop();
 
+    // task.domainInterval will be used as site.downloadInterval.
+    // real waiting time will be downloadInterval + random(0 ~ downloadInterval/2)
     Task t1 = new Task("1", "http://google.com");
-    t1.setDomainInterval(dt * 2);
+    // google.com should be available after at most 2dt + 2dt/2 = 3dt
+    t1.setDomainInterval((int) dt * 2);
     Task t2 = new Task("2", "http://yahoo.com");
-    t2.setDomainInterval(dt * 4);
+    // yahoo.com should be available after at most 4dt + 4dt/2 = 6dt
+    t2.setDomainInterval((int) dt * 4);
 
     d.presetTasks.add(t1);
     d.presetTasks.add(t2);
     d.usePresetTasksOnce = true;
     d.start();
 
-    // 0.5dt after start:
+    // 0.5dt after start: both domains are still busy
     Utils.sleep(dt / 2);
     assertBlacklisted(d, "google.com");
     assertBlacklisted(d, "yahoo.com");
 
     Utils.sleep(dt / 2 + dt);
-    // 2dt after start:
+    // 2dt after start: both are busy
     assertBlacklisted(d, "google.com");
     assertBlacklisted(d, "yahoo.com");
 
     Utils.sleep(dt / 2 + dt);
-    // 3.5dt after start:
+    // 3.5dt after start: google.com should be available after at most 3dt
     assertNotBlacklisted(d, "google.com");
     assertBlacklisted(d, "yahoo.com");
 
     Utils.sleep(dt * 3);
-    // 6.5dt after start:
+    // 6.5dt after start: yahoo.com should be available after at most 6dt
     assertNotBlacklisted(d, "google.com");
     assertNotBlacklisted(d, "yahoo.com");
   }

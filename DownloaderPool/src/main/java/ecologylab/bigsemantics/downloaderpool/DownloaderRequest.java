@@ -8,22 +8,26 @@ import ecologylab.serialization.annotations.simpl_collection;
 import ecologylab.serialization.annotations.simpl_scalar;
 
 /**
+ * The request of tasks sent from a downloader to the controller.
  * 
  * @author quyin
- *
  */
 public class DownloaderRequest
 {
-  
+
   /**
-   * Blacklisted domains.
+   * Blacklisted domains. The controller will not return tasks with any of the domains in this
+   * collection.
    */
   @simpl_collection("domain")
   private List<String> blacklist;
-  
+
+  /**
+   * Maximum number of tasks that can be accepted by this request.
+   */
   @simpl_scalar
   private int          maxTaskCount;
-  
+
   public DownloaderRequest()
   {
     super();
@@ -48,7 +52,7 @@ public class DownloaderRequest
   {
     this.maxTaskCount = maxTaskCount;
   }
-  
+
   private List<String> blacklist()
   {
     if (blacklist == null)
@@ -63,13 +67,20 @@ public class DownloaderRequest
     }
     return blacklist;
   }
-  
+
   public void addToBlacklist(String domain)
   {
     if (domain != null && domain.length() > 0)
       this.blacklist().add(domain);
   }
-  
+
+  /**
+   * Test if a given URL can be accepted by this request, considering the blacklist.
+   * 
+   * @param purl
+   *          The URL to test.
+   * @return true if the URL can be accepted (domain not in the blacklist), otherwise false.
+   */
   public boolean accept(ParsedURL purl)
   {
     if (purl == null)

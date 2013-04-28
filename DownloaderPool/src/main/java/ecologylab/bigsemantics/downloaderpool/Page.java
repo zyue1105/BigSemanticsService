@@ -2,23 +2,52 @@ package ecologylab.bigsemantics.downloaderpool;
 
 import java.io.IOException;
 
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.params.ClientPNames;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.AbstractHttpClient;
+import org.apache.http.params.CoreProtocolPNames;
 
+import ecologylab.bigsemantics.downloaderpool.DownloaderResult.State;
 import ecologylab.concurrent.Downloadable;
 import ecologylab.concurrent.DownloadableLogRecord;
 import ecologylab.concurrent.Site;
 import ecologylab.net.ParsedURL;
 
+/**
+ * Represent a page to download. It is the actual class that the DownloadMonitor works with.
+ * 
+ * @author quyin
+ */
 public class Page implements Downloadable
 {
 
-  private ParsedURL location;
+  // collaborating objects:
+  
+  HttpClientPool           clientPool;
 
-  DownloaderResult  result;
+  SimpleSiteTable          sst;
 
-  SimpleSiteTable   sst;
+  // properties:
+  
+  private ParsedURL        location;
+
+  private String           userAgent;
+
+  private DownloaderResult result;
+
+  public Page(String id, ParsedURL location, String userAgent)
+  {
+    this.location = location;
+    this.userAgent = userAgent;
+    result = new DownloaderResult();
+    result.setTaskId(id);
+  }
+
+  @Override
+  public ParsedURL location()
+  {
+    return location;
+  }
 
   @Override
   public ParsedURL getDownloadLocation()
@@ -37,7 +66,7 @@ public class Page implements Downloadable
     if (location != null)
     {
       String domain = location.domain();
-      return sst.getSite(domain);
+      return sst.getSite(domain, 0);
     }
     return null;
   }
@@ -56,7 +85,43 @@ public class Page implements Downloadable
   }
 
   @Override
-  public void handleIoError(Throwable arg0)
+  public void performDownload()
+  {
+    AbstractHttpClient client = clientPool.acquire();
+    if (userAgent != null && userAgent.length() > 0)
+    {
+      client.getParams().setParameter(CoreProtocolPNames.USER_AGENT, userAgent);
+    }
+    PageResponseHandler handler = new PageResponseHandler(result);
+    PageRedirectStrategy redirectStrategy = new PageRedirectStrategy(result);
+    client.setRedirectStrategy(redirectStrategy);
+
+    HttpGet httpGet = new HttpGet(location.toString());
+    try
+    {
+      client.execute(httpGet, handler);
+    }
+    catch (ClientProtocolException e)
+    {
+      // TODO logging
+      result.setState(State.ERR_PROTOCOL);
+    }
+    catch (IOException e)
+    {
+      // TODO logging
+      result.setState(State.ERR_IO);
+    }
+
+    clientPool.release(client);
+  }
+
+  public DownloaderResult getResult()
+  {
+    return result;
+  }
+
+  @Override
+  public void handleIoError(Throwable e)
   {
     // TODO Auto-generated method stub
 
@@ -84,10 +149,10 @@ public class Page implements Downloadable
   }
 
   @Override
-  public ParsedURL location()
+  public void recycle()
   {
     // TODO Auto-generated method stub
-    return null;
+
   }
 
   @Override
@@ -95,34 +160,6 @@ public class Page implements Downloadable
   {
     // TODO Auto-generated method stub
     return null;
-  }
-
-  @Override
-  public void performDownload() throws IOException
-  {
-    System.err.println("Perform downloading: " + this);
-
-    // TODO pooling?
-    DefaultHttpClient client = new DefaultHttpClient();
-    client.getParams().setParameter(ClientPNames.HANDLE_REDIRECTS, true);
-
-    HttpGet httpGet = new HttpGet(location.toString());
-    PageRedirectStrategy redirectStrategy = new PageRedirectStrategy();
-    PageResponseHandler handler = new PageResponseHandler();
-    client.setRedirectStrategy(redirectStrategy);
-    result = client.execute(httpGet, handler);
-  }
-
-  @Override
-  public void recycle()
-  {
-    // TODO Auto-generated method stub
-
-  }
-
-  public DownloaderResult getResult()
-  {
-    return result;
   }
 
   public String toString()

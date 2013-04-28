@@ -8,9 +8,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 /**
+ * Test Jersey.
  * 
  * @author quyin
- * 
  */
 @Path("/echo")
 public class HelloJersey

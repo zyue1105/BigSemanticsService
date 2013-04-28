@@ -4,24 +4,42 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * A mock downloader for testing
  * 
  * @author quyin
- * 
  */
 public class MockDownloader extends Downloader
 {
 
-  int        numTasksRequested  = 0;
+  // collaborating objects:
 
-  int        numPagesQueued     = 0;
+  /**
+   * A preset responder (that will typically not actually connect to a controller on a server).
+   */
+  MockDownloaderResponder presetResponder;
 
-  List<Task> presetTasks        = new ArrayList<Task>();
+  // properties:
 
-  boolean    usePresetTasksOnce = false;
+  int                     numTasksRequested  = 0;
+
+  int                     numPagesQueued     = 0;
+
+  /**
+   * Use this to preset some tasks, as if they are retrieved from the controller.
+   */
+  List<Task>              presetTasks        = new ArrayList<Task>();
+
+  /**
+   * If this is set to true, the preset tasks will be used only once. This is useful to test the
+   * downloader's behavior with a single set of preset tasks. If you need to test its behavior with
+   * a serials of tasks, you can set this to false.
+   */
+  boolean                 usePresetTasksOnce = false;
 
   @Override
   public List<Task> requestTasks()
   {
+    // use preset tasks
     numTasksRequested++;
     List<Task> result = presetTasks;
     if (usePresetTasksOnce)
@@ -32,32 +50,33 @@ public class MockDownloader extends Downloader
   }
 
   @Override
-  protected Page createPage()
+  protected Page createPage(Task task)
   {
-    return new MockPage();
+    // creates a MockPage instead of Page
+    Page page = new MockPage(task.getId(), task.getPurl(), task.getUserAgent());
+    page.clientPool = this.clientPool;
+    page.sst = this.sst;
+    return page;
   }
 
   @Override
-  protected void queuePageToDownload(Page pageToDownload)
+  protected void queuePageToDownload(Page pageToDownload, Task associatedTask)
   {
-    super.queuePageToDownload(pageToDownload);
+    // queue and count
+    super.queuePageToDownload(pageToDownload, associatedTask);
     System.err.println("Queued page to download: " + pageToDownload);
     numPagesQueued++;
   }
 
-  MockDownloaderResponder presetResponder;
-
   @Override
-  protected DownloaderResponder createDownloaderResponder()
+  protected DownloaderResponder createDownloaderResponder(Task associatedTask)
   {
-    if (presetResponder != null)
+    // use the preset responder, if there is one.
+    if (presetResponder == null)
     {
-      return presetResponder;
+      presetResponder = new MockDownloaderResponder();
     }
-    else
-    {
-      return super.createDownloaderResponder();
-    }
+    return presetResponder;
   }
 
 }

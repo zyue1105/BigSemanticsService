@@ -6,17 +6,34 @@ import java.util.Stack;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
+import ecologylab.bigsemantics.downloaderpool.Task.State;
+
 /**
+ * The central controller that works with a set of downloaders. The controller accepts requests from
+ * clients as tasks, assigns tasks to distributed downloaders, collects results, and returns to
+ * clients. The controller doesn't remember previous tasks (memoryless), for simplicity.
  * 
  * @author quyin
- * 
  */
 public class Controller
 {
 
-  ConcurrentLinkedDeque<Task>     waitingTasks;
+  /**
+   * The maximum number of tasks that can be assigned to a downloader.
+   */
+  private int                             maxTasksPerDownloader = 10;
 
-  ConcurrentHashMap<String, Task> tasksByUri;
+  /**
+   * The tasks that are received from clients, but not yet been assigned to downloaders.
+   */
+  private ConcurrentLinkedDeque<Task>     waitingTasks;
+
+  /**
+   * Indexing waiting and ongoing tasks. Finished tasks, either succeeded or terminated due to too
+   * many failures, will be removed from this map. This implies that the controller is not
+   * remembering previous tasks.
+   */
+  private ConcurrentHashMap<String, Task> tasksByUri;
 
   public Controller()
   {
@@ -24,6 +41,11 @@ public class Controller
     tasksByUri = new ConcurrentHashMap<String, Task>();
   }
 
+  /**
+   * Queue a new task to this controller.
+   * 
+   * @param task
+   */
   public void queueTask(Task task)
   {
     if (task == null)
@@ -36,11 +58,11 @@ public class Controller
     Task existingTask = tasksByUri.putIfAbsent(task.getUri(), task);
     if (existingTask != null)
     {
-      task.setState(TaskState.DEDUP);
+      task.setState(State.DEDUP);
       existingTask.addClients(task.getClients());
       return;
     }
-    task.setState(TaskState.WAITING);
+    task.setState(State.WAITING);
     waitingTasks.add(task);
   }
 
@@ -54,11 +76,20 @@ public class Controller
     return waitingTasks.size();
   }
 
+  /**
+   * Process a DownloaderRequest and gives a list of appropriate tasks for this request. The tasks
+   * are ordered the same as when they are queued.
+   * 
+   * @param req
+   * @return
+   */
   public List<Task> getTasksForWork(DownloaderRequest req)
   {
     int n = req.getMaxTaskCount();
-    if (n <= 0)
+    if (n < 0)
       return null;
+    if (n == 0)
+      n = maxTasksPerDownloader;
 
     List<Task> tasks = new ArrayList<Task>();
 
@@ -68,11 +99,11 @@ public class Controller
       Task t = waitingTasks.pollFirst();
       if (t == null)
         break;
-      t.setState(TaskState.MATCHING);
+      t.setState(State.MATCHING);
       if (req.accept(t.getPurl()))
       {
         tasks.add(t);
-        t.setState(TaskState.ONGOING);
+        t.setState(State.ONGOING);
       }
       else
       {
@@ -82,17 +113,23 @@ public class Controller
     while (!unacceptedTasks.empty())
     {
       Task t = unacceptedTasks.pop();
-      t.setState(TaskState.WAITING);
+      t.setState(State.WAITING);
       waitingTasks.offerFirst(t);
     }
 
     return tasks;
   }
 
+  /**
+   * When a task is attempted but failed, and it has not yet reached the maximum number of allowed
+   * attempts, it will re-enter the waiting tasks queue for another attempt.
+   * 
+   * @param ongoingTask
+   */
   private void moveToWaitingTask(Task ongoingTask)
   {
     // TODO reset task properties
-    ongoingTask.setState(TaskState.WAITING);
+    ongoingTask.setState(State.WAITING);
     waitingTasks.offer(ongoingTask);
   }
 
@@ -106,30 +143,34 @@ public class Controller
     int n = 0;
     for (Task t : tasksByUri.values())
     {
-      if (t.getState() == TaskState.ONGOING)
+      if (t.getState() == State.ONGOING)
         n++;
     }
     return n;
   }
 
-  public void countDownTasks()
+  /**
+   * Every call to this method counts down all ongoing tasks. When an ongoing task counts down to 0,
+   * the attempt fails (request out of time).
+   */
+  public void countDownTasks(int passedTime)
   {
     for (Task t : tasksByUri.values())
     {
-      t.countDown();
-      if (t.getCounter() <= 0)
+      t.countDown(passedTime);
+      if (t.getTimer() <= 0)
       {
         if (t.getAttempts() >= t.getMaxAttempts())
         {
-          // TODO terminate this task
-          t.setState(TaskState.TERMINATED);
+          // TODO notify the client that this task has been terminated
+          t.setState(State.TERMINATED);
           tasksByUri.remove(t.getUri());
           break;
         }
         else
         {
-          t.setState(TaskState.ATTEMPT_FAILED);
-          t.resetCounter();
+          t.setState(State.ATTEMPT_FAILED);
+          t.resetTimer();
           moveToWaitingTask(t);
         }
       }
