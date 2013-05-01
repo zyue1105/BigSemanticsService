@@ -2,8 +2,10 @@ package ecologylab.bigsemantics.downloaderpool;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
 
 import ecologylab.net.ParsedURL;
+import ecologylab.serialization.annotations.simpl_composite;
 import ecologylab.serialization.annotations.simpl_scalar;
 
 /**
@@ -13,15 +15,20 @@ import ecologylab.serialization.annotations.simpl_scalar;
  * @author quyin
  * 
  */
-public class Task
+public class Task extends Observable
 {
+
+  public static enum ObservableEventType
+  {
+    STATE_CHANGE, COUNT_DOWN
+  }
 
   /**
    * The state of a task.
    * 
    * @author quyin
    */
-  public enum State
+  public static enum State
   {
 
     /**
@@ -59,6 +66,12 @@ public class Task
      * terminated.
      */
     TERMINATED,
+
+    /**
+     * The task has been responded from a downloader, meaning either it has been downloaded or there
+     * is an error occurrd during downloading it.
+     */
+    RESPONDED,
 
   }
 
@@ -128,6 +141,9 @@ public class Task
   @simpl_scalar
   private String           banRegex;
 
+  @simpl_composite
+  private DownloaderResult result;
+
   // Runtime properties:
 
   /**
@@ -176,10 +192,12 @@ public class Task
 
   public State getState()
   {
+    State result;
     synchronized (lockState)
     {
-      return state;
+      result = state;
     }
+    return result;
   }
 
   public void setState(State state)
@@ -188,6 +206,7 @@ public class Task
     {
       this.state = state;
     }
+    notifyObservers(ObservableEventType.STATE_CHANGE);
   }
 
   public String getUri()
@@ -322,6 +341,17 @@ public class Task
     timer -= passedTime;
     if (timer <= 0)
       attempts++;
+    notifyObservers(ObservableEventType.COUNT_DOWN);
+  }
+
+  public DownloaderResult getResult()
+  {
+    return result;
+  }
+
+  public void setResult(DownloaderResult result)
+  {
+    this.result = result;
   }
 
 }

@@ -14,6 +14,12 @@ import ecologylab.serialization.annotations.simpl_scalar;
  */
 public class DownloaderRequest
 {
+  
+  /**
+   * The ID of the downloader
+   */
+  @simpl_scalar
+  private String workerId;
 
   /**
    * Blacklisted domains. The controller will not return tasks with any of the domains in this
@@ -31,6 +37,16 @@ public class DownloaderRequest
   public DownloaderRequest()
   {
     super();
+  }
+  
+  public String getWorkerId()
+  {
+    return workerId;
+  }
+  
+  public void setWorkerId(String workerId)
+  {
+    this.workerId = workerId;
   }
 
   public List<String> getBlacklist()

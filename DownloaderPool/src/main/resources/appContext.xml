@@ -4,7 +4,38 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
 	 http://www.springframework.org/schema/beans/spring-beans.xsd">
-   
-   <!-- beans -->
 
+	<!-- beans -->
+	<bean id="controller" class="ecologylab.bigsemantics.downloaderpool.Controller">
+		<!-- nothing inside -->
+	</bean>
+
+	<bean id="download.json" class="ecologylab.bigsemantics.downloaderpool.services.DownloadJson">
+	  <property name="controller" ref="controller"></property>
+	</bean>
+	
+	<bean id="download.xml" class="ecologylab.bigsemantics.downloaderpool.services.DownloadXml">
+	  <property name="controller" ref="controller"></property>
+	</bean>
+	
+	<bean id="assign.json" class="ecologylab.bigsemantics.downloaderpool.services.AssignJson">
+	  <property name="controller" ref="controller"></property>
+	</bean>
+	
+	<bean id="assign.xml" class="ecologylab.bigsemantics.downloaderpool.services.AssignXml">
+	  <property name="controller" ref="controller"></property>
+	</bean>
+	
+	<bean id="report" class="ecologylab.bigsemantics.downloaderpool.services.Report">
+	  <property name="controller" ref="controller"></property>
+	</bean>
+	
+	<bean id="task.json" class="ecologylab.bigsemantics.downloaderpool.services.TaskJson">
+	  <property name="controller" ref="controller"></property>
+	</bean>
+	
+	<bean id="task.xml" class="ecologylab.bigsemantics.downloaderpool.services.TaskXml">
+	  <property name="controller" ref="controller"></property>
+	</bean>
+	
 </beans>

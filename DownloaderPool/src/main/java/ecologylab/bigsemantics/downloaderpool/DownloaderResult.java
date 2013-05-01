@@ -19,7 +19,7 @@ public class DownloaderResult
    * 
    * @author quyin
    */
-  public enum State
+  public static enum State
   {
 
     /**

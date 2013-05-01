@@ -2,9 +2,18 @@ package ecologylab.bigsemantics.downloaderpool;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Stack;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
+
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ecologylab.bigsemantics.downloaderpool.Task.State;
 
@@ -18,6 +27,18 @@ import ecologylab.bigsemantics.downloaderpool.Task.State;
 public class Controller
 {
 
+  static private Logger                   logger;
+
+  static
+  {
+    logger = LoggerFactory.getLogger(Controller.class);
+  }
+
+  /**
+   * The maximum length of the task ID.
+   */
+  private int                             taskIdLen             = 11;
+
   /**
    * The maximum number of tasks that can be assigned to a downloader.
    */
@@ -29,16 +50,57 @@ public class Controller
   private ConcurrentLinkedDeque<Task>     waitingTasks;
 
   /**
-   * Indexing waiting and ongoing tasks. Finished tasks, either succeeded or terminated due to too
-   * many failures, will be removed from this map. This implies that the controller is not
+   * Indexing waiting and ongoing tasks by URL. Finished tasks, either succeeded or terminated due
+   * to too many failures, will be removed from this map. This implies that the controller is not
    * remembering previous tasks.
    */
   private ConcurrentHashMap<String, Task> tasksByUri;
+
+  /**
+   * Indexing all tasks by ID. We regard conflicts of keys as impossible.
+   */
+  private Cache                           allTasksById;
+
+  /**
+   * Indexing all tasks by URL. When there is conflict this only stores the latest one.
+   */
+  private Cache                           allTasksByUri;
 
   public Controller()
   {
     waitingTasks = new ConcurrentLinkedDeque<Task>();
     tasksByUri = new ConcurrentHashMap<String, Task>();
+    CacheManager cacheManager = CacheManager.getInstance();
+    
+    cacheManager.addCacheIfAbsent("tasks-by-id");
+    allTasksById = cacheManager.getCache("tasks-by-id");
+    
+    cacheManager.addCacheIfAbsent("tasks-by-uri");
+    allTasksByUri = cacheManager.getCache("tasks-by-uri");
+    
+    logger.info("Controller is constructed.");
+  }
+
+  public int getTaskIdLen()
+  {
+    return taskIdLen;
+  }
+
+  public void setTaskIdLen(int taskIdLen)
+  {
+    this.taskIdLen = taskIdLen;
+  }
+
+  public Task getTask(String id)
+  {
+    Element element = allTasksById.get(id);
+    return element == null ? null : (Task) element.getObjectValue();
+  }
+
+  public Task getTaskByUri(String uri)
+  {
+    Element element = allTasksByUri.get(uri);
+    return element == null ? null : (Task) element.getObjectValue();
   }
 
   /**
@@ -46,7 +108,7 @@ public class Controller
    * 
    * @param task
    */
-  public void queueTask(Task task)
+  public void queueTask(final Task task)
   {
     if (task == null)
       throw new IllegalArgumentException("Task to queue cannot be null.");
@@ -55,25 +117,26 @@ public class Controller
     if (task.getUri() == null || task.getUri().length() == 0)
       throw new IllegalArgumentException("Task to queue must have a URI.");
 
+    allTasksById.put(new Element(task.getId(), task));
+    allTasksByUri.put(new Element(task.getUri(), task));
+
     Task existingTask = tasksByUri.putIfAbsent(task.getUri(), task);
     if (existingTask != null)
     {
       task.setState(State.DEDUP);
       existingTask.addClients(task.getClients());
+      existingTask.addObserver(new Observer()
+      {
+        @Override
+        public void update(Observable arg0, Object arg1)
+        {
+          task.notifyObservers(arg1);
+        }
+      });
       return;
     }
     task.setState(State.WAITING);
     waitingTasks.add(task);
-  }
-
-  /**
-   * (Note that this operation is costly! It needs to traverse the whole queue.)
-   * 
-   * @return
-   */
-  public int countWaitingTasks()
-  {
-    return waitingTasks.size();
   }
 
   /**
@@ -134,6 +197,16 @@ public class Controller
   }
 
   /**
+   * (Note that this operation is costly! It needs to traverse the whole queue.)
+   * 
+   * @return
+   */
+  public int countWaitingTasks()
+  {
+    return waitingTasks.size();
+  }
+
+  /**
    * (Note that this operation is costly! It needs to traverse the whole task map.)
    * 
    * @return
@@ -174,6 +247,17 @@ public class Controller
           moveToWaitingTask(t);
         }
       }
+    }
+  }
+
+  public void report(String taskId, DownloaderResult result)
+  {
+    Task task = getTask(taskId);
+    if (task != null)
+    {
+      task.setResult(result);
+      tasksByUri.remove(task.getUri());
+      task.setState(State.RESPONDED);
     }
   }
 
