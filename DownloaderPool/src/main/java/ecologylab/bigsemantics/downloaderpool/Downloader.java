@@ -1,11 +1,22 @@
 package ecologylab.bigsemantics.downloaderpool;
 
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+
+import org.apache.http.HttpStatus;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ecologylab.concurrent.DownloadMonitor;
 import ecologylab.concurrent.Site;
 import ecologylab.net.ParsedURL;
+import ecologylab.serialization.formatenums.StringFormat;
 
 /**
  * A downloader that actively retrieves tasks from the controller, downloads pages, and sends
@@ -18,10 +29,19 @@ import ecologylab.net.ParsedURL;
 public class Downloader extends Routine
 {
 
+  private static Logger logger;
+
+  static
+  {
+    logger = LoggerFactory.getLogger(Downloader.class);
+  }
+
   // configs:
   // TODO should go into a config file
 
-  static int            numDownloadThreads = 4;
+  String                controllerBaseUrl  = "http://localhost:8080/DownloaderPool/assign.xml";
+
+  int                   numDownloadThreads = 4;
 
   int                   maxTaskCount       = 10;
 
@@ -33,25 +53,29 @@ public class Downloader extends Routine
 
   HttpClientPool        clientPool;
 
+  /**
+   * This client is used to communicate with the controller.
+   */
+  HttpClient            client;
+
   // runtime properties:
 
   private String        name;
 
-  public String getName()
+  public Downloader(String name)
   {
-    return name;
-  }
-
-  public void setName(String name)
-  {
+    super();
     this.name = name;
-  }
-
-  public void init()
-  {
     downloadMonitor = new DownloadMonitor<Page>("Downloader: " + name, numDownloadThreads);
     sst = new SimpleSiteTable();
     clientPool = new HttpClientPool();
+    client = clientPool.acquire();
+    setReady();
+  }
+
+  public String getName()
+  {
+    return name;
   }
 
   /**
@@ -63,7 +87,52 @@ public class Downloader extends Routine
   public List<Task> requestTasks()
   {
     DownloaderRequest req = formRequest();
-    // TODO: send request and wait for response;
+
+    Map<String, String> params = new HashMap<String, String>();
+    params.put("id", this.name);
+    String blist = req.getBlacklistString();
+    if (blist != null)
+    {
+      params.put("blacklist", blist);
+    }
+    params.put("ntask", String.valueOf(this.maxTaskCount));
+    HttpGet get = Utils.generateGetRequest(controllerBaseUrl, params);
+    logger.info("HTTP GET: " + get.getURI());
+
+    int status = -1;
+    try
+    {
+      BasicResponse result = new BasicResponse();
+      client.execute(get, new BasicResponseHandler(result));
+      status = result.getHttpRespCode();
+      String content = result.getContent();
+      if (status == HttpStatus.SC_OK)
+      {
+        AssignedTasks assignedTasks = (AssignedTasks) Utils.deserialize(content,
+                                                                        MessageScope.get(),
+                                                                        StringFormat.XML);
+        return assignedTasks.getTasks();
+      }
+      else
+      {
+        logger.info("Status message: " + result.getHttpRespMsg());
+        logger.info("Content:\n" + content);
+      }
+    }
+    catch (ClientProtocolException e)
+    {
+      logger.error("Exception when accessing " + get.getURI(), e);
+      e.printStackTrace();
+      get.abort();
+    }
+    catch (IOException e)
+    {
+      logger.error("Exception when accessing " + get.getURI(), e);
+      e.printStackTrace();
+      get.abort();
+    }
+
+    logger.error("Empty response [status code: {}] from {}", status, get.getURI());
     return null;
   }
 
@@ -86,10 +155,10 @@ public class Downloader extends Routine
 
   public void routineBody()
   {
-    System.err.println("routineBody()");
+    logger.debug("routineBody()");
     if (downloadMonitor.toDownloadSize() <= 0)
     {
-      System.err.println("routineBody() if");
+      logger.debug("routineBody(): request tasks and queue downloads");
       List<Task> tasks = requestTasks();
       updateSiteIntervals(tasks);
       createAndQueuePages(tasks);
@@ -132,6 +201,7 @@ public class Downloader extends Routine
       {
         if (task.getId() != null && task.getPurl() != null)
         {
+          logger.info("creating Page object for task[{}][{}]...", task.getId(), task.getPurl());
           Page pageToDownload = createPage(task);
           queuePageToDownload(pageToDownload, task);
         }
@@ -173,7 +243,9 @@ public class Downloader extends Routine
    */
   protected DownloaderResponder createDownloaderResponder(Task associatedTask)
   {
-    return new DownloaderResponder(associatedTask);
+    DownloaderResponder downloaderResponder = new DownloaderResponder(associatedTask);
+    downloaderResponder.downloader = this;
+    return downloaderResponder;
   }
 
 }

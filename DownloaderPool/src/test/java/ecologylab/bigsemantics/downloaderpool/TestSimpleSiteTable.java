@@ -70,14 +70,15 @@ public class TestSimpleSiteTable
     assertSiteBusy(bs, "yahoo.com");
     assertSiteNotBusy(bs, "bing.com");
 
-    Utils.sleep(dt - dt / 10);
-    // 0.9dt from beginning
+    Utils.sleep(dt - dt / 2);
+    // 0.5dt from beginning
     bs = sst.getBusySites();
+    System.out.println(bs);
     assertSiteBusy(bs, "google.com");
     assertSiteBusy(bs, "yahoo.com");
     assertSiteNotBusy(bs, "bing.com");
 
-    Utils.sleep(dt / 10 + dt / 2);
+    Utils.sleep(dt / 2 + dt / 2);
     // 1.5dt from beginning
     // google.com can be accessed now (downloadInterval = 1dt)
     bs = sst.getBusySites();

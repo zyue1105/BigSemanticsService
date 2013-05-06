@@ -52,15 +52,15 @@ public abstract class Routine implements Runnable
   {
     super();
     status = Status.NEW;
-    init();
-    status = Status.READY;
   }
 
   /**
-   * Initialize the Routine implementation. Before calling this, the status is NEW. After calling
-   * this, the status becomes READY.
+   * The Routine implementation should call this method after getting ready to run.
    */
-  abstract void init();
+  protected void setReady()
+  {
+    status = Status.READY;
+  }
 
   /**
    * The body of the routine loop. This method will be invoked repeatedly to do routine work, unless

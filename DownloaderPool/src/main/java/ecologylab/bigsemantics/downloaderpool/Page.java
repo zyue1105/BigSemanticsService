@@ -6,6 +6,8 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.AbstractHttpClient;
 import org.apache.http.params.CoreProtocolPNames;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ecologylab.bigsemantics.downloaderpool.DownloaderResult.State;
 import ecologylab.concurrent.Downloadable;
@@ -21,14 +23,21 @@ import ecologylab.net.ParsedURL;
 public class Page implements Downloadable
 {
 
+  private static Logger    logger;
+
+  static
+  {
+    logger = LoggerFactory.getLogger(Page.class);
+  }
+
   // collaborating objects:
-  
+
   HttpClientPool           clientPool;
 
   SimpleSiteTable          sst;
 
   // properties:
-  
+
   private ParsedURL        location;
 
   private String           userAgent;
@@ -96,7 +105,7 @@ public class Page implements Downloadable
     PageRedirectStrategy redirectStrategy = new PageRedirectStrategy(result);
     client.setRedirectStrategy(redirectStrategy);
 
-    HttpGet httpGet = new HttpGet(location.toString());
+    HttpGet httpGet = Utils.generateGetRequest(location.toString(), null);
     try
     {
       client.execute(httpGet, handler);
@@ -104,12 +113,16 @@ public class Page implements Downloadable
     catch (ClientProtocolException e)
     {
       // TODO logging
+      logger.error("Exception when connecting to " + location, e);
       result.setState(State.ERR_PROTOCOL);
+      httpGet.abort();
     }
     catch (IOException e)
     {
       // TODO logging
+      logger.error("Exception when reading from " + location, e);
       result.setState(State.ERR_IO);
+      httpGet.abort();
     }
 
     clientPool.release(client);

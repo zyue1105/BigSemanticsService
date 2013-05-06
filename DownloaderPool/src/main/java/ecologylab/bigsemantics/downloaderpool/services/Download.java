@@ -18,7 +18,20 @@ public class Download extends Action
 {
 
   private static final long TIMEOUT = 60000;
-
+  
+  /**
+   * 
+   * @param remoteIp
+   * @param url
+   * @param userAgent
+   * @param interval
+   * @param longInterval
+   * @param numOfAttempts
+   * @param timeOfAttempt
+   * @param failPattern
+   * @param banPattern
+   * @return
+   */
   public DownloaderResult requestDownload(String remoteIp,
                                           String url,
                                           String userAgent,
@@ -86,6 +99,7 @@ public class Download extends Action
     {
       try
       {
+        logger.info("Waiting for Task[" + task.getId() + "] to be responded ...");
         lock.wait(TIMEOUT);
       }
       catch (InterruptedException e)
@@ -95,6 +109,7 @@ public class Download extends Action
       }
     }
 
+    logger.info("Task[" + task.getId() + "] responded, result = " + task.getResult());
     return task.getResult();
   }
 

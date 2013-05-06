@@ -18,17 +18,13 @@ import ecologylab.serialization.formatenums.StringFormat;
 public class Action
 {
 
-  protected static Logger logger;
+  protected Logger   logger;
 
-  static
-  {
-    logger = LoggerFactory.getLogger(Download.class);
-  }
-
-  private Controller    controller;
+  private Controller controller;
 
   public Action()
   {
+    logger = LoggerFactory.getLogger(this.getClass());
     logger.info(this.getClass().getName() + " Constructed");
   }
 
@@ -43,9 +39,9 @@ public class Action
   }
 
   protected Response generateResponse(Object result,
-                                    StringFormat serialFormat,
-                                    String mediaType,
-                                    String errorMsg)
+                                      StringFormat serialFormat,
+                                      String mediaType,
+                                      String errorMsg)
   {
     String content = Utils.serialize(result, serialFormat);
     Response resp = content == null

@@ -3,6 +3,9 @@ package ecologylab.bigsemantics.downloaderpool;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.base.Joiner;
+
+import ecologylab.generic.StringBuilderBaseUtils;
 import ecologylab.net.ParsedURL;
 import ecologylab.serialization.annotations.simpl_collection;
 import ecologylab.serialization.annotations.simpl_scalar;
@@ -14,12 +17,12 @@ import ecologylab.serialization.annotations.simpl_scalar;
  */
 public class DownloaderRequest
 {
-  
+
   /**
    * The ID of the downloader
    */
   @simpl_scalar
-  private String workerId;
+  private String       workerId;
 
   /**
    * Blacklisted domains. The controller will not return tasks with any of the domains in this
@@ -38,12 +41,12 @@ public class DownloaderRequest
   {
     super();
   }
-  
+
   public String getWorkerId()
   {
     return workerId;
   }
-  
+
   public void setWorkerId(String workerId)
   {
     this.workerId = workerId;
@@ -88,6 +91,17 @@ public class DownloaderRequest
   {
     if (domain != null && domain.length() > 0)
       this.blacklist().add(domain);
+  }
+
+  Joiner joiner = Joiner.on(',');
+  
+  public String getBlacklistString()
+  {
+    if (blacklist != null)
+    {
+      return joiner.join(blacklist);
+    }
+    return null;
   }
 
   /**

@@ -1,8 +1,8 @@
 package ecologylab.bigsemantics.downloaderpool.services;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.GET;
+import javax.ws.rs.FormParam;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
@@ -35,20 +35,21 @@ public class Report extends Action
    * @param contentDescription
    * @return
    */
-  @GET
+  @POST
   @Produces(MediaType.TEXT_PLAIN)
   public Response reportResult(@Context HttpServletRequest request,
-                               @QueryParam("wid") String workerId,
-                               @QueryParam("tid") String taskId,
-                               @QueryParam("state") State state,
-                               @QueryParam("code") int respCode,
-                               @QueryParam("msg") String respMsg,
-                               @QueryParam("mime") String mimeType,
-                               @QueryParam("charset") String charset,
-                               @QueryParam("content") String content,
-                               @QueryParam("descr") String contentDescription)
+                               @FormParam("wid") String workerId,
+                               @FormParam("tid") String taskId,
+                               @FormParam("state") State state,
+                               @FormParam("code") int respCode,
+                               @FormParam("msg") String respMsg,
+                               @FormParam("mime") String mimeType,
+                               @FormParam("charset") String charset,
+                               @FormParam("content") String content,
+                               @FormParam("descr") String contentDescription)
   {
     String ip = request.getRemoteAddr();
+    logger.info("received param map: " + request.getParameterMap());
     logger.info("Downloader[{}]@{} reported results for task[{}]; code: {}; content-length: {}.",
                 workerId,
                 ip,
@@ -69,7 +70,7 @@ public class Report extends Action
 
     ctrl.report(taskId, result);
 
-    return Response.ok().build();
+    return Response.ok("Task[" + taskId + "] received.").build();
   }
 
 }

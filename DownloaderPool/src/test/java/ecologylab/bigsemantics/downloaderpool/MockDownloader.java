@@ -13,6 +13,7 @@ public class MockDownloader extends Downloader
 
   // collaborating objects:
 
+
   /**
    * A preset responder (that will typically not actually connect to a controller on a server).
    */
@@ -35,6 +36,12 @@ public class MockDownloader extends Downloader
    * a serials of tasks, you can set this to false.
    */
   boolean                 usePresetTasksOnce = false;
+  
+  public MockDownloader(String name)
+  {
+    super(name);
+    // TODO Auto-generated constructor stub
+  }
 
   @Override
   public List<Task> requestTasks()

@@ -24,10 +24,12 @@ import ecologylab.bigsemantics.downloaderpool.Task.State;
  * 
  * @author quyin
  */
-public class Controller
+public class Controller extends Routine
 {
 
-  static private Logger                   logger;
+  private static final int                WAIT_BETWEEN_COUNTDOWN = 500;
+
+  private static Logger                   logger;
 
   static
   {
@@ -37,12 +39,12 @@ public class Controller
   /**
    * The maximum length of the task ID.
    */
-  private int                             taskIdLen             = 11;
+  private int                             taskIdLen              = 11;
 
   /**
    * The maximum number of tasks that can be assigned to a downloader.
    */
-  private int                             maxTasksPerDownloader = 10;
+  private int                             maxTasksPerDownloader  = 10;
 
   /**
    * The tasks that are received from clients, but not yet been assigned to downloaders.
@@ -71,13 +73,16 @@ public class Controller
     waitingTasks = new ConcurrentLinkedDeque<Task>();
     tasksByUri = new ConcurrentHashMap<String, Task>();
     CacheManager cacheManager = CacheManager.getInstance();
-    
+
     cacheManager.addCacheIfAbsent("tasks-by-id");
     allTasksById = cacheManager.getCache("tasks-by-id");
-    
+
     cacheManager.addCacheIfAbsent("tasks-by-uri");
     allTasksByUri = cacheManager.getCache("tasks-by-uri");
-    
+
+    setSleepBetweenLoop(WAIT_BETWEEN_COUNTDOWN);
+
+    setReady();
     logger.info("Controller is constructed.");
   }
 
@@ -136,6 +141,7 @@ public class Controller
       return;
     }
     task.setState(State.WAITING);
+    logger.info("enqueuing task " + task);
     waitingTasks.add(task);
   }
 
@@ -191,7 +197,6 @@ public class Controller
    */
   private void moveToWaitingTask(Task ongoingTask)
   {
-    // TODO reset task properties
     ongoingTask.setState(State.WAITING);
     waitingTasks.offer(ongoingTask);
   }
@@ -235,9 +240,9 @@ public class Controller
       {
         if (t.getAttempts() >= t.getMaxAttempts())
         {
-          // TODO notify the client that this task has been terminated
           t.setState(State.TERMINATED);
           tasksByUri.remove(t.getUri());
+          t.notifyObservers();
           break;
         }
         else
@@ -261,4 +266,20 @@ public class Controller
     }
   }
 
+  private long t = -1;
+
+  @Override
+  void routineBody()
+  {
+    if (t < 0)
+    {
+      t = System.currentTimeMillis();
+    }
+    else
+    {
+      long dt = System.currentTimeMillis() - t;
+      countDownTasks((int) dt);
+      t += dt;
+    }
+  }
 }

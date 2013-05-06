@@ -26,7 +26,7 @@ public class TestDownloader
   @Before
   public void init()
   {
-    d = new MockDownloader();
+    d = new MockDownloader("MockDownloader");
     d.setSleepBetweenLoop(100);
   }
 
@@ -90,16 +90,16 @@ public class TestDownloader
   }
 
   @Test
-  public void testFormingResult()
+  public void testCallingCallback()
   {
     long dt = d.getSleepBetweenLoop();
 
     d.presetTasks.add(new Task("1", "http://1.google.com"));
+    d.usePresetTasksOnce = true;
     d.start();
     Utils.sleep(dt);
     d.stop();
 
-    // in approx. 1 cycle, it should do 1 callback, but there chould 
     assertEquals(1, d.presetResponder.numCallbacks);
     MockPage page = (MockPage) d.presetResponder.lastCallbackPage;
     assertNotNull(page);

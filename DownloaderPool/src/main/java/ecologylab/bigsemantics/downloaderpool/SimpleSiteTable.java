@@ -4,6 +4,9 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ecologylab.concurrent.Site;
 
 /**
@@ -13,6 +16,13 @@ import ecologylab.concurrent.Site;
  */
 public class SimpleSiteTable
 {
+
+  private static Logger                         logger;
+
+  static
+  {
+    logger = LoggerFactory.getLogger(SimpleSiteTable.class);
+  }
 
   /**
    * The real table, from domain to Site object.
@@ -38,6 +48,7 @@ public class SimpleSiteTable
     }
     else
     {
+      logger.debug("Creating Site object for " + domain);
       site = new SimpleSite(domain);
       SimpleSite existingSite = sites.putIfAbsent(domain, site);
       if (existingSite != null)
@@ -58,16 +69,23 @@ public class SimpleSiteTable
   {
     Set<Site> results = new HashSet<Site>();
 
-    long t = System.currentTimeMillis();
+    long t0 = System.currentTimeMillis();
+    // logger.info("current time t0=" + t0);
     for (SimpleSite site : sites.values())
     {
+      long t = site.getNextAvailableTime();
+      // logger.info("Site[{}]: next available at {} (t{}{})",
+      // site,
+      // t,
+      // t > t0 ? "+" : "-",
+      // Math.abs(t - t0));
       // if the site is down or ignored, we treat it as busy because we don't want to download from
       // them anyway.
       if (site.isDown() || site.isIgnored())
       {
         results.add(site);
       }
-      if (site.isDownloadingConstrained() && site.getNextAvailableTime() > t)
+      if (site.isDownloadingConstrained() && t > t0)
       {
         results.add(site);
       }

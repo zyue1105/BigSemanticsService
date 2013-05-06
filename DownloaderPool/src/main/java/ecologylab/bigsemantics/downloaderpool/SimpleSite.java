@@ -227,5 +227,10 @@ public class SimpleSite implements Site
   {
     return cOther;
   }
+  
+  public String toString()
+  {
+    return this.getClass().getSimpleName() + "[" + domain + "]";
+  }
 
 }

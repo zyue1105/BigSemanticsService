@@ -16,7 +16,7 @@ import ecologylab.generic.ResourcePool;
 public class HttpClientPool extends ResourcePool<AbstractHttpClient>
 {
 
-  protected HttpClientPool()
+  public HttpClientPool()
   {
     super(false, 10, 10, false);
   }

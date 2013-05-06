@@ -2,12 +2,10 @@ package ecologylab.bigsemantics.downloaderpool;
 
 import java.io.IOException;
 
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.ParseException;
-import org.apache.http.client.ResponseHandler;
-import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ecologylab.bigsemantics.downloaderpool.DownloaderResult.State;
 
@@ -17,54 +15,33 @@ import ecologylab.bigsemantics.downloaderpool.DownloaderResult.State;
  * 
  * @author quyin
  */
-public class PageResponseHandler implements ResponseHandler<DownloaderResult>
+public class PageResponseHandler extends BasicResponseHandler
 {
-
-  /**
-   * The DownloaderResult object for this download.
-   */
-  private DownloaderResult result;
 
   public PageResponseHandler(DownloaderResult result)
   {
-    this.result = result;
+    super(result);
   }
 
   @Override
   public DownloaderResult handleResponse(HttpResponse resp)
   {
-    // status code
-    result.setHttpRespCode(resp.getStatusLine().getStatusCode());
+    Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    // status msg
-    result.setHttpRespMsg(resp.getStatusLine().getReasonPhrase());
-
-    // mime type and charset
-    HttpEntity entity = resp.getEntity();
-    Header contentTypeHeader = entity.getContentType(); // mime type + charset
-    String[] contentTypeInfo = contentTypeHeader.getValue().split(";");
-    String mimeType = contentTypeInfo[0].trim();
-    String charset = contentTypeInfo.length > 1 ? contentTypeInfo[1].trim() : null;
-    if (charset != null && charset.startsWith("charset="))
-    {
-      charset = charset.substring(8);
-    }
-    result.setMimeType(mimeType);
-    result.setCharset(charset);
-
-    // content
+    DownloaderResult result = (DownloaderResult) super.result;
+    result.setState(State.OK);
     try
     {
-      result.setContent(EntityUtils.toString(entity));
+      super.handleResponse(resp);
     }
     catch (ParseException e)
     {
-      // TODO logging
+      logger.error("Exception when parsing content from " + result.getRequestedUrl(), e);
       result.setState(State.ERR_CONTENT);
     }
     catch (IOException e)
     {
-      // TODO logging
+      logger.error("Exception when reading from " + result.getRequestedUrl(), e);
       result.setState(State.ERR_IO);
     }
 

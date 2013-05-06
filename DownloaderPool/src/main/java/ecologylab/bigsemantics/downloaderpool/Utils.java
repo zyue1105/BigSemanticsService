@@ -1,5 +1,20 @@
 package ecologylab.bigsemantics.downloaderpool;
 
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.message.BasicNameValuePair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.base.Charsets;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
@@ -48,12 +63,12 @@ public class Utils
   {
     return enc.encode(bytes);
   }
-  
+
   public static String serialize(Object obj, StringFormat fmt)
   {
     if (obj == null)
       return null;
-    
+
     try
     {
       return SimplTypesScope.serialize(obj, fmt).toString();
@@ -63,8 +78,84 @@ public class Utils
       // TODO logging
       e.printStackTrace();
     }
-    
+
     return null;
+  }
+
+  public static Object deserialize(CharSequence content, SimplTypesScope scope, StringFormat fmt)
+  {
+    if (content == null)
+      return null;
+
+    try
+    {
+      return scope.deserialize(content, fmt);
+    }
+    catch (SIMPLTranslationException e)
+    {
+      // TODO logging
+      e.printStackTrace();
+    }
+
+    return null;
+  }
+
+  public static HttpGet generateGetRequest(String url,
+                                           Map<String, String> additionalParams)
+  {
+    try
+    {
+      URIBuilder ub = new URIBuilder(url);
+      if (additionalParams != null)
+      {
+        for (String key : additionalParams.keySet())
+        {
+          String value = additionalParams.get(key);
+          ub.addParameter(key, value);
+        }
+      }
+      URI uri = ub.build();
+
+      String hostName = uri.getHost();
+      int port = uri.getPort();
+      String host = hostName + ((port > 0) ? (":" + port) : "");
+
+      HttpGet get = new HttpGet(uri);
+      get.addHeader("HOST", host); // this header is required by HTTP 1.1
+
+      return get;
+    }
+    catch (Exception e)
+    {
+      Logger logger = LoggerFactory.getLogger(Utils.class);
+      logger.error("Exception when generating a HttpGet object for " + url, e);
+      e.printStackTrace();
+    }
+    return null;
+  }
+
+  public static HttpPost generatePostRequest(String url, Map<String, String> formParams)
+  {
+    HttpPost post = new HttpPost(url);
+    URI uri = post.getURI();
+    String hostName = uri.getHost();
+    int port = uri.getPort();
+    String host = hostName + ((port > 0) ? (":" + port) : "");
+    post.addHeader("HOST", host); // this header is required by HTTP 1.1
+
+    List<NameValuePair> params = new ArrayList<NameValuePair>();
+    for (String key : formParams.keySet())
+    {
+      String value = formParams.get(key);
+      if (value != null)
+      {
+        params.add(new BasicNameValuePair(key, value));
+      }
+    }
+    HttpEntity entity = new UrlEncodedFormEntity(params, Charsets.UTF_8);
+    post.setEntity(entity);
+    
+    return post;
   }
 
 }
