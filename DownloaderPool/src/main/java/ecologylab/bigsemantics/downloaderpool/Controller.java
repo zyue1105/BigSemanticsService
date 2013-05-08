@@ -12,6 +12,7 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
+import org.apache.commons.configuration.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,27 +25,25 @@ import ecologylab.bigsemantics.downloaderpool.Task.State;
  * 
  * @author quyin
  */
-public class Controller extends Routine
+public class Controller extends Routine implements ControllerConfigNames
 {
 
-  private static final int                WAIT_BETWEEN_COUNTDOWN = 500;
-
-  private static Logger                   logger;
-
-  static
-  {
-    logger = LoggerFactory.getLogger(Controller.class);
-  }
+  private static Logger                   logger = LoggerFactory.getLogger(Controller.class);
 
   /**
-   * The maximum length of the task ID.
+   * The maximum length of the task ID. Default: 11.
    */
-  private int                             taskIdLen              = 11;
+  private int                             taskIdLen;
 
   /**
-   * The maximum number of tasks that can be assigned to a downloader.
+   * The maximum number of tasks that can be assigned to a downloader. Default: 10
    */
-  private int                             maxTasksPerDownloader  = 10;
+  private int                             maxTasksPerDownloader;
+  
+  /**
+   * Timeout for a client's requests (e.g. downloading a page), in seconds.
+   */
+  private int                             clientRequestTimeout;
 
   /**
    * The tasks that are received from clients, but not yet been assigned to downloaders.
@@ -68,8 +67,15 @@ public class Controller extends Routine
    */
   private Cache                           allTasksByUri;
 
-  public Controller()
+  public Controller(Configuration configs)
   {
+    super();
+    
+    this.setSleepBetweenLoop(configs.getInt(WAIT_BETWEEN_COUNTDOWN, 500));
+    this.taskIdLen = configs.getInt(TASK_ID_LENGTH, 11);
+    this.maxTasksPerDownloader = configs.getInt(MAX_TASKS_PER_DOWNLOADER, 10);
+    this.clientRequestTimeout = configs.getInt(CLIENT_REQUEST_TIMEOUT, 120);
+
     waitingTasks = new ConcurrentLinkedDeque<Task>();
     tasksByUri = new ConcurrentHashMap<String, Task>();
     CacheManager cacheManager = CacheManager.getInstance();
@@ -80,20 +86,18 @@ public class Controller extends Routine
     cacheManager.addCacheIfAbsent("tasks-by-uri");
     allTasksByUri = cacheManager.getCache("tasks-by-uri");
 
-    setSleepBetweenLoop(WAIT_BETWEEN_COUNTDOWN);
-
     setReady();
-    logger.info("Controller is constructed.");
+    logger.info("Controller is constructed and ready.");
   }
 
   public int getTaskIdLen()
   {
     return taskIdLen;
   }
-
-  public void setTaskIdLen(int taskIdLen)
+  
+  public int getClientRequestTimeout()
   {
-    this.taskIdLen = taskIdLen;
+    return clientRequestTimeout;
   }
 
   public Task getTask(String id)
@@ -129,7 +133,6 @@ public class Controller extends Routine
     if (existingTask != null)
     {
       task.setState(State.DEDUP);
-      existingTask.addClients(task.getClients());
       existingTask.addObserver(new Observer()
       {
         @Override
@@ -255,6 +258,12 @@ public class Controller extends Routine
     }
   }
 
+  /**
+   * Report a downloaded task.
+   * 
+   * @param taskId
+   * @param result
+   */
   public void report(String taskId, DownloaderResult result)
   {
     Task task = getTask(taskId);
@@ -266,6 +275,9 @@ public class Controller extends Routine
     }
   }
 
+  /**
+   * Used to record how much time has elapsed before last count-down.
+   */
   private long t = -1;
 
   @Override
@@ -282,4 +294,5 @@ public class Controller extends Routine
       t += dt;
     }
   }
+
 }

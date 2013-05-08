@@ -1,8 +1,9 @@
 package ecologylab.bigsemantics.downloaderpool;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Observable;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ecologylab.net.ParsedURL;
 import ecologylab.serialization.annotations.simpl_composite;
@@ -17,6 +18,8 @@ import ecologylab.serialization.annotations.simpl_scalar;
  */
 public class Task extends Observable
 {
+
+  private static Logger logger = LoggerFactory.getLogger(Task.class);
 
   public static enum ObservableEventType
   {
@@ -151,10 +154,6 @@ public class Task extends Observable
    */
   private ParsedURL        purl;
 
-  // TODO we need locking around clients collection: when we are modifying this collection, the
-  // collection should not be used.
-  private List<ClientStub> clients;
-
   private int              attempts;
 
   private int              timer;
@@ -176,8 +175,8 @@ public class Task extends Observable
     this.uri = uri;
     this.state = State.INIT;
 
-    this.clients = new ArrayList<ClientStub>();
     this.lockState = new Object();
+    logger.info("Task created: id={}, url={}", id, uri);
   }
 
   public String getId()
@@ -206,6 +205,7 @@ public class Task extends Observable
     {
       this.state = state;
     }
+    this.setChanged();
     notifyObservers(ObservableEventType.STATE_CHANGE);
   }
 
@@ -297,30 +297,6 @@ public class Task extends Observable
     return purl;
   }
 
-  public List<ClientStub> getClients()
-  {
-    synchronized (clients)
-    {
-      return clients;
-    }
-  }
-
-  public void addClient(ClientStub client)
-  {
-    synchronized (clients)
-    {
-      clients.add(client);
-    }
-  }
-
-  public void addClients(List<ClientStub> moreClients)
-  {
-    synchronized (clients)
-    {
-      clients.addAll(moreClients);
-    }
-  }
-
   public synchronized int getAttempts()
   {
     return attempts;
@@ -352,6 +328,11 @@ public class Task extends Observable
   public void setResult(DownloaderResult result)
   {
     this.result = result;
+  }
+
+  public String toString()
+  {
+    return String.format("Task[%s](%s)", id, state);
   }
 
 }

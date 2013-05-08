@@ -5,6 +5,7 @@ import java.util.List;
 import ecologylab.serialization.annotations.simpl_collection;
 
 /**
+ * Convenient message class that encloses multiple tasks.
  * 
  * @author quyin
  */
@@ -23,5 +24,5 @@ public class AssignedTasks
   {
     this.tasks = tasks;
   }
-  
+
 }

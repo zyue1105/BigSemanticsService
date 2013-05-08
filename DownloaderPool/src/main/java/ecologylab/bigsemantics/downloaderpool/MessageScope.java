@@ -3,6 +3,7 @@ package ecologylab.bigsemantics.downloaderpool;
 import ecologylab.serialization.SimplTypesScope;
 
 /**
+ * The SIMPL scope for all the messages used by the controller and the downloaders.
  * 
  * @author quyin
  */
@@ -17,7 +18,7 @@ public class MessageScope
       AssignedTasks.class,
       BasicResponse.class,
       DownloaderResult.class,
-  };
+                                      };
 
   public static SimplTypesScope get()
   {

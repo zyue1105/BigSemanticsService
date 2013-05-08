@@ -7,6 +7,9 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
+import org.apache.commons.configuration.Configuration;
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.PropertiesConfiguration;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -24,9 +27,10 @@ public class TestDownloader
   MockDownloader d;
 
   @Before
-  public void init()
+  public void init() throws ConfigurationException
   {
-    d = new MockDownloader("MockDownloader");
+    Configuration configs = new PropertiesConfiguration("dpool-testing.properties");
+    d = new MockDownloader(configs);
     d.setSleepBetweenLoop(100);
   }
 

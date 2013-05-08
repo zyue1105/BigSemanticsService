@@ -10,6 +10,7 @@ import org.apache.http.client.ResponseHandler;
 import org.apache.http.util.EntityUtils;
 
 /**
+ * A handler that modifies or returns a BasicResponse.
  * 
  * @author quyin
  */
@@ -17,15 +18,24 @@ public class BasicResponseHandler implements ResponseHandler<BasicResponse>
 {
 
   protected BasicResponse result;
+  
+  public BasicResponseHandler()
+  {
+    this(null);
+  }
 
   public BasicResponseHandler(BasicResponse result)
   {
+    super();
     this.result = result;
   }
 
   @Override
   public BasicResponse handleResponse(HttpResponse resp) throws IOException, ParseException
   {
+    if (result == null)
+      result = new BasicResponse();
+    
     // status code
     result.setHttpRespCode(resp.getStatusLine().getStatusCode());
 

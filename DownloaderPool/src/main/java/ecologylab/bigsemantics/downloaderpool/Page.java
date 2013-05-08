@@ -23,18 +23,13 @@ import ecologylab.net.ParsedURL;
 public class Page implements Downloadable
 {
 
-  private static Logger    logger;
-
-  static
-  {
-    logger = LoggerFactory.getLogger(Page.class);
-  }
+  private static Logger    logger = LoggerFactory.getLogger(Page.class);
 
   // collaborating objects:
 
-  HttpClientPool           clientPool;
+  HttpClientFactory        clientFactory;
 
-  SimpleSiteTable          sst;
+  SimpleSiteTable          siteTable;
 
   // properties:
 
@@ -44,12 +39,12 @@ public class Page implements Downloadable
 
   private DownloaderResult result;
 
-  public Page(String id, ParsedURL location, String userAgent)
+  public Page(String taskId, ParsedURL location, String userAgent)
   {
     this.location = location;
     this.userAgent = userAgent;
     result = new DownloaderResult();
-    result.setTaskId(id);
+    result.setTaskId(taskId);
   }
 
   @Override
@@ -75,7 +70,7 @@ public class Page implements Downloadable
     if (location != null)
     {
       String domain = location.domain();
-      return sst.getSite(domain, 0);
+      return siteTable.getSite(domain, 0);
     }
     return null;
   }
@@ -96,7 +91,8 @@ public class Page implements Downloadable
   @Override
   public void performDownload()
   {
-    AbstractHttpClient client = clientPool.acquire();
+    AbstractHttpClient client = clientFactory.get();
+
     if (userAgent != null && userAgent.length() > 0)
     {
       client.getParams().setParameter(CoreProtocolPNames.USER_AGENT, userAgent);
@@ -112,20 +108,16 @@ public class Page implements Downloadable
     }
     catch (ClientProtocolException e)
     {
-      // TODO logging
       logger.error("Exception when connecting to " + location, e);
       result.setState(State.ERR_PROTOCOL);
       httpGet.abort();
     }
     catch (IOException e)
     {
-      // TODO logging
       logger.error("Exception when reading from " + location, e);
       result.setState(State.ERR_IO);
       httpGet.abort();
     }
-
-    clientPool.release(client);
   }
 
   public DownloaderResult getResult()

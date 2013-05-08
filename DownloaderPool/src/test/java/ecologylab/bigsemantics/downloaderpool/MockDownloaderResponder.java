@@ -14,7 +14,7 @@ public class MockDownloaderResponder extends DownloaderResponder
 
   public MockDownloaderResponder()
   {
-    super(null);
+    super(null, null);
   }
 
   @Override

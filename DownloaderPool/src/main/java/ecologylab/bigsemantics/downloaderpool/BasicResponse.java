@@ -7,9 +7,9 @@ import ecologylab.serialization.annotations.simpl_collection;
 import ecologylab.serialization.annotations.simpl_scalar;
 
 /**
+ * Basic response from a HTTP request.
  * 
  * @author quyin
- * 
  */
 public class BasicResponse
 {

@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.google.common.base.Joiner;
 
-import ecologylab.generic.StringBuilderBaseUtils;
 import ecologylab.net.ParsedURL;
 import ecologylab.serialization.annotations.simpl_collection;
 import ecologylab.serialization.annotations.simpl_scalar;
@@ -94,7 +93,7 @@ public class DownloaderRequest
   }
 
   Joiner joiner = Joiner.on(',');
-  
+
   public String getBlacklistString()
   {
     if (blacklist != null)

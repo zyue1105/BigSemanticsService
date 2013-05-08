@@ -152,6 +152,11 @@
         	<artifactId>jsr166</artifactId>
         	<version>1.7.0</version>
         </dependency>
+        <dependency>
+        	<groupId>commons-configuration</groupId>
+        	<artifactId>commons-configuration</artifactId>
+        	<version>1.9</version>
+        </dependency>
     </dependencies>
     <properties>
         <jersey.version>1.17.1</jersey.version>

@@ -3,6 +3,8 @@ package ecologylab.bigsemantics.downloaderpool;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.configuration.Configuration;
+
 /**
  * A mock downloader for testing
  * 
@@ -37,9 +39,9 @@ public class MockDownloader extends Downloader
    */
   boolean                 usePresetTasksOnce = false;
   
-  public MockDownloader(String name)
+  public MockDownloader(Configuration configs)
   {
-    super(name);
+    super(configs);
     // TODO Auto-generated constructor stub
   }
 
@@ -61,8 +63,8 @@ public class MockDownloader extends Downloader
   {
     // creates a MockPage instead of Page
     Page page = new MockPage(task.getId(), task.getPurl(), task.getUserAgent());
-    page.clientPool = this.clientPool;
-    page.sst = this.sst;
+    page.clientFactory = this.clientFactory;
+    page.siteTable = this.siteTable;
     return page;
   }
 

@@ -6,10 +6,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.configuration.Configuration;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.AbstractHttpClient;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,51 +29,86 @@ import ecologylab.serialization.formatenums.StringFormat;
  * @author quyin
  * 
  */
-public class Downloader extends Routine
+public class Downloader extends Routine implements DownloaderConfigNames
 {
 
-  private static Logger logger;
-
-  static
-  {
-    logger = LoggerFactory.getLogger(Downloader.class);
-  }
+  private static Logger logger = LoggerFactory.getLogger(Downloader.class);
 
   // configs:
-  // TODO should go into a config file
 
-  String                controllerBaseUrl  = "http://localhost:8080/DownloaderPool/assign.xml";
+  private String        name;
 
-  int                   numDownloadThreads = 4;
+  private String        controllerBaseUrl;
 
-  int                   maxTaskCount       = 10;
+  private int           numDownloadThreads;
+
+  private int           maxTaskCount;
 
   // collaborating objects:
 
   DownloadMonitor<Page> downloadMonitor;
 
-  SimpleSiteTable       sst;
+  SimpleSiteTable       siteTable;
 
-  HttpClientPool        clientPool;
+  HttpClientFactory     clientFactory;
 
-  /**
-   * This client is used to communicate with the controller.
-   */
-  HttpClient            client;
-
-  // runtime properties:
-
-  private String        name;
-
-  public Downloader(String name)
+  public Downloader(Configuration configs)
   {
     super();
-    this.name = name;
-    downloadMonitor = new DownloadMonitor<Page>("Downloader: " + name, numDownloadThreads);
-    sst = new SimpleSiteTable();
-    clientPool = new HttpClientPool();
-    client = clientPool.acquire();
+
+    this.name = configs.getString(NAME, null);
+    String[] baseUrls = configs.getStringArray(CONTROLLER_BASE_URL);
+    this.controllerBaseUrl = findWorkingControllerBaseUrl(baseUrls);
+    this.numDownloadThreads = configs.getInt(NUM_DOWNLOADING_THREADS, 4);
+    this.maxTaskCount = configs.getInt(MAX_TASK_COUNT, 10);
+
+    downloadMonitor = new DownloadMonitor<Page>("DownloadMonitor[" + name + "]", numDownloadThreads);
+    siteTable = new SimpleSiteTable();
+    clientFactory = new HttpClientFactory();
+
     setReady();
+    logger.info("Downloader[{}] is constructed and ready.", name);
+  }
+
+  protected String findWorkingControllerBaseUrl(String... baseUrls)
+  {
+    for (String baseUrl : baseUrls)
+    {
+      String echoUrl = baseUrl + "echo/get";
+      if (tryEcho(echoUrl))
+        return baseUrl;
+    }
+    return null;
+  }
+
+  private boolean tryEcho(String echoUrl)
+  {
+    Map<String, String> params = new HashMap<String, String>();
+    String ts = String.valueOf(System.currentTimeMillis());
+    String msg = Utils.base64urlEncode(Utils.hashToBytes(ts));
+    params.put("msg", msg);
+    HttpGet get = Utils.generateGetRequest(echoUrl, params);
+    HttpClient client = new DefaultHttpClient();
+    BasicResponse resp = null;
+    try
+    {
+      resp = client.execute(get, new BasicResponseHandler());
+    }
+    catch (ClientProtocolException e)
+    {
+      logger.info("Protocol error when trying " + echoUrl);
+    }
+    catch (IOException e)
+    {
+      logger.info("I/O error when trying " + echoUrl);
+    }
+    if (resp != null
+        && resp.getHttpRespCode() == HttpStatus.SC_OK
+        && resp.getContent().contains(msg))
+    {
+      return true;
+    }
+    return false;
   }
 
   public String getName()
@@ -96,14 +134,14 @@ public class Downloader extends Routine
       params.put("blacklist", blist);
     }
     params.put("ntask", String.valueOf(this.maxTaskCount));
-    HttpGet get = Utils.generateGetRequest(controllerBaseUrl, params);
-    logger.info("HTTP GET: " + get.getURI());
+    String assignUrl = controllerBaseUrl + "task/assign.xml";
+    HttpGet get = Utils.generateGetRequest(assignUrl, params);
 
     int status = -1;
     try
     {
-      BasicResponse result = new BasicResponse();
-      client.execute(get, new BasicResponseHandler(result));
+      AbstractHttpClient client = clientFactory.get();
+      BasicResponse result = client.execute(get, new BasicResponseHandler());
       status = result.getHttpRespCode();
       String content = result.getContent();
       if (status == HttpStatus.SC_OK)
@@ -115,8 +153,8 @@ public class Downloader extends Routine
       }
       else
       {
-        logger.info("Status message: " + result.getHttpRespMsg());
-        logger.info("Content:\n" + content);
+        logger.error("Status message: " + result.getHttpRespMsg());
+        logger.error("Content:\n" + content);
       }
     }
     catch (ClientProtocolException e)
@@ -145,7 +183,7 @@ public class Downloader extends Routine
   {
     DownloaderRequest req = new DownloaderRequest();
     req.setMaxTaskCount(maxTaskCount);
-    Set<Site> busySites = sst.getBusySites();
+    Set<Site> busySites = siteTable.getBusySites();
     for (Site site : busySites)
     {
       req.addToBlacklist(site.domain());
@@ -181,7 +219,7 @@ public class Downloader extends Routine
         if (purl != null)
         {
           String domain = purl.domain();
-          sst.getSite(domain, task.getDomainInterval());
+          siteTable.getSite(domain, task.getDomainInterval());
         }
       }
     }
@@ -218,8 +256,8 @@ public class Downloader extends Routine
   protected Page createPage(Task task)
   {
     Page page = new Page(task.getId(), task.getPurl(), task.getUserAgent());
-    page.clientPool = this.clientPool;
-    page.sst = this.sst;
+    page.clientFactory = this.clientFactory;
+    page.siteTable = this.siteTable;
     return page;
   }
 
@@ -243,9 +281,17 @@ public class Downloader extends Routine
    */
   protected DownloaderResponder createDownloaderResponder(Task associatedTask)
   {
-    DownloaderResponder downloaderResponder = new DownloaderResponder(associatedTask);
+    String reportUrl = controllerBaseUrl + "page/report";
+    DownloaderResponder downloaderResponder = new DownloaderResponder(reportUrl, associatedTask);
     downloaderResponder.downloader = this;
     return downloaderResponder;
+  }
+
+  @Override
+  public void stop()
+  {
+    downloadMonitor.stop();
+    super.stop();
   }
 
 }

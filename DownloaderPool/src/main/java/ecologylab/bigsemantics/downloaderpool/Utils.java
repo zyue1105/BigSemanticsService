@@ -32,6 +32,8 @@ import ecologylab.serialization.formatenums.StringFormat;
 public class Utils
 {
 
+  static Logger logger = LoggerFactory.getLogger(Utils.class);
+
   /**
    * Sleep for the given time in milliseconds. The sleep can be interrupted but it won't throw
    * exceptions.
@@ -75,8 +77,7 @@ public class Utils
     }
     catch (SIMPLTranslationException e)
     {
-      // TODO logging
-      e.printStackTrace();
+      logger.error("Exception during serializing " + obj, e);
     }
 
     return null;
@@ -93,8 +94,7 @@ public class Utils
     }
     catch (SIMPLTranslationException e)
     {
-      // TODO logging
-      e.printStackTrace();
+      logger.error("Exception during deserializing:\n" + content, e);
     }
 
     return null;
@@ -127,9 +127,7 @@ public class Utils
     }
     catch (Exception e)
     {
-      Logger logger = LoggerFactory.getLogger(Utils.class);
       logger.error("Exception when generating a HttpGet object for " + url, e);
-      e.printStackTrace();
     }
     return null;
   }
@@ -154,7 +152,7 @@ public class Utils
     }
     HttpEntity entity = new UrlEncodedFormEntity(params, Charsets.UTF_8);
     post.setEntity(entity);
-    
+
     return post;
   }
 

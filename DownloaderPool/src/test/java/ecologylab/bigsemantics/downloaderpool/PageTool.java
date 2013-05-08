@@ -32,8 +32,8 @@ public class PageTool
       }
 
       Page p = new Page("page-tool", ParsedURL.getAbsolute(url), null);
-      p.clientPool = new HttpClientPool();
-      p.sst = new SimpleSiteTable();
+      p.clientFactory = new HttpClientFactory();
+      p.siteTable = new SimpleSiteTable();
       p.performDownload();
       DownloaderResult result = p.getResult();
       

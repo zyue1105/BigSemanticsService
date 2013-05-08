@@ -8,18 +8,19 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 /**
- * Viewing a downloaded page.
+ * View service log.
  * 
  * @author quyin
  */
-@Path("/page.json")
-public class PageJson
+@Path("/log")
+public class LogRequest extends RequestHandlerForController
 {
 
   @GET
-  @Produces(MediaType.APPLICATION_JSON)
-  public Response viewPage(@QueryParam("id") String workerId,
-                           @QueryParam("url") String url)
+  @Produces(MediaType.TEXT_PLAIN)
+  public Response viewLog(@QueryParam("prefix") String prefix,
+                          @QueryParam("from") String from,
+                          @QueryParam("to") String to)
   {
     // TODO
     return null;

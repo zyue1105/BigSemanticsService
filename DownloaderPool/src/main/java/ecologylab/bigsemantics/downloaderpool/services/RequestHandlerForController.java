@@ -12,17 +12,18 @@ import ecologylab.bigsemantics.downloaderpool.Utils;
 import ecologylab.serialization.formatenums.StringFormat;
 
 /**
+ * A base class for request handlers on the controller side.
  * 
  * @author quyin
  */
-public class Action
+public class RequestHandlerForController
 {
 
   protected Logger   logger;
 
   private Controller controller;
 
-  public Action()
+  public RequestHandlerForController()
   {
     logger = LoggerFactory.getLogger(this.getClass());
     logger.info(this.getClass().getName() + " Constructed");
@@ -36,6 +37,8 @@ public class Action
   public void setController(Controller controller)
   {
     this.controller = controller;
+    controller.start();
+    logger.info("Controller hooked and started (if not yet).");
   }
 
   protected Response generateResponse(Object result,

@@ -10,7 +10,6 @@ import org.apache.http.HttpStatus;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,19 +25,23 @@ import ecologylab.generic.Continuation;
 public class DownloaderResponder implements Continuation<Page>
 {
 
-  static String CONTROLLER_REPORT_URL = "http://localhost:8080/DownloaderPool/report";
+  static Logger  logger = LoggerFactory.getLogger(DownloaderResponder.class);
 
-  static Logger logger                = LoggerFactory.getLogger(DownloaderResponder.class);
-
-  Downloader    downloader;
+  /**
+   * The URL used to report downloaded pages to the controller.
+   */
+  private String controllerReportUrl;
 
   /**
    * The task that we need to respond to.
    */
-  private Task  associatedTask;
+  private Task   associatedTask;
 
-  public DownloaderResponder(Task associatedTask)
+  Downloader     downloader;
+
+  public DownloaderResponder(String controllerReportUrl, Task associatedTask)
   {
+    this.controllerReportUrl = controllerReportUrl;
     this.associatedTask = associatedTask;
   }
 
@@ -66,35 +69,38 @@ public class DownloaderResponder implements Continuation<Page>
     params.put("content", result.getContent());
     params.put("descr", result.getContentDescription());
     logger.info("form params: " + params);
-    HttpPost post = Utils.generatePostRequest(CONTROLLER_REPORT_URL, params);
+    HttpPost post = Utils.generatePostRequest(controllerReportUrl, params);
 
-    BasicResponse postResult = new BasicResponse();
     try
     {
-      HttpClient client = new DefaultHttpClient();
-      client.execute(post, new BasicResponseHandler(postResult));
+      HttpClient client = downloader.clientFactory.get();
+      BasicResponse postResult = client.execute(post, new BasicResponseHandler());
+      if (postResult.getHttpRespCode() == HttpStatus.SC_OK)
+      {
+        logger.info("Downloading result reported.");
+      }
+      else
+      {
+        logger.error("Error reporting downloading result: {}: {}",
+                     postResult.getHttpRespCode(),
+                     postResult.getHttpRespMsg());
+      }
     }
     catch (ClientProtocolException e)
     {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      logger.error("Protocol exception when reporting to "
+                   + controllerReportUrl
+                   + " with "
+                   + associatedTask, e);
     }
     catch (IOException e)
     {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      logger.error("I/O exception when reporting to "
+                   + controllerReportUrl
+                   + " with "
+                   + associatedTask, e);
     }
 
-    if (postResult.getHttpRespCode() == HttpStatus.SC_OK)
-    {
-      logger.info("Downloading result reported.");
-    }
-    else
-    {
-      logger.error("Error reporting downloading result: {}: {}",
-                   postResult.getHttpRespCode(),
-                   postResult.getHttpRespMsg());
-    }
   }
 
   /**

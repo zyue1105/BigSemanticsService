@@ -5,6 +5,9 @@ import static org.junit.Assert.assertNotNull;
 
 import java.util.List;
 
+import org.apache.commons.configuration.Configuration;
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.PropertiesConfiguration;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -24,9 +27,10 @@ public class TestController
   Controller ctrl;
 
   @Before
-  public void init()
+  public void init() throws ConfigurationException
   {
-    ctrl = new Controller();
+    Configuration configs = new PropertiesConfiguration("dpool-testing.properties");
+    ctrl = new Controller(configs);
   }
 
   @Test
@@ -59,17 +63,14 @@ public class TestController
   public void testAddTasksWithSameUri()
   {
     Task task1 = new Task("my-task-1", "http://example.com");
-    task1.addClient(new ClientStub("client 1"));
     ctrl.queueTask(task1);
     Task task2 = new Task("my-task-2", "http://example.com");
-    task2.addClient(new ClientStub("client 2"));
     ctrl.queueTask(task2);
     // when you queue two tasks with the same URL, they should be merged into one task.
     // the merged task should contain clients for both of the origin ones.
     // the state of the 2nd task should become DEDUP.
     assertEquals(1, ctrl.countWaitingTasks());
     assertEquals(State.DEDUP, task2.getState());
-    assertEquals(2, task1.getClients().size());
   }
 
   @Test
@@ -115,7 +116,7 @@ public class TestController
   {
     Task task = new Task("my-task-0", "http://example.com");
     task.setAttemptTime(200); // each attempt should be within 200ms
-    task.setMaxAttempts(2);   // 2 attempts at most
+    task.setMaxAttempts(2); // 2 attempts at most
     ctrl.queueTask(task);
 
     // t = 0ms from beginning
