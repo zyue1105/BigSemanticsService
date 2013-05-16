@@ -104,8 +104,8 @@ public class SemanticServiceScope extends SemanticsGlobalScope
       HTTPDownloadController.SERVICE_LOC =
           getProperty(serviceProps, "DOWNLOAD_SERVICE_LOCATION", null);
       
-      DPoolDownloadController.SERVICE_LOC =
-          getProperty(serviceProps, "DPOOL_SERVICE_LOCATION", null);
+      String serviceLocs = getProperty(serviceProps, "DPOOL_SERVICE_LOCATIONS", null);
+      DPoolDownloadController.setServiceLocs(serviceLocs);
     }
     catch (Exception e)
     {

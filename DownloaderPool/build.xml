@@ -71,16 +71,12 @@
 	</target>
 
 	<target name="war" depends="compile">
-		<war basedir="${dist.dir}" destfile="${ant.project.name}.war" webxml="${webapp.dir}/WEB-INF/web.xml">
+		<war basedir="${dist.dir}" destfile="${build.dir}/${ant.project.name}.war" webxml="${webapp.dir}/WEB-INF/web.xml">
 			<webinf dir="${dist.dir}/WEB-INF/" />
 			<metainf dir="${webapp.dir}/META-INF/" />
 		</war>
 	</target>
 	
-	<target name="downloader-jar" depends="compile">
-		<jar basedir="${dist.classes.dir}" destfile="${basedir}/Downloader.jar" />
-	</target>
-
 	<target name="main" depends="war" />
 
 </project>

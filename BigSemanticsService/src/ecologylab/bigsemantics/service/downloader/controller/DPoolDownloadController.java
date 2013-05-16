@@ -30,7 +30,6 @@ import ecologylab.bigsemantics.metadata.builtins.Document;
 import ecologylab.bigsemantics.metadata.builtins.DocumentClosure;
 import ecologylab.concurrent.DownloadableLogRecord;
 import ecologylab.generic.Debug;
-import ecologylab.generic.StringInputStream;
 import ecologylab.net.PURLConnection;
 import ecologylab.net.ParsedURL;
 import ecologylab.serialization.SIMPLTranslationException;
@@ -45,14 +44,63 @@ import ecologylab.serialization.formatenums.StringFormat;
 public class DPoolDownloadController extends Debug implements DownloadController
 {
 
-  public static int                     HTTP_DOWNLOAD_REQUEST_TIMEOUT = 45000;
+  public static int     HTTP_DOWNLOAD_REQUEST_TIMEOUT = 45000;
+  
+  private static String SERVICE_LOCS;
 
-  public static String                  SERVICE_LOC;
+  private static String SERVICE_LOC;
+
+  public static void setServiceLocs(String serviceLocs)
+  {
+    SERVICE_LOCS = serviceLocs;
+  }
+  
+  private static void tryServiceLocs()
+  {
+    String[] locs = SERVICE_LOCS.split(",");
+    for (String loc : locs)
+    {
+      debugT(DPoolDownloadController.class, ": trying dpool service at " + loc);
+      try
+      {
+        String testLoc = loc.replace("page/download.xml", "echo/get?msg=TEST");
+        Client client = Client.create();
+        WebResource r = client.resource(URI.create(testLoc));
+        ClientResponse resp = r.get(ClientResponse.class);
+        if (resp != null && resp.getStatus() == ClientResponse.Status.OK.getStatusCode())
+        {
+          String content = resp.getEntity(String.class);
+          if (content.contains("TEST"))
+          {
+            debugT(DPoolDownloadController.class, ": picked dpool service at " + loc);
+            SERVICE_LOC = loc;
+            return;
+          }
+        }
+      }
+      catch (Throwable t)
+      {
+        // do nothing.
+      }
+    }
+  }
 
   ConcurrentHashMap<ParsedURL, Boolean> recentlyCached;
 
   public DPoolDownloadController()
   {
+    assert SERVICE_LOCS != null;
+    if (SERVICE_LOC == null)
+    {
+      synchronized (SERVICE_LOCS)
+      {
+        if (SERVICE_LOC == null)
+        {
+          tryServiceLocs();
+        }
+      }
+    }
+
     recentlyCached = new ConcurrentHashMap<ParsedURL, Boolean>(1000);
   }
 

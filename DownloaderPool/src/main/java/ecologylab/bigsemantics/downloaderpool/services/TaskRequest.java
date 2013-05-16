@@ -44,11 +44,11 @@ public class TaskRequest extends RequestHandlerForController
                               String blacklist,
                               int maxTaskCount)
   {
-    logger.info("Downloader[{}]@{} asks for tasks; blacklist: {}; count: {}.",
-                workerId,
-                remoteIp,
-                blacklist,
-                maxTaskCount);
+    logger.debug("Downloader[{}]@{} asks for tasks; blacklist: {}; count: {}.",
+                 workerId,
+                 remoteIp,
+                 blacklist,
+                 maxTaskCount);
     Controller ctrl = getController();
 
     DownloaderRequest req = new DownloaderRequest();
@@ -65,7 +65,14 @@ public class TaskRequest extends RequestHandlerForController
 
     List<Task> tasks = ctrl.getTasksForWork(req);
     int n = tasks == null ? 0 : tasks.size();
-    logger.info("{} task(s) will be assigned to Downloader[{}]@{}.", n, workerId, remoteIp);
+    if (n > 0)
+    {
+      logger.info("{} task(s) will be assigned to Downloader[{}]@{}.", n, workerId, remoteIp);
+    }
+    else
+    {
+      logger.debug("{} task(s) will be assigned to Downloader[{}]@{}.", n, workerId, remoteIp);
+    }
 
     AssignedTasks result = new AssignedTasks();
     result.setTasks(tasks);

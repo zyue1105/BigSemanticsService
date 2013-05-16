@@ -19,7 +19,11 @@ import ecologylab.serialization.annotations.simpl_scalar;
 public class Task extends Observable
 {
 
-  private static Logger logger = LoggerFactory.getLogger(Task.class);
+  private static final int DEFAULT_ATTEMPT_TIME = 60 * 1000;
+
+  public static final int  DEFAULT_MAX_ATTEMPTS = 1;
+
+  private static Logger    logger               = LoggerFactory.getLogger(Task.class);
 
   public static enum ObservableEventType
   {
@@ -121,13 +125,13 @@ public class Task extends Observable
    * and it didn't succeed, the task is seen as undoable, thus terminated.
    */
   @simpl_scalar
-  private int              maxAttempts;
+  private int              maxAttempts = DEFAULT_MAX_ATTEMPTS;
 
   /**
    * The time for each attempt, in millisecond.
    */
   @simpl_scalar
-  private int              attemptTime;
+  private int              attemptTime = DEFAULT_ATTEMPT_TIME;
 
   /**
    * Some websites returns an error page with status code 200. This regex helps detect such cases,
@@ -160,6 +164,8 @@ public class Task extends Observable
 
   private Object           lockState;
 
+  private Object           lockResult;
+
   /**
    * (for simpl)
    */
@@ -171,11 +177,15 @@ public class Task extends Observable
   public Task(String id, String uri)
   {
     super();
-    this.id = id;
-    this.uri = uri;
+
+    setId(id);
+    setUri(uri);
+
     this.state = State.INIT;
 
     this.lockState = new Object();
+    this.lockResult = new Object();
+
     logger.info("Task created: id={}, url={}", id, uri);
   }
 
@@ -216,6 +226,14 @@ public class Task extends Observable
 
   public void setUri(String uri)
   {
+    if (uri != null)
+    {
+      if (!uri.matches("\\w+://.*"))
+      {
+        uri = "http://" + uri;
+      }
+      uri = uri.replace(' ', '+');
+    }
     this.uri = uri;
   }
 
@@ -322,12 +340,22 @@ public class Task extends Observable
 
   public DownloaderResult getResult()
   {
-    return result;
+    synchronized (lockResult)
+    {
+      return result;
+    }
   }
 
   public void setResult(DownloaderResult result)
   {
-    this.result = result;
+    synchronized (lockResult)
+    {
+      if (this.result != null && result == null)
+      {
+        logger.warn("setting result for {} to null!", this);
+      }
+      this.result = result;
+    }
   }
 
   public String toString()

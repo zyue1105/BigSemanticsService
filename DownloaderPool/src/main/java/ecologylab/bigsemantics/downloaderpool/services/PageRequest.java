@@ -54,7 +54,8 @@ public class PageRequest extends RequestHandlerForController
                                    int numOfAttempts,
                                    int timeOfAttempt,
                                    String failPattern,
-                                   String banPattern)
+                                   String banPattern,
+                                   String[] outTid)
   {
     Controller ctrl = getController();
     
@@ -63,6 +64,10 @@ public class PageRequest extends RequestHandlerForController
     byte[] hash = Utils.hashToBytes(sb.toString());
     String tid = Utils.base64urlEncode(hash).substring(0, ctrl.getTaskIdLen());
     StringBuilderBaseUtils.release(sb);
+    if (outTid != null && outTid.length >= 1)
+    {
+      outTid[0] = tid;
+    }
 
     Task task = new Task(tid, url);
     task.setUserAgent(userAgent);
@@ -116,8 +121,9 @@ public class PageRequest extends RequestHandlerForController
 
       try
       {
-        logger.info("Waiting for Task[" + task.getId() + "] to be responded ...");
-        lock.wait(ctrl.getClientRequestTimeout() * 1000);
+        int timeout = ctrl.getClientRequestTimeout();
+        logger.info("Waiting for {} to be responded in {} second(s)...", task, timeout);
+        lock.wait(timeout * 1000);
       }
       catch (InterruptedException e)
       {
@@ -126,8 +132,9 @@ public class PageRequest extends RequestHandlerForController
       }
     }
 
-    logger.info("Task[" + task.getId() + "] responded, result = " + task.getResult());
-    return task.getResult();
+    DownloaderResult result = task.getResult();
+    logger.info("Task[" + task.getId() + "] responded, result = " + result);
+    return result;
   }
 
   @Path("/download.json")
@@ -144,6 +151,7 @@ public class PageRequest extends RequestHandlerForController
                                @QueryParam("banp") String banPattern)
   {
     String remoteIp = request.getRemoteAddr();
+    String[] tid = new String[1];
     DownloaderResult result = this.download(remoteIp,
                                             url,
                                             userAgent,
@@ -152,12 +160,13 @@ public class PageRequest extends RequestHandlerForController
                                             numOfAttempts,
                                             timeOfAttempt,
                                             failPattern,
-                                            banPattern);
+                                            banPattern,
+                                            tid);
 
     return generateResponse(result,
                             StringFormat.JSON,
                             MediaType.APPLICATION_JSON,
-                            "The Request Cannot Be Fulfilled.");
+                            "The Request Cannot Be Fulfilled. Task id: " + tid[0]);
   }
 
   @Path("/download.xml")
@@ -174,6 +183,7 @@ public class PageRequest extends RequestHandlerForController
                               @QueryParam("banp") String banPattern)
   {
     String remoteIp = request.getRemoteAddr();
+    String[] tid = new String[1];
     DownloaderResult result = this.download(remoteIp,
                                             url,
                                             userAgent,
@@ -182,12 +192,13 @@ public class PageRequest extends RequestHandlerForController
                                             numOfAttempts,
                                             timeOfAttempt,
                                             failPattern,
-                                            banPattern);
+                                            banPattern,
+                                            tid);
 
     return generateResponse(result,
                             StringFormat.XML,
                             MediaType.APPLICATION_XML,
-                            "The Request Cannot Be Fulfilled.");
+                            "The Request Cannot Be Fulfilled. Task id: " + tid[0]);
   }
 
   @Path("view.json")
