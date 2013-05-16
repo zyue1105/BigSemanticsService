@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.configuration.Configuration;
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
@@ -292,6 +294,14 @@ public class Downloader extends Routine implements DownloaderConfigNames
   {
     downloadMonitor.stop();
     super.stop();
+  }
+
+  public static void main(String[] args) throws ConfigurationException, InterruptedException
+  {
+    Configuration configs = new PropertiesConfiguration("dpool.properties");
+    Downloader d = new Downloader(configs);
+    d.start();
+    d.join();
   }
 
 }

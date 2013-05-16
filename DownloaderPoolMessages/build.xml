@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns:artifact="antlib:org.apache.maven.artifact.ant"
+	name="DownloaderPoolMessages" basedir="." default="main">
+	<property name="src.dir" value="src" />
+	<property name="build.dir" value="build" />
+	<property name="classes.dir" value="${build.dir}/classes" />
+	<property name="jar.dir" value="${build.dir}/jar" />
+	<property name="jar.file" value="${jar.dir}/${ant.project.name}.jar" />
+
+	<artifact:pom id="pom" file="pom.xml" />
+	
+	<artifact:dependencies filesetId="maven-deps" pomRefId="pom" />
+	
+	<target name="clean">
+		<delete dir="${build.dir}" />
+	</target>
+
+	<path id="classpath">
+		<fileset dir="${basedir}/../../BigSemanticsJava/BigSemanticsCore/lib/" includes="simpl*.jar" />
+		<fileset refid="maven-deps" />
+	</path>
+
+	<target name="compile">
+		<mkdir dir="${classes.dir}" />
+		<javac srcdir="${src.dir}" destdir="${classes.dir}" source="1.6" target="1.6" classpathref="classpath" />
+	</target>
+
+	<target name="jar" depends="compile">
+		<mkdir dir="${jar.dir}" />
+		<jar destfile="${jar.file}" basedir="${classes.dir}" />
+	</target>
+
+	<target name="main" depends="clean,jar" />
+
+</project>

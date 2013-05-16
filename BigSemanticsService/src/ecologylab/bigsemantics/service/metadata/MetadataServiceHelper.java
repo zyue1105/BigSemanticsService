@@ -105,7 +105,7 @@ public class MetadataServiceHelper extends Debug implements Continuation<Documen
 
 	private void queueDocumentForDownload(Document document)
 	{
-		DocumentClosure closure = document.getOrConstructClosure(DownloadControllerType.HTTP);
+		DocumentClosure closure = document.getOrConstructClosure(DownloadControllerType.DPOOL);
 		closure.addContinuation(this);
 		closure.setLogRecord(logRecord);
 		serviceLog.debug("Queueing %s for downloading.", document);
@@ -211,7 +211,7 @@ public class MetadataServiceHelper extends Debug implements Continuation<Documen
 			serviceLog.debug("%s has been cached in service global document collection", document);
 
 			serviceLog.debug("adding continuation to the closure of %s", document);
-			closure = document.getOrConstructClosure(DownloadControllerType.HTTP);
+			closure = document.getOrConstructClosure(DownloadControllerType.DPOOL);
 			closure.addContinuation(this);
 			this.document = document;
 			break;

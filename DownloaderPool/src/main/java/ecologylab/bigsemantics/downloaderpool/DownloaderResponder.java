@@ -55,6 +55,7 @@ public class DownloaderResponder implements Continuation<Page>
                 result.getHttpRespCode(),
                 result.getHttpRespMsg());
 
+    result.setState(State.OK);
     searchPatternInContent(result, associatedTask.getFailRegex(), State.ERR_CONTENT);
     searchPatternInContent(result, associatedTask.getBanRegex(), State.ERR_BANNED);
 
