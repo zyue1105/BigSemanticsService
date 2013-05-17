@@ -1,0 +1,7 @@
+input_url_list_file = data/input.lst
+output_file = data/output.lst
+max_count = 10000
+max_time = 600
+metadata_service_uri = http://ecology-service.cse.tamu.edu/BigSemanticsService/metadata.xml
+timeout = 120
+reload = false
