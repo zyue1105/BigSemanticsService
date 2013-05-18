@@ -31,13 +31,13 @@ public class ScholarlyArticleExpander extends AbstractDocumentExpander
     {
       ScholarlyArticle article = (ScholarlyArticle) doc;
 
-      if (expandConnectedCollection(crawler, article, "authors", Author.class))
-      {
-        for (Author author : article.getAuthors())
-        {
-          queue(crawler, author.getCreativeWorks());
-        }
-      }
+//      if (expandConnectedCollection(crawler, article, "authors", Author.class))
+//      {
+//        for (Author author : article.getAuthors())
+//        {
+//          queue(crawler, author.getCreativeWorks());
+//        }
+//      }
 
       queue(crawler, article.getReferences());
       queue(crawler, article.getCitations());

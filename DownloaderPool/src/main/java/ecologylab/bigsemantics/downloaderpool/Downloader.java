@@ -138,6 +138,7 @@ public class Downloader extends Routine implements DownloaderConfigNames
     params.put("ntask", String.valueOf(this.maxTaskCount));
     String assignUrl = controllerBaseUrl + "task/assign.xml";
     HttpGet get = Utils.generateGetRequest(assignUrl, params);
+    logger.info("request for tasks: " + get.getURI());
 
     int status = -1;
     try
@@ -221,7 +222,7 @@ public class Downloader extends Routine implements DownloaderConfigNames
         if (purl != null)
         {
           String domain = purl.domain();
-          siteTable.getSite(domain, task.getDomainInterval());
+          siteTable.updateSiteDownloadInterval(domain, task.getDomainInterval());
         }
       }
     }

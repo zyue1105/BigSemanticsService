@@ -8,6 +8,7 @@ import java.util.Properties;
 
 import ecologylab.appframework.types.prefs.Pref;
 import ecologylab.bigsemantics.collecting.SemanticsGlobalScope;
+import ecologylab.bigsemantics.collecting.SemanticsSite;
 import ecologylab.bigsemantics.cyberneko.CybernekoWrapper;
 import ecologylab.bigsemantics.dbinterface.IDocumentCache;
 import ecologylab.bigsemantics.dbinterface.IDocumentCacheFactory;
@@ -75,6 +76,7 @@ public class SemanticServiceScope extends SemanticsGlobalScope
       loadProperties();
       
       DocumentClosure.controllerClass = DPoolDownloadController.class;
+      SemanticsSite.disableDownloadInterval = true;
 
       SimplTypesScope.graphSwitch = GRAPH_SWITCH.ON;
       semanticServiceScope = new SemanticServiceScope(RepositoryMetadataTranslationScope.get(),

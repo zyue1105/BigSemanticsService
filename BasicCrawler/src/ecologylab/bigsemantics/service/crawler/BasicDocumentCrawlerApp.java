@@ -110,6 +110,9 @@ public abstract class BasicDocumentCrawlerApp
       if (crawler.countSuccess() >= maxCount)
         break;
     }
+    
+    logger.info("total time: {} millisec", System.currentTimeMillis() - t0);
+    logger.info("total success: " + crawler.countSuccess());
   }
 
 }

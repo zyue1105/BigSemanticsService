@@ -70,7 +70,7 @@ public class Page implements Downloadable
     if (location != null)
     {
       String domain = location.domain();
-      return siteTable.getSite(domain, 0);
+      return siteTable.getSite(domain);
     }
     return null;
   }
@@ -169,7 +169,7 @@ public class Page implements Downloadable
 
   public String toString()
   {
-    return String.format("%s[%s]", this.getClass().getSimpleName(), this.location);
+    return String.format("%s[%s, result=%s]", this.getClass().getSimpleName(), location, result);
   }
 
 }

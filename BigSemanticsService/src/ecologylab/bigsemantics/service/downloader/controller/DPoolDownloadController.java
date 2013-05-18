@@ -222,10 +222,7 @@ public class DPoolDownloadController extends Debug implements DownloadController
       UriBuilder ub = UriBuilder.fromUri(SERVICE_LOC);
       ub.queryParam("url", origLoc);
       ub.queryParam("agent", userAgentString);
-      if (site.isDownloadingConstrained())
-      {
-        ub.queryParam("int", (int) (site.getMinDownloadInterval() * 1000));
-      }
+      ub.queryParam("int", (int) (site.getMinDownloadInterval() * 1000));
       ub.queryParam("natt", 3);
       ub.queryParam("tatt", 60000);
       URI requestUri = ub.build();

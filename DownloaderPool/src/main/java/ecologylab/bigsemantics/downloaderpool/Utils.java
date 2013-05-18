@@ -65,6 +65,16 @@ public class Utils
   {
     return enc.encode(bytes);
   }
+  
+  public static <K, V> boolean putNonEmpty(Map<K, V> map, K key, V value)
+  {
+    if (map == null || key == null || value == null)
+      return false;
+    if (value instanceof String && ((String) value).isEmpty())
+      return false;
+    map.put(key, value);
+    return true;
+  }
 
   public static String serialize(Object obj, StringFormat fmt)
   {

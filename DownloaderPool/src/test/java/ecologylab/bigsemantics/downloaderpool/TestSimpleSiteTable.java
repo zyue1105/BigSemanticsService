@@ -38,8 +38,8 @@ public class TestSimpleSiteTable
   public void testGettingTheSameSite()
   {
     // same domain should map to the same Site object.
-    Site s1 = sst.getSite("google.com", 0);
-    Site s2 = sst.getSite("google.com", 0);
+    Site s1 = sst.getSite("google.com");
+    Site s2 = sst.getSite("google.com");
     assertNotNull(s1);
     assertNotNull(s2);
     assertSame(s1, s2);
@@ -56,9 +56,11 @@ public class TestSimpleSiteTable
     long dt = 100; // the time for one single step
 
     // the real waiting time is downloadInterval + random(0 ~ downloadInterval/2)
-    SimpleSite s1 = (SimpleSite) sst.getSite("google.com", dt);
-    SimpleSite s2 = (SimpleSite) sst.getSite("yahoo.com", dt * 2);
-    SimpleSite s3 = (SimpleSite) sst.getSite("bing.com", 0); // no intervals between downloads
+    SimpleSite s1 = (SimpleSite) sst.getSite("google.com");
+    s1.setDownloadInterval(dt);
+    SimpleSite s2 = (SimpleSite) sst.getSite("yahoo.com");
+    s2.setDownloadInterval(dt * 2);
+    SimpleSite s3 = (SimpleSite) sst.getSite("bing.com"); // no intervals between downloads
 
     // 0dt from beginning
     s1.advanceNextAvailableTime();

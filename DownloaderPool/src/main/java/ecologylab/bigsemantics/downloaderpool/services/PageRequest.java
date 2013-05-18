@@ -78,7 +78,11 @@ public class PageRequest extends RequestHandlerForController
     task.setFailRegex(failPattern);
     task.setBanRegex(banPattern);
     
-    logger.info("Downloading request from [{}]: {}", remoteIp, task);
+    logger.info("Downloading request from [{}]: {}, download interval: {}, user agent: [{}]",
+                remoteIp,
+                task,
+                interval,
+                userAgent);
 
     final Object lock = new Object();
     Observer taskOb = new Observer()

@@ -49,6 +49,11 @@ public class DownloaderResponder implements Continuation<Page>
   public void callback(Page page)
   {
     DownloaderResult result = page.getResult();
+    if (result == null)
+    {
+      logger.error("WEIRD! Null result for callback Page: " + page);
+      return;
+    }
     logger.info("Downloading result for Task[{}][{}]: {}: {}",
                 associatedTask.getId(),
                 associatedTask.getPurl(),
@@ -65,11 +70,13 @@ public class DownloaderResponder implements Continuation<Page>
     params.put("state", result.getState().toString());
     params.put("code", String.valueOf(result.getHttpRespCode()));
     params.put("msg", result.getHttpRespMsg());
-    params.put("mime", result.getMimeType());
-    params.put("charset", result.getCharset());
-    params.put("content", result.getContent());
-    params.put("descr", result.getContentDescription());
-    logger.info("form params: " + params);
+    Utils.putNonEmpty(params, "mime", result.getMimeType());
+    Utils.putNonEmpty(params, "charset", result.getCharset());
+    Utils.putNonEmpty(params, "descr", result.getContentDescription());
+    String content = result.getContent();
+    int contentLen = content == null ? 0 : content.length();
+    logger.info("form params except content[len={}]: {}", contentLen, params);
+    Utils.putNonEmpty(params, "content", content);
     HttpPost post = Utils.generatePostRequest(controllerReportUrl, params);
 
     try
@@ -101,7 +108,6 @@ public class DownloaderResponder implements Continuation<Page>
                    + " with "
                    + associatedTask, e);
     }
-
   }
 
   /**

@@ -67,7 +67,12 @@ public class TaskRequest extends RequestHandlerForController
     int n = tasks == null ? 0 : tasks.size();
     if (n > 0)
     {
-      logger.info("{} task(s) will be assigned to Downloader[{}]@{}.", n, workerId, remoteIp);
+      logger.info("{} task(s) will be assigned to Downloader[{}]@{}, blacklist: [{}], max: {}",
+                  n,
+                  workerId,
+                  remoteIp,
+                  blacklist,
+                  maxTaskCount);
     }
     else
     {
