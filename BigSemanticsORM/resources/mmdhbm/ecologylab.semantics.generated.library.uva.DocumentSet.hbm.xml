@@ -1,4 +1,0 @@
-<?xml version="1.0"?>
-<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-
-<hibernate-mapping package="ecologylab.semantics.generated.library.uva"><joined-subclass name="ecologylab.semantics.generated.library.uva.DocumentSet" table="document_set" extends="ecologylab.semantics.metadata.Metadata"><key column="orm_id" not-null="true"/><list name="documents" lazy="true" table="document_set__documents"><key column="orm_id" not-null="true"/><index column="document_set__documents__index"/><many-to-many column="document_id" class="ecologylab.semantics.metadata.builtins.Document" lazy="proxy"/></list></joined-subclass></hibernate-mapping>

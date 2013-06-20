@@ -1,4 +1,0 @@
-<?xml version="1.0"?>
-<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-
-<hibernate-mapping package="ecologylab.semantics.generated.library.artwork"><joined-subclass name="ecologylab.semantics.generated.library.artwork.MmArtwork" table="mm_artwork" extends="ecologylab.semantics.generated.library.artwork.Artwork"><key column="orm_id" not-null="true"/><property name="website" lazy="false" access="ecologylab.semantics.compiler.orm.scalartypes.MetadataScalarAccessor" type="ecologylab.semantics.compiler.orm.scalartypes.MetadataParsedURLHibernateType" column="website" length="1024"/><property name="extendedAbstract" lazy="false" access="ecologylab.semantics.compiler.orm.scalartypes.MetadataScalarAccessor" type="ecologylab.semantics.compiler.orm.scalartypes.MetadataParsedURLHibernateType" column="extended_abstract" length="1024"/></joined-subclass></hibernate-mapping>

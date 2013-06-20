@@ -1,4 +1,0 @@
-<?xml version="1.0"?>
-<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-
-<hibernate-mapping package="ecologylab.semantics.generated.library.dlese"><joined-subclass name="ecologylab.semantics.generated.library.dlese.UserSearchAdditionalMetadata" table="user_search_additional_metadata" extends="ecologylab.semantics.generated.library.dlese.AdditionalMetadata"><key column="orm_id" not-null="true"/><many-to-one name="searchAdditionalMetadataAdn" lazy="proxy" column="search_additional_metadata_adn" class="ecologylab.semantics.generated.library.dlese.SearchAdditionalMetadataAdn"/></joined-subclass></hibernate-mapping>

@@ -1,4 +1,0 @@
-<?xml version="1.0"?>
-<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-
-<hibernate-mapping package="ecologylab.semantics.generated.library.wikipedia"><joined-subclass name="ecologylab.semantics.generated.library.wikipedia.Category" table="category" extends="ecologylab.semantics.metadata.Metadata"><key column="orm_id" not-null="true"/><property name="name" lazy="false" access="ecologylab.semantics.compiler.orm.scalartypes.MetadataScalarAccessor" type="ecologylab.semantics.compiler.orm.scalartypes.MetadataStringHibernateType" column="name" length="1024"/><property name="catLink" lazy="false" access="ecologylab.semantics.compiler.orm.scalartypes.MetadataScalarAccessor" type="ecologylab.semantics.compiler.orm.scalartypes.MetadataParsedURLHibernateType" column="cat_link" length="1024"/></joined-subclass></hibernate-mapping>

@@ -1,4 +1,0 @@
-<?xml version="1.0"?>
-<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-
-<hibernate-mapping package="ecologylab.semantics.generated.library.imdb"><joined-subclass name="ecologylab.semantics.generated.library.imdb.CastMember" table="cast_member" extends="ecologylab.semantics.metadata.Metadata"><key column="orm_id" not-null="true"/><many-to-one name="actor" lazy="proxy" column="actor" class="ecologylab.semantics.generated.library.imdb.PersonDetails"/><many-to-one name="character" lazy="proxy" column="simpl_column__character" class="ecologylab.semantics.generated.library.imdb.PersonDetails"/></joined-subclass></hibernate-mapping>

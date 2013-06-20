@@ -1,4 +1,0 @@
-<?xml version="1.0"?>
-<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-
-<hibernate-mapping package="ecologylab.semantics.generated.library.fastflip"><joined-subclass name="ecologylab.semantics.generated.library.fastflip.FastflipSearch" table="fastflip_search" extends="ecologylab.semantics.metadata.builtins.CompoundDocument"><key column="orm_id" not-null="true"/><list name="thumbnails" lazy="true" table="fastflip_search__thumbnails"><key column="orm_id" not-null="true"/><index column="fastflip_search__thumbnails__index"/><many-to-many column="thumbnail_id" class="ecologylab.semantics.generated.library.fastflip.Thumbnail" lazy="proxy"/></list></joined-subclass></hibernate-mapping>
