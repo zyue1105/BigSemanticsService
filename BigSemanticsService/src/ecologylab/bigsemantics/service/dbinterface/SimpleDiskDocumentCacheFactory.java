@@ -1,7 +1,7 @@
 package ecologylab.bigsemantics.service.dbinterface;
 
-import ecologylab.bigsemantics.dbinterface.IDocumentCache;
-import ecologylab.bigsemantics.dbinterface.IDocumentCacheFactory;
+import ecologylab.bigsemantics.documentcache.IDocumentCache;
+import ecologylab.bigsemantics.documentcache.IDocumentCacheFactory;
 import ecologylab.generic.Debug;
 
 /**

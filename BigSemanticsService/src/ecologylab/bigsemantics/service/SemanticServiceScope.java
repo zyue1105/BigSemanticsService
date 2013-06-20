@@ -10,15 +10,13 @@ import ecologylab.appframework.types.prefs.Pref;
 import ecologylab.bigsemantics.collecting.SemanticsGlobalScope;
 import ecologylab.bigsemantics.collecting.SemanticsSite;
 import ecologylab.bigsemantics.cyberneko.CybernekoWrapper;
-import ecologylab.bigsemantics.dbinterface.IDocumentCache;
-import ecologylab.bigsemantics.dbinterface.IDocumentCacheFactory;
+import ecologylab.bigsemantics.documentcache.IDocumentCache;
+import ecologylab.bigsemantics.documentcache.IDocumentCacheFactory;
 import ecologylab.bigsemantics.documentparsers.ParserBase;
-import ecologylab.bigsemantics.downloaders.controllers.HTTPDownloadController;
 import ecologylab.bigsemantics.filestorage.FileSystemStorage;
 import ecologylab.bigsemantics.generated.library.RepositoryMetadataTranslationScope;
 import ecologylab.bigsemantics.html.dom.IDOMProvider;
 import ecologylab.bigsemantics.metadata.builtins.DocumentClosure;
-import ecologylab.bigsemantics.service.dbinterface.DBDocumentCacheFactory;
 import ecologylab.bigsemantics.service.dbinterface.SimpleDiskDocumentCacheFactory;
 import ecologylab.bigsemantics.service.downloader.controller.DPoolDownloadController;
 import ecologylab.bigsemantics.service.logging.Log4jLoggerFactory;
@@ -43,7 +41,7 @@ public class SemanticServiceScope extends SemanticsGlobalScope
   }
 
   @Override
-  public IDocumentCache getDBDocumentProvider()
+  public IDocumentCache getDocumentCache()
   {
     IDocumentCache result = null;
 
@@ -96,15 +94,9 @@ public class SemanticServiceScope extends SemanticsGlobalScope
       serviceProps.load(in);
       in.close();
 
-      if (getProperty(serviceProps, "USE_SIMPLE_DISK_DOCUMENT_PROVIDER", "").equals("true"))
-        documentCacheFactory = new SimpleDiskDocumentCacheFactory();
-      else if (getProperty(serviceProps, "USE_DB_DOCUMENT_PROVIDER", "").equals("true"))
-        documentCacheFactory = new DBDocumentCacheFactory();
+      documentCacheFactory = new SimpleDiskDocumentCacheFactory();
 
       FileSystemStorage.setDownloadDirectory(serviceProps);
-      
-      HTTPDownloadController.SERVICE_LOC =
-          getProperty(serviceProps, "DOWNLOAD_SERVICE_LOCATION", null);
       
       String serviceLocs = getProperty(serviceProps, "DPOOL_SERVICE_LOCATIONS", null);
       DPoolDownloadController.setServiceLocs(serviceLocs);

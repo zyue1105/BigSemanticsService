@@ -4,7 +4,7 @@ import java.io.File;
 
 import ecologylab.appframework.PropertiesAndDirectories;
 import ecologylab.bigsemantics.collecting.SemanticsGlobalScope;
-import ecologylab.bigsemantics.dbinterface.IDocumentCache;
+import ecologylab.bigsemantics.documentcache.IDocumentCache;
 import ecologylab.bigsemantics.filestorage.FileMetadata;
 import ecologylab.bigsemantics.filestorage.FileStorageProvider;
 import ecologylab.bigsemantics.filestorage.FileSystemStorage;

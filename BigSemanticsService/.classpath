@@ -5,7 +5,6 @@
 	<classpathentry kind="src" path="test"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/BigSemanticsCore"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/BigSemanticsCybernekoWrapper"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/BigSemanticsORM"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/BigSemanticsSunSpecifics"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/cyberneko"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/imageMetadataExtractor"/>
@@ -24,5 +23,6 @@
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/DownloaderPoolMessages"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

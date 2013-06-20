@@ -34,9 +34,6 @@
         <dependent-module archiveName="imageMetadataExtractor.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/imageMetadataExtractor/imageMetadataExtractor">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="BigSemanticsORM.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/BigSemanticsORM/BigSemanticsORM">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
         <property name="java-output-path" value="/BigSemanticsService/build/classes"/>
         <property name="context-root" value="BigSemanticsService"/>
     </wb-module>

@@ -5,7 +5,6 @@
 	<projects>
 		<project>BigSemanticsSDK</project>
 		<project>simplCore</project>
-		<project>BigSemanticsORM</project>
 		<project>BigSemanticsCore</project>
 		<project>cyberneko</project>
 		<project>BigSemanticsWrappers</project>

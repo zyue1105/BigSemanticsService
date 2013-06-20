@@ -264,7 +264,7 @@ public class MetadataServiceHelper extends Debug implements Continuation<Documen
   {
     // remove from caches
     serviceLog.debug("removing document [%s] from caches", docPurl);
-    semanticsServiceScope.getDBDocumentProvider().removeDocument(docPurl);
+    semanticsServiceScope.getDocumentCache().removeDocument(docPurl);
     FileSystemStorage.getStorageProvider().removeFileAndMetadata(docPurl);
   }
 
