@@ -4,36 +4,6 @@
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/MmdRepository"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/config"/>
-        <dependent-module archiveName="xercesMinimal.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/cyberneko/lib/xercesMinimal.jar">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module archiveName="simplCore.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/BigSemanticsCore/lib/simplCore.jar">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module archiveName="simplSunSpecifics.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/BigSemanticsSunSpecifics/lib/simplSunSpecifics.jar">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module archiveName="BigSemanticsGeneratedClassesJava.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/BigSemanticsSunSpecifics/lib/BigSemanticsGeneratedClassesJava.jar">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module archiveName="BigSemanticsCore.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/BigSemanticsCore/BigSemanticsCore">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module archiveName="cyberneko.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/cyberneko/cyberneko">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module archiveName="BigSemanticsSunSpecifics.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/BigSemanticsSunSpecifics/BigSemanticsSunSpecifics">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module archiveName="BigSemanticsCybernekoWrapper.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/BigSemanticsCybernekoWrapper/BigSemanticsCybernekoWrapper">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module archiveName="BigSemanticsWrappers.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/BigSemanticsSDK/lib/BigSemanticsWrappers.jar">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module archiveName="imageMetadataExtractor.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/imageMetadataExtractor/imageMetadataExtractor">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
         <property name="java-output-path" value="/BigSemanticsService/build/classes"/>
         <property name="context-root" value="BigSemanticsService"/>
     </wb-module>

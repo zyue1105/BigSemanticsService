@@ -5,13 +5,8 @@
 	<projects>
 		<project>BigSemanticsSDK</project>
 		<project>simplCore</project>
-		<project>BigSemanticsCore</project>
-		<project>cyberneko</project>
 		<project>BigSemanticsWrappers</project>
-		<project>BigSemanticsSunSpecifics</project>
-		<project>BigSemanticsCybernekoWrapper</project>
 		<project>BigSemanticsGeneratedClassesJava</project>
-		<project>imageMetadataExtractor</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
