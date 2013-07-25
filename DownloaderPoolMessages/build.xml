@@ -1,12 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project xmlns:artifact="antlib:org.apache.maven.artifact.ant"
-	name="DownloaderPoolMessages" basedir="." default="main">
+<project xmlns:artifact="antlib:org.apache.maven.artifact.ant" name="DownloaderPoolMessages" basedir="." default="main">
+
 	<property name="src.dir" value="src" />
 	<property name="build.dir" value="build" />
 	<property name="classes.dir" value="${build.dir}/classes" />
 	<property name="jar.dir" value="${build.dir}/jar" />
 	<property name="jar.file" value="${jar.dir}/${ant.project.name}.jar" />
+
+	<taskdef resource="org/apache/maven/artifact/ant/antlib.xml">
+		<classpath>
+			<pathelement location="${basedir}/../lib/maven-ant-tasks-2.1.1.jar" />
+		</classpath>
+	</taskdef>
 
 	<artifact:pom id="pom" file="pom.xml" />
 	
@@ -17,7 +23,7 @@
 	</target>
 
 	<path id="classpath">
-		<fileset dir="${basedir}/../../BigSemanticsJava/BigSemanticsCore/lib/" includes="simpl*.jar" />
+		<fileset dir="${basedir}/../lib/" includes="simpl*.jar" />
 		<fileset refid="maven-deps" />
 	</path>
 
