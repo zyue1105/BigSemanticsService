@@ -7,9 +7,11 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
 
 import javax.ws.rs.core.UriBuilder;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Charsets;
 import com.sun.jersey.api.client.Client;
@@ -22,30 +24,30 @@ import ecologylab.bigsemantics.documentparsers.DocumentParser;
 import ecologylab.bigsemantics.downloaderpool.DownloaderResult;
 import ecologylab.bigsemantics.downloaderpool.MessageScope;
 import ecologylab.bigsemantics.downloaders.LocalDocumentCache;
-import ecologylab.bigsemantics.downloaders.controllers.DownloadController;
+import ecologylab.bigsemantics.downloaders.controllers.NewDownloadController;
 import ecologylab.bigsemantics.filestorage.FileMetadata;
 import ecologylab.bigsemantics.filestorage.FileStorageProvider;
 import ecologylab.bigsemantics.filestorage.FileSystemStorage;
 import ecologylab.bigsemantics.metadata.builtins.Document;
 import ecologylab.bigsemantics.metadata.builtins.DocumentClosure;
 import ecologylab.concurrent.DownloadableLogRecord;
-import ecologylab.generic.Debug;
 import ecologylab.net.PURLConnection;
 import ecologylab.net.ParsedURL;
 import ecologylab.serialization.SIMPLTranslationException;
 import ecologylab.serialization.formatenums.StringFormat;
 
-/**
- * A download controller that connects to a pool of distributed downloaders. The pool of downloaders
- * is managed as a web service.
- * 
- * @author quyin
- */
-public class DPoolDownloadController extends Debug implements DownloadController
+public class NewDPoolDownloadController implements NewDownloadController
 {
 
+  private static Logger logger;
+
+  static
+  {
+    logger = LoggerFactory.getLogger(NewDPoolDownloadController.class);
+  }
+
   public static int     HTTP_DOWNLOAD_REQUEST_TIMEOUT = 45000;
-  
+
   private static String SERVICE_LOCS;
 
   private static String SERVICE_LOC;
@@ -54,13 +56,13 @@ public class DPoolDownloadController extends Debug implements DownloadController
   {
     SERVICE_LOCS = serviceLocs;
   }
-  
+
   private static void tryServiceLocs()
   {
     String[] locs = SERVICE_LOCS.split(",");
     for (String loc : locs)
     {
-      debugT(DPoolDownloadController.class, ": trying dpool service at " + loc);
+      logger.info("Trying dpool service at " + loc);
       try
       {
         String testLoc = loc.replace("page/download.xml", "echo/get?msg=TEST");
@@ -72,7 +74,7 @@ public class DPoolDownloadController extends Debug implements DownloadController
           String content = resp.getEntity(String.class);
           if (content.contains("TEST"))
           {
-            debugT(DPoolDownloadController.class, ": picked dpool service at " + loc);
+            logger.info("Picked dpool service at " + loc);
             SERVICE_LOC = loc;
             return;
           }
@@ -80,14 +82,26 @@ public class DPoolDownloadController extends Debug implements DownloadController
       }
       catch (Throwable t)
       {
-        // do nothing.
+        logger.error("Cannot locate the download controller!");
       }
     }
   }
 
-  ConcurrentHashMap<ParsedURL, Boolean> recentlyCached;
+  private String           userAgent;
 
-  public DPoolDownloadController()
+  private DocumentClosure  closure;
+
+  private ParsedURL        location;
+
+  private ParsedURL        redirectedLocation;
+
+  private DownloaderResult result;
+
+  private boolean          good;
+  
+  private InputStream      inputStream;
+
+  public NewDPoolDownloadController()
   {
     assert SERVICE_LOCS != null;
     if (SERVICE_LOC == null)
@@ -100,56 +114,60 @@ public class DPoolDownloadController extends Debug implements DownloadController
         }
       }
     }
+  }
 
-    recentlyCached = new ConcurrentHashMap<ParsedURL, Boolean>(1000);
+  public void setDocumentClosure(DocumentClosure closure)
+  {
+    this.closure = closure;
   }
 
   @Override
-  public void connect(DocumentClosure documentClosure) throws IOException
+  public void setUserAgent(String userAgent)
   {
-    ParsedURL origLoc = documentClosure.getDownloadLocation();
-    DownloadableLogRecord logRecord = documentClosure.getLogRecord();
-    Document document = documentClosure.getDocument();
+    this.userAgent = userAgent;
+  }
+
+  @Override
+  public boolean accessAndDownload(ParsedURL location) throws IOException
+  {
+    this.location = location;
+    
+    Document document = closure.getDocument();
     SemanticsGlobalScope semanticScope = document.getSemanticsScope();
     SemanticsSite site = document.getSite();
 
+    DownloadableLogRecord logRecord = closure.getLogRecord();
+
     FileStorageProvider storageProvider = FileSystemStorage.getStorageProvider();
-    String mimeType = null;
-
-    if (!origLoc.isFile())
+    if (!location.isFile())
     {
-      // the location is a network address, not a local file address:
-
-      // check if the page is cached
-      String filePath = storageProvider.lookupFilePath(origLoc);
+      String filePath = storageProvider.lookupFilePath(location);
       if (filePath == null)
       {
         // not cached, network download:
         logRecord.setHtmlCacheHit(false);
         // htmlCacheLog.debug("Uncached URL: " + originalPURL);
 
-        String userAgentString = document.getMetaMetadata().getUserAgentString();
-        DownloaderResult result = downloadPage(site, origLoc, userAgentString);
+        if (userAgent == null)
+        {
+          userAgent = document.getMetaMetadata().getUserAgentString();
+        }
+        result = downloadPage(site, location, userAgent);
+
         if (result.getHttpRespCode() == ClientResponse.Status.OK.getStatusCode())
         {
-          // this var is only used for creating fileMetadata. FileMetadata should really
-          // contain a list of redirected locations instead of only one.
-          // TODO multiple redirects
-          ParsedURL redirectLoc = null;
-
           // handle other locations (e.g. redirects)
           List<String> otherLocations = result.getOtherLocations();
           if (otherLocations != null && otherLocations.size() > 0)
           {
             for (String otherLocation : otherLocations)
             {
-              redirectLoc = ParsedURL.getAbsolute(otherLocation);
-              setCached(redirectLoc);
-              handleRedirectLocation(semanticScope, documentClosure, origLoc, redirectLoc);
+              redirectedLocation = ParsedURL.getAbsolute(otherLocation);
+              handleRedirectLocation(semanticScope, closure, location, redirectedLocation);
             }
           }
 
-          String localPath = cacheNewPage(origLoc, storageProvider, result, redirectLoc);
+          String localPath = cacheNewPage(location, storageProvider, result, redirectedLocation);
           if (logRecord != null)
           {
             String urlHash = localPath.substring(localPath.lastIndexOf(File.separatorChar));
@@ -158,36 +176,40 @@ public class DPoolDownloadController extends Debug implements DownloadController
 
           // set local location
           document.setLocalLocation(ParsedURL.getAbsolute("file://" + localPath));
-
-          // set mime type
-          mimeType = result.getMimeType();
         }
         else
         {
-          error("failed to download " + origLoc + ": " + result.getHttpRespCode());
+          logger.error("Failed to download " + location + ": " + result.getHttpRespCode());
+          return false;
         }
       }
       else
       {
+        // cached:
         logRecord.setHtmlCacheHit(true);
         // htmlCacheLog.debug("Cached URL[" + originalPURL + "] at " + filePath);
 
         // document is present in local cache. read meta information as well
         document.setLocalLocation(ParsedURL.getAbsolute("file://" + filePath));
 
-        FileMetadata fileMetadata = storageProvider.getFileMetadata(origLoc);
+        FileMetadata fileMetadata = storageProvider.getFileMetadata(location);
         if (fileMetadata != null)
         {
           // additional location
-          ParsedURL redirectLoc = fileMetadata.getRedirectedLocation();
-          if (redirectLoc != null)
+          redirectedLocation = fileMetadata.getRedirectedLocation();
+          if (redirectedLocation != null)
           {
-            debug("Changing " + document + " using redirected location " + redirectLoc);
-            handleRedirectLocation(semanticScope, documentClosure, origLoc, redirectLoc);
+            logger.debug("Changing "
+                         + document
+                         + " using redirected location "
+                         + redirectedLocation);
+            handleRedirectLocation(semanticScope, closure, location, redirectedLocation);
           }
-
-          // set mime type
-          mimeType = fileMetadata.getMimeType();
+        }
+        else
+        {
+          logger.error("Failed to find file meta for " + location);
+          return false;
         }
       }
     }
@@ -195,18 +217,18 @@ public class DPoolDownloadController extends Debug implements DownloadController
     // irrespective of document origin, its now saved to a local location
     LocalDocumentCache localDocumentCache = new LocalDocumentCache(document);
     localDocumentCache.connect();
-    PURLConnection purlConnection = localDocumentCache.getPurlConnection();
+    PURLConnection purlConn = localDocumentCache.getPurlConnection();
+    inputStream = purlConn == null ? null : purlConn.inputStream();
+    good = inputStream != null;
+
     DocumentParser documentParser = localDocumentCache.getDocumentParser();
-
-    // set mime type for purl connection
-    if (mimeType != null)
-      purlConnection.setMimeType(mimeType);
-    debug("Setting purlConnection[" + purlConnection.getPurl() + "] to documentClosure");
-    documentClosure.setPurlConnection(purlConnection);
-
     // document parser is set only when URL is local directory
     if (documentParser != null)
-      documentClosure.setDocumentParser(documentParser);
+    {
+      closure.setDocumentParser(documentParser);
+    }
+
+    return good;
   }
 
   private DownloaderResult downloadPage(SemanticsSite site,
@@ -239,13 +261,14 @@ public class DPoolDownloadController extends Debug implements DownloadController
       }
       else
       {
-        error("pool controller error status when downloading " + origLoc + ": " + resp.getStatus());
+        logger.error("Pool controller error status when downloading "
+                     + origLoc + ": " + resp.getStatus());
       }
     }
     catch (SIMPLTranslationException e)
     {
-      error("exception when deserializing downloading result for page " + origLoc);
-      error("" + e.getStackTrace());
+      logger.error("Exception when deserializing downloading result for page " + origLoc);
+      logger.error("" + e.getStackTrace());
     }
 
     return null;
@@ -279,36 +302,58 @@ public class DPoolDownloadController extends Debug implements DownloadController
     documentClosure.changeDocument(newDocument);
   }
 
-  /**
-   * This method sets the cache status of the input URL to 'cached'. Note that this status is only a
-   * temporary status in memory, for quick deciding if this document has been cached or not without
-   * hitting the disk, and does not necessarily reflect the real cache status on disk.
-   * 
-   * @param url
-   */
-  private void setCached(ParsedURL url)
+  @Override
+  public boolean isGood()
   {
-    if (url != null)
-      recentlyCached.put(url, true);
+    return good;
   }
 
   @Override
-  public boolean isCached(ParsedURL purl)
+  public int getStatus()
   {
-    if (purl == null)
-      return false;
-    if (!recentlyCached.containsKey(purl))
-    {
-      FileStorageProvider storageProvider = FileSystemStorage.getStorageProvider();
-      String filePath = storageProvider.lookupFilePath(purl);
-      File cachedFile = filePath == null ? null : new File(filePath);
-      boolean cached = cachedFile != null && cachedFile.exists();
-      Boolean previous = recentlyCached.putIfAbsent(purl, cached);
-      if (previous != null)
-        cached = previous;
-      return cached;
-    }
-    return recentlyCached.get(purl);
+    return result == null ? -1 : result.getHttpRespCode();
+  }
+
+  @Override
+  public String getStatusMessage()
+  {
+    return result == null ? null : result.getHttpRespMsg();
+  }
+
+  @Override
+  public ParsedURL getLocation()
+  {
+    return location;
+  }
+
+  @Override
+  public ParsedURL getRedirectedLocation()
+  {
+    return redirectedLocation;
+  }
+
+  @Override
+  public String getMimeType()
+  {
+    return result == null ? null : result.getMimeType();
+  }
+
+  @Override
+  public String getCharset()
+  {
+    return result == null ? null : result.getCharset();
+  }
+
+  @Override
+  public String getHeader(String name)
+  {
+    throw new RuntimeException("Not implemented.");
+  }
+
+  @Override
+  public InputStream getInputStream()
+  {
+    return isGood() ? inputStream : null;
   }
 
 }

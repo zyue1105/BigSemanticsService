@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import ecologylab.bigsemantics.collecting.DownloadStatus;
 import ecologylab.bigsemantics.collecting.SemanticsSessionScope;
-import ecologylab.bigsemantics.downloaders.controllers.DownloadControllerType;
 import ecologylab.bigsemantics.metadata.builtins.Document;
 import ecologylab.bigsemantics.metadata.builtins.DocumentClosure;
 import ecologylab.generic.Continuation;
@@ -32,7 +31,7 @@ public class LocalDocumentCrawler extends AbstractDocumentCrawler
 
     ParsedURL purl = ParsedURL.getAbsolute(uri);
     Document doc = sss.getOrConstructDocument(purl);
-    DocumentClosure closure = doc.getOrConstructClosure(DownloadControllerType.DEFAULT);
+    DocumentClosure closure = doc.getOrConstructClosure();
 
     final Object lock = new Object();
     synchronized (lock)

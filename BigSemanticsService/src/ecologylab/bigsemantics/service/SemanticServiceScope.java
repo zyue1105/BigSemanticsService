@@ -18,7 +18,7 @@ import ecologylab.bigsemantics.generated.library.RepositoryMetadataTranslationSc
 import ecologylab.bigsemantics.html.dom.IDOMProvider;
 import ecologylab.bigsemantics.metadata.builtins.DocumentClosure;
 import ecologylab.bigsemantics.service.dbinterface.SimpleDiskDocumentCacheFactory;
-import ecologylab.bigsemantics.service.downloader.controller.DPoolDownloadController;
+import ecologylab.bigsemantics.service.downloader.controller.NewDPoolDownloadController;
 import ecologylab.bigsemantics.service.logging.Log4jLoggerFactory;
 import ecologylab.serialization.SimplTypesScope;
 import ecologylab.serialization.SimplTypesScope.GRAPH_SWITCH;
@@ -73,7 +73,6 @@ public class SemanticServiceScope extends SemanticsGlobalScope
 
       loadProperties();
       
-      DocumentClosure.controllerClass = DPoolDownloadController.class;
       SemanticsSite.disableDownloadInterval = true;
 
       SimplTypesScope.graphSwitch = GRAPH_SWITCH.ON;
@@ -99,7 +98,7 @@ public class SemanticServiceScope extends SemanticsGlobalScope
       FileSystemStorage.setDownloadDirectory(serviceProps);
       
       String serviceLocs = getProperty(serviceProps, "DPOOL_SERVICE_LOCATIONS", null);
-      DPoolDownloadController.setServiceLocs(serviceLocs);
+      NewDPoolDownloadController.setServiceLocs(serviceLocs);
     }
     catch (Exception e)
     {

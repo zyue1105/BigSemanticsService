@@ -7,13 +7,13 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import ecologylab.bigsemantics.collecting.DownloadStatus;
-import ecologylab.bigsemantics.downloaders.controllers.DownloadControllerType;
 import ecologylab.bigsemantics.filestorage.FileSystemStorage;
 import ecologylab.bigsemantics.metadata.builtins.Document;
 import ecologylab.bigsemantics.metadata.builtins.DocumentClosure;
 import ecologylab.bigsemantics.metametadata.MetaMetadata;
 import ecologylab.bigsemantics.service.SemanticServiceErrorCodes;
 import ecologylab.bigsemantics.service.SemanticServiceScope;
+import ecologylab.bigsemantics.service.downloader.controller.NewDPoolDownloadControllerFactory;
 import ecologylab.bigsemantics.service.logging.ServiceLogRecord;
 import ecologylab.concurrent.DownloadableLogRecord;
 import ecologylab.generic.Continuation;
@@ -105,7 +105,9 @@ public class MetadataServiceHelper extends Debug implements Continuation<Documen
 
 	private void queueDocumentForDownload(Document document)
 	{
-		DocumentClosure closure = document.getOrConstructClosure(DownloadControllerType.DPOOL);
+    DocumentClosure closure =
+        document.getOrConstructClosure(new NewDPoolDownloadControllerFactory());
+		                                                         
 		closure.addContinuation(this);
 		closure.setLogRecord(logRecord);
 		serviceLog.debug("Queueing %s for downloading.", document);
@@ -211,7 +213,7 @@ public class MetadataServiceHelper extends Debug implements Continuation<Documen
 			serviceLog.debug("%s has been cached in service global document collection", document);
 
 			serviceLog.debug("adding continuation to the closure of %s", document);
-			closure = document.getOrConstructClosure(DownloadControllerType.DPOOL);
+			closure = document.getOrConstructClosure(new NewDPoolDownloadControllerFactory());
 			closure.addContinuation(this);
 			this.document = document;
 			break;
