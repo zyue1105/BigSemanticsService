@@ -3,10 +3,6 @@
 	<name>BigSemanticsService</name>
 	<comment></comment>
 	<projects>
-		<project>BigSemanticsSDK</project>
-		<project>simplCore</project>
-		<project>BigSemanticsWrappers</project>
-		<project>BigSemanticsGeneratedClassesJava</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
