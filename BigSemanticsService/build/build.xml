@@ -4,7 +4,7 @@
 <project name="BigSemanticsService" default="buildwar" xmlns:artifact="antlib:org.apache.maven.artifact.ant">
 	
 	<!-- projects necessary to run the service -->
-	<property name="project.names" value="cyberneko,BigSemanticsCore,BigSemanticsCybernekoWrapper,imageMetadataExtractor,BigSemanticsSunSpecifics,BigSemanticsSDK,BigSemanticsORM,DownloaderPoolMessages" />
+	<property name="project.names" value="cyberneko,BigSemanticsCore,BigSemanticsCybernekoWrapper,imageMetadataExtractor,BigSemanticsSunSpecifics,BigSemanticsSDK,DownloaderPoolMessages" />
 	
 	<!-- semantic service project directory-->
 	<property name="service.dir" value="${basedir}/.." />
@@ -22,8 +22,6 @@
 	<property name="BigSemanticsSunSpecifics.dir" value="${service.dir}/../../BigSemanticsJava/BigSemanticsSunSpecifics" />
 	
 	<property name="BigSemanticsSDK.dir" value="${service.dir}/../../BigSemanticsJava/BigSemanticsSDK" />
-	
-	<property name="BigSemanticsORM.dir" value="${service.dir}/../BigSemanticsORM" />
 
 	<property name="DownloaderPoolMessages.dir" value="${service.dir}/../DownloaderPoolMessages" />
 	
