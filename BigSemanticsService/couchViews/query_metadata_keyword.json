@@ -1,0 +1,25 @@
+{
+   "_id": "_design/query_metadata_keyword",
+   "_rev": "18-dff6bf754780189f58e77abd4b54baa6",
+   "views": {
+       "by_keyword": {
+           "map": "function(doc)\n{\n  var tokens;\n\n  for (var i in doc)\n  {\n    if (doc[i].title)\n    {\n      tokens = doc[i].title.split(/[^A-Z0-9\\\\-_]+/i);\n\n      for (var word in tokens)\n      {\n        emit( tokens[word], null);\n      }\n    }\n    if (doc[i].abstract)\n    {\n      tokens = doc[i].abstract.split(/[^A-Z0-9\\\\-_]+/i);\n\n      for (var word in tokens)\n      {\n        emit(tokens[word], null);\n      }\n    }\n    if (doc[i].description)\n    {\n      tokens = doc[i].description.split(/[^A-Z0-9\\\\-_]+/i);\n\n      for (var word in tokens)\n      {\n        emit(tokens[word], null);\n      }\n    }\n  }\n}"
+       },
+       "by_keyword_advanced": {
+           "map": "function(doc)\n{\n  var tokens;\n\n  for (var i in doc)\n  {\n    if (doc[i].title)\n    {\n      tokens = doc[i].title.split(/[^A-Z0-9\\\\-_]+/i);\n\n      for (var word in tokens)\n      {\n        emit([doc[i].mm_name, i, tokens[word]], null);\n      }\n    }\n    if (doc[i].abstract)\n    {\n      tokens = doc[i].abstract.split(/[^A-Z0-9\\\\-_]+/i);\n\n      for (var word in tokens)\n      {\n        emit([doc[i].mm_name, i, tokens[word]], null);\n      }\n    }\n    if (doc[i].description)\n    {\n      tokens = doc[i].description.split(/[^A-Z0-9\\\\-_]+/i);\n\n      for (var word in tokens)\n      {\n        emit([doc[i].mm_name, i, tokens[word]], null);\n      }\n    }\n  }\n}"
+       },
+       "by_title_keyword": {
+           "map": "function(doc){var tokens;for (var i in doc){if (doc[i].title){tokens = doc[i].title.split(/[^A-Z0-9\\-_]+/i);for (var word in tokens){emit(tokens[word], null);}}}}"
+       },
+       "by_abstract_keyword": {
+           "map": "function(doc){var tokens;for (var i in doc){if (doc[i].abstract){tokens = doc[i].abstract.split(/[^A-Z0-9\\-_]+/i);for (var word in tokens){emit(tokens[word], null);}}}}"
+       },
+       "by_description_keyword": {
+           "map": "function(doc){var tokens;for (var i in doc){if (doc[i].description){tokens = doc[i].description.split(/[^A-Z0-9\\-_]+/i);for (var word in tokens){emit(tokens[word], null);}}}}"
+       },
+       "by_keyword_test": {
+           "map": "function(doc)\n{\n  var tokens;\n\n  for (var i in doc)\n  {\n    for (var j in doc[i])\n    {\n      tokens = doc[i][j].split(/[^A-Z0-9\\\\-_]+/i);\n\n      for (var word in tokens)\n      {\n        emit([doc[i].mm_name, j, tokens[word]], null);\n      }\n    }\n   /* if (doc[i].title)\n    {\n      tokens = doc[i].title.split(/[^A-Z0-9\\\\-_]+/i);\n\n      for (var word in tokens)\n      {\n\temit([doc[i].mm_name, i, tokens[word]], null);\n      }\n    }\n    if (doc[i].abstract)\n    {\n      tokens = doc[i].abstract.split(/[^A-Z0-9\\\\-_]+/i);\n\n      for (var word in tokens)\n      {\n        emit([doc[i].mm_name, i, tokens[word]], null);\n      }\n    }\n    if (doc[i].description)\n    {\n      tokens = doc[i].description.split(/[^A-Z0-9\\\\-_]+/i);\n\n      for (var word in tokens)\n      {\n        emit([doc[i].mm_name, i, tokens[word]], null);\n      }\n    }*/\n  }\n}"
+       }
+   },
+   "language": "javascript"
+}

@@ -20,6 +20,12 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status;
 
+/**
+ * query_metadata_range.json CouchDB queries are made with document type, field, minimum value for field, and maximum value for a field (both inclusive)
+ * 
+ * @author colton
+ *
+ */
 @Path("/query_metadata_range.json")
 @Component
 @Scope("singleton")

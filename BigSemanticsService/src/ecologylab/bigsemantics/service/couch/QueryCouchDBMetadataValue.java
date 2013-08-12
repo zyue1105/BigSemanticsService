@@ -20,6 +20,12 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status;
 
+/**
+ * query_metadata_value.json CouchDB queries are made with document type, field, and exact match value for field
+ * 
+ * @author colton
+ *
+ */
 @Path("/query_metadata_value.json")
 @Component
 @Scope("singleton")

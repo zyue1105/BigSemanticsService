@@ -20,6 +20,12 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status;
 
+/**
+ * query_metadata_keyword.json CouchDB queries are made with a single keyword
+ * 
+ * @author colton
+ *
+ */
 @Path("/query_metadata_keyword.json")
 @Component
 @Scope("singleton")

@@ -1,0 +1,10 @@
+{
+   "_id": "_design/query_metadata_value",
+   "_rev": "2-a0d1e8dbe5954793c956a5071bbcd7a1",
+   "views": {
+       "general": {
+           "map": "function(doc){for (var i in doc){if (doc[i].mm_name){for (var j in doc[i]){emit([doc[i].mm_name, j, (doc[i])[j]], null)}}}}"
+       }
+   },
+   "language": "javascript"
+}

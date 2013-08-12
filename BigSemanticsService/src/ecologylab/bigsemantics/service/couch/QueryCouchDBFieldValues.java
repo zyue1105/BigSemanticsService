@@ -20,6 +20,12 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status;
 
+/**
+ * query_field_values.json CouchDB queries are made with document type and field
+ * 
+ * @author colton
+ *
+ */
 @Path("/query_field_values.json")
 @Component
 @Scope("singleton")

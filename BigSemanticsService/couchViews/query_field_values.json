@@ -1,0 +1,12 @@
+{
+   "_id": "_design/query_field_values",
+   "_rev": "9-a78a3eabd3da09b4dfd608149075915e",
+   "views": {
+       "by_title": {
+           "map": "function(doc){for (var i in doc){if (doc[i].title) emit(doc[i].mm_name, doc[i].title)}}"
+       },
+       "by_location": {
+           "map": "function(doc){for (var i in doc){if (doc[i].location) emit(doc[i].mm_name, doc[i].location)}}"
+       }
+   }
+}
