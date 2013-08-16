@@ -1,117 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- requires: (1) ant4eclipse installed as an eclipse plugin; (2) ant-contrib installed; (3) jarsigner.exe be on the path -->
 
-<project name="BigSemanticsService" default="buildwar" xmlns:artifact="antlib:org.apache.maven.artifact.ant">
-	
-	<!-- projects necessary to run the service -->
-	<property name="project.names" value="cyberneko,BigSemanticsCore,BigSemanticsCybernekoWrapper,imageMetadataExtractor,BigSemanticsSunSpecifics,BigSemanticsSDK,BigSemanticsORM,DownloaderPoolMessages" />
-	
+<project name="BigSemanticsService" default="buildwar"
+	       xmlns:artifact="antlib:org.apache.maven.artifact.ant">
+
 	<!-- semantic service project directory-->
 	<property name="service.dir" value="${basedir}/.." />
-	
-	<!-- project dependencies: update the locations: to respective build.xml(s) -->
-	
-	<property name="cyberneko.dir" value="${service.dir}/../../BigSemanticsJava/cyberneko" />
-	
-	<property name="BigSemanticsCore.dir" value="${service.dir}/../../BigSemanticsJava/BigSemanticsCore" />
-	
-	<property name="BigSemanticsCybernekoWrapper.dir" value="${service.dir}/../../BigSemanticsJava/BigSemanticsCybernekoWrapper" />
-	
-	<property name="imageMetadataExtractor.dir" value="${service.dir}/../../BigSemanticsJava/imageMetadataExtractor" />
-	
-	<property name="BigSemanticsSunSpecifics.dir" value="${service.dir}/../../BigSemanticsJava/BigSemanticsSunSpecifics" />
-	
-	<property name="BigSemanticsSDK.dir" value="${service.dir}/../../BigSemanticsJava/BigSemanticsSDK" />
-	
-	<property name="BigSemanticsORM.dir" value="${service.dir}/../BigSemanticsORM" />
+	<property name="lib.dir" value="${basedir}/../../lib" />
 
-	<property name="DownloaderPoolMessages.dir" value="${service.dir}/../DownloaderPoolMessages" />
-	
-	<property name="deps.default.target" value="jar"/>
-	
-	<property name="deps.jar.subdir" value="build/jar"/>
-		
+	<!-- semantic service sub-directories -->
+	<property name="source.dir" value="${service.dir}/src" />
+	<property name="context.dir" value="${service.dir}/context" />
+	<property name="config.dir" value="${service.dir}/config" />
+	<property name="dist.dir" value="${basedir}/dist" />
+	<property name="distlib.dir" value="${dist.dir}/WEB-INF/lib" />
+	<property name="distclasses.dir" value="${dist.dir}/WEB-INF/classes" />
+	<property name="distmetainf.dir" value="${dist.dir}/META-INF" />
+
 	<!-- deployment server credentials used with the deploy rule -->
 	<property name="sftp.host" value="ecoarray0" />
 	<property name="sftp.user" value="ecologylab" />
 	<property name="sftp.port" value="2022" />
-	
 	<property name="jetty.dir" value="/bigsemantics-service/jetty-dist" />
 
-	<!-- semantic service sub-directories -->
-	<property name="source.dir" value="${service.dir}/src" />
-	
-	<property name="context.dir" value="${service.dir}/context" />
-	
-	<property name="config.dir" value="${service.dir}/config" />
-	
-	<property name="dist.dir" value="${basedir}/dist" />
-	
-	<property name="distlib.dir" value="${dist.dir}/WEB-INF/lib" />
-	
-	<property name="distclasses.dir" value="${dist.dir}/WEB-INF/classes" />
-	
-	<property name="distmetainf.dir" value="${dist.dir}/META-INF" />
-		
-	<!-- declare ant-contrib -->
-	<taskdef resource="net/sf/antcontrib/antlib.xml">
-		<classpath>
-			<pathelement location="${BigSemanticsCore.dir}/lib/ant-contrib-1.0b3.jar" />
-		</classpath>
-	</taskdef>
-	
 	<!-- declare maven -->
 	<path id="maven-ant-tasks.classpath" path="${basedir}/antlib/maven-ant-tasks-2.1.1.jar" />
-	<typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="antlib:org.apache.maven.artifact.ant" classpathref="maven-ant-tasks.classpath" />
-	
+	<typedef resource="org/apache/maven/artifact/ant/antlib.xml"
+		       uri="antlib:org.apache.maven.artifact.ant" classpathref="maven-ant-tasks.classpath" />
+
 	<path id="classpath">
-	  	<fileset dir="${distlib.dir}" includes="**/*.jar" />
-  	</path>
-	
-	<target name="build-service">
-		<javac debug="on" 
-			debuglevel="lines,vars,source" 
-			classpathref="classpath" 
-			srcdir="${source.dir}" 
-			destdir="${distclasses.dir}"
-			source="1.6"
-			target="1.6" 
-			includeantruntime="true" >
-			<compilerarg value="-g"/>
-		</javac>
-	</target>
-	
-	<target name="get-project-library">
-		<echo>Ant build project ${project.name}</echo>
-		<propertycopy name="project.location" from="${project.name}.dir" />
-		
-		<echo>${project.location}/build.xml</echo>
-		<ant dir="${project.location}" useNativeBasedir="true" target="${deps.default.target}" inheritAll="false" />
-		
-		<echo>Copy jar</echo>
-		<copy todir="${distlib.dir}">
-	        <fileset dir="${project.location}/${deps.jar.subdir}">
-	            <include name="**/*.jar" />
-	        </fileset>
-	    </copy>
-	</target>
-	
-	<!-- build service dependencies: contains lot of dependencies through ORM project -->
-	<target name="build-project-libraries">
-		<echo>list of projects to build: ${project.names}</echo>
-		<foreach list="${project.names}" target="get-project-library" param="project.name" trim="yes" />
-	</target>
+		<fileset dir="${distlib.dir}" includes="**/*.jar" />
+	</path>
 
 	<target name="clean">
 		<echo>cleaning: emptying ${dist.dir}</echo>
 		<delete dir="${dist.dir}" />
 		<delete file="${basedir}/${ant.project.name}.war" />
 	</target>
-	
+
 	<target name="copy-dependencies" depends="clean">
 		<mkdir dir="${distlib.dir}" />
 		<mkdir dir="${distmetainf.dir}" />
-	    
+
 		<echo>adding maven dependencies</echo>
 		<artifact:pom id="servicepom" file="${service.dir}/pom.xml" />
 		<artifact:dependencies filesetId="mavendeps" pomRefId="servicepom" />
@@ -119,54 +48,67 @@
 			<fileset refid="mavendeps" />
 		</copy>
 		<echo>...done.</echo>
-		
+
 		<echo>adding additional jar(s)</echo>
 		<copy todir="${distlib.dir}">
-			<fileset dir="${cyberneko.dir}/lib" includes="xercesMinimal.jar" />
-			<fileset dir="${BigSemanticsCore.dir}/lib" includes="simplCore.jar" />
-			<fileset dir="${BigSemanticsSunSpecifics.dir}/lib/" includes="simplSunSpecifics.jar" />
-			<fileset dir="${BigSemanticsSunSpecifics.dir}/lib/" includes="BigSemanticsGeneratedClassesJava.jar" />
-			<fileset dir="${BigSemanticsSDK.dir}/lib/" includes="BigSemanticsWrappers.jar" />
+			<fileset dir="${lib.dir}/" includes="xercesMinimal.jar" />
+			<fileset dir="${lib.dir}/" includes="simplCore.jar" />
+			<fileset dir="${lib.dir}/" includes="simplSunSpecifics.jar" />
+			<fileset dir="${lib.dir}/" includes="BigSemanticsCore.jar" />
+			<fileset dir="${lib.dir}/" includes="BigSemanticsCybernekoWrapper.jar" />
+			<fileset dir="${lib.dir}/" includes="BigSemanticsGeneratedClassesJava.jar" />
+			<fileset dir="${lib.dir}/" includes="BigSemanticsSunSpecifics.jar" />
+			<fileset dir="${lib.dir}/" includes="BigSemanticsWrappers.jar" />
+			<fileset dir="${lib.dir}/" includes="cyberneko.jar" />
+			<fileset dir="${lib.dir}/" includes="DownloaderPoolMessages.jar" />
+			<fileset dir="${lib.dir}/" includes="imageMetadataExtractor.jar" />
 		</copy>
 		<echo>...done.</echo>
-		
-		<echo>adding project dependencies</echo>
-			<antcall target="build-project-libraries" />
-		<echo>...done.</echo>
-		
+
 		<echo>adding metainf</echo>
 		<copy todir="${distmetainf.dir}">
 			<fileset dir="${service.dir}/WebContent/META-INF" />
 		</copy>
 		<echo>...done.</echo>
 	</target>
-	
+
+	<target name="build-service">
+		<javac debug="on" debuglevel="lines,vars,source" classpathref="classpath" srcdir="${source.dir}"
+			     destdir="${distclasses.dir}" source="1.6" target="1.6" includeantruntime="true">
+			<compilerarg value="-g" />
+		</javac>
+	</target>
+
 	<target name="compile" depends="copy-dependencies">
 		<mkdir dir="${distclasses.dir}" />
-		
+
 		<antcall target="build-service" />
-		
-		<copy file="${config.dir}/service.properties" todir="${distclasses.dir}"/>
-		<copy file="${config.dir}/log4j.properties" todir="${distclasses.dir}"/>
+
+		<copy file="${config.dir}/service.properties" todir="${distclasses.dir}" />
+		<copy file="${config.dir}/log4j.properties" todir="${distclasses.dir}" />
 	</target>
-	
+
 	<target name="buildwar" depends="compile">
-		<war basedir="${dist.dir}" destfile="${ant.project.name}.war" webxml="${service.dir}/WebContent/WEB-INF/web.xml">
-	        <webinf dir="${dist.dir}/WEB-INF/" />
+		<war basedir="${dist.dir}" destfile="${ant.project.name}.war"
+			   webxml="${service.dir}/WebContent/WEB-INF/web.xml">
+			<webinf dir="${dist.dir}/WEB-INF/" />
 			<metainf dir="${dist.dir}/META-INF/" />
-	    </war>
+		</war>
 	</target>
-	
+
 	<target name="deploy" depends="buildwar">
 		<antform>
-			<textProperty label="Please enter sftp password for ${sftp.user}:" password="true" property="sftp.password"/>
+			<textProperty label="Please enter sftp password for ${sftp.user}:" password="true"
+				            property="sftp.password" />
 		</antform>
-		
+
 		<var name="sftp.upload" value="true" />
 		<var name="sftp.exists" value="true" />
 		<trycatch>
 			<try>
-				<sshexec host="${sftp.host}" port="${sftp.port}" username="${sftp.user}" password="${sftp.password}" trust="true" command="ls ${jetty.dir}/webapps/${ant.project.name}.war" />
+				<sshexec host="${sftp.host}" port="${sftp.port}" username="${sftp.user}"
+					       password="${sftp.password}" trust="true"
+					       command="ls ${jetty.dir}/webapps/${ant.project.name}.war" />
 			</try>
 			<catch>
 				<var name="sftp.exists" value="false" />
@@ -175,11 +117,14 @@
 				<if>
 					<istrue value="${sftp.exists}" />
 					<then>
-						<input message="${ant.project.name}.war already exists. Overwrite?" validargs="yes,no" addproperty="sftp.overwrite" />
+						<input message="${ant.project.name}.war already exists. Overwrite?" validargs="yes,no"
+							     addproperty="sftp.overwrite" />
 						<if>
 							<equals arg1="yes" arg2="${sftp.overwrite}" />
 							<then>
-								<sshexec host="${sftp.host}" port="${sftp.port}" username="${sftp.user}" password="${sftp.password}" trust="true" command="rm ${jetty.dir}/webapps/${ant.project.name}.war" />
+								<sshexec host="${sftp.host}" port="${sftp.port}" username="${sftp.user}"
+        								 password="${sftp.password}" trust="true"
+        								 command="rm ${jetty.dir}/webapps/${ant.project.name}.war" />
 								<var name="sftp.upload" value="true" />
 							</then>
 							<else>
@@ -189,16 +134,20 @@
 					</then>
 				</if>
 				<if>
-					<istrue value="${sftp.upload}"/>
+					<istrue value="${sftp.upload}" />
 					<then>
 						<echo>Deploying on ecoarray...</echo>
-						
+
 						<echo>deploying war</echo>
-						<scp port="${sftp.port}" file="${basedir}/${ant.project.name}.war" todir="${sftp.user}:${sftp.password}@${sftp.host}:${jetty.dir}/webapps/" trust="true" />
+						<scp port="${sftp.port}" file="${basedir}/${ant.project.name}.war"
+							   todir="${sftp.user}:${sftp.password}@${sftp.host}:${jetty.dir}/webapps/"
+							   trust="true" />
 						<echo>...done</echo>
-						
+
 						<echo>deploying context</echo>
-						<scp port="${sftp.port}" file="${context.dir}/${ant.project.name}.xml" todir="${sftp.user}:${sftp.password}@${sftp.host}:${jetty.dir}/contexts/" trust="true" />
+						<scp port="${sftp.port}" file="${context.dir}/${ant.project.name}.xml"
+							   todir="${sftp.user}:${sftp.password}@${sftp.host}:${jetty.dir}/contexts/"
+							   trust="true" />
 						<echo>...done</echo>
 					</then>
 				</if>
