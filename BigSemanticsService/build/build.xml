@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <project name="BigSemanticsService" default="buildwar"
-	       xmlns:artifact="antlib:org.apache.maven.artifact.ant">
-
+         xmlns:artifact="antlib:org.apache.maven.artifact.ant">
+	
 	<!-- semantic service project directory-->
 	<property name="service.dir" value="${basedir}/.." />
 	<property name="lib.dir" value="${basedir}/../../lib" />
