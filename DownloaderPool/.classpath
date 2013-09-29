@@ -37,8 +37,15 @@
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/lib/jsr166-1.7.0.jar"/>
-	<classpathentry kind="lib" path="/lib/simplCore.jar"/>
-	<classpathentry kind="lib" path="/lib/simplSunSpecifics.jar"/>
+	<classpathentry kind="lib" path="/lib/simplCore.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/lib/simplSunSpecifics.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
