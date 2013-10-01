@@ -138,7 +138,7 @@ public class Downloader extends Routine implements DownloaderConfigNames
     params.put("ntask", String.valueOf(this.maxTaskCount));
     String assignUrl = controllerBaseUrl + "task/assign.xml";
     HttpGet get = Utils.generateGetRequest(assignUrl, params);
-    logger.info("request for tasks: " + get.getURI());
+    // logger.info("request for tasks: " + get.getURI());  // -- hated!
 
     int status = -1;
     try
