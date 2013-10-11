@@ -105,6 +105,7 @@ public class Page implements Downloadable
     try
     {
       client.execute(httpGet, handler);
+      result.setState(State.OK);
     }
     catch (ClientProtocolException e)
     {

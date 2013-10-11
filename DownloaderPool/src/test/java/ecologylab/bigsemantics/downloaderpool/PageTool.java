@@ -38,6 +38,8 @@ public class PageTool
       DownloaderResult result = p.getResult();
       
       System.out.println("\n\n\n------------------------------------------------------------\n");
+      System.out.println("ID:          " + result.getTaskId());
+      System.out.println("STATE:       " + result.getState());
       System.out.println("URL:         " + url);
       System.out.println("OTHER URLs:  " + result.getOtherLocations());
       System.out.println("STATUS CODE: " + result.getHttpRespCode());

@@ -10,6 +10,7 @@ import ecologylab.serialization.annotations.simpl_scalar;
 @simpl_inherit
 public class ServiceLogRecord extends DocumentLogRecord
 {
+
 	@simpl_scalar
 	Date beginTime;
 	
@@ -24,6 +25,15 @@ public class ServiceLogRecord extends DocumentLogRecord
 	
 	@simpl_scalar
 	int responseCode;
+	
+	@simpl_scalar
+	long msPageCacheLookup;
+	
+	@simpl_scalar
+	long msPageCaching;
+	
+	@simpl_scalar
+	long msPageLocalFileConnecting;
 
 	public Date getBeginTime()
 	{
@@ -74,4 +84,50 @@ public class ServiceLogRecord extends DocumentLogRecord
 	{
 		this.responseCode = responseCode;
 	}
+	
+	public long getMsPageCacheLookup()
+  {
+    return msPageCacheLookup;
+  }
+
+  public void setMsPageCacheLookup(long msPageCacheLookup)
+  {
+    this.msPageCacheLookup = msPageCacheLookup;
+  }
+
+  public long getMsPageCaching()
+  {
+    return msPageCaching;
+  }
+
+  public void setMsPageCaching(long msPageCaching)
+  {
+    this.msPageCaching = msPageCaching;
+  }
+
+  public long getMsPageLocalFileConnecting()
+  {
+    return msPageLocalFileConnecting;
+  }
+
+  public void setMsPageLocalFileConnecting(long msConnectingPageLocalFile)
+  {
+    this.msPageLocalFileConnecting = msConnectingPageLocalFile;
+  }
+
+  @Override
+	public String toString()
+	{
+	  return String.format("%s[%s]",
+	                       ServiceLogRecord.class.getSimpleName(),
+	                       requestUrl == null ? "NullLocation" : requestUrl.toString());
+	}
+
+	static final public ServiceLogRecord DUMMY;
+	
+	static
+	{
+	  DUMMY = new ServiceLogRecord();
+	}
+
 }

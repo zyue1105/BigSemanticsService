@@ -30,6 +30,7 @@ import ecologylab.bigsemantics.filestorage.FileStorageProvider;
 import ecologylab.bigsemantics.filestorage.FileSystemStorage;
 import ecologylab.bigsemantics.metadata.builtins.Document;
 import ecologylab.bigsemantics.metadata.builtins.DocumentClosure;
+import ecologylab.bigsemantics.service.logging.ServiceLogRecord;
 import ecologylab.concurrent.DownloadableLogRecord;
 import ecologylab.net.PURLConnection;
 import ecologylab.net.ParsedURL;
@@ -136,12 +137,20 @@ public class NewDPoolDownloadController implements NewDownloadController
     SemanticsGlobalScope semanticScope = document.getSemanticsScope();
     SemanticsSite site = document.getSite();
 
-    DownloadableLogRecord logRecord = closure.getLogRecord();
+    ServiceLogRecord logRecord = ServiceLogRecord.DUMMY;
+    DownloadableLogRecord downloadableLogRecord = closure.getLogRecord();
+    if (downloadableLogRecord instanceof ServiceLogRecord)
+    {
+      logRecord = (ServiceLogRecord) downloadableLogRecord;
+    }
 
     FileStorageProvider storageProvider = FileSystemStorage.getStorageProvider();
     if (!location.isFile())
     {
+      long t0Lookup = System.currentTimeMillis();
       String filePath = storageProvider.lookupFilePath(location);
+      logRecord.setMsPageCacheLookup(System.currentTimeMillis() - t0Lookup);
+      
       if (filePath == null)
       {
         // not cached, network download:
@@ -167,7 +176,9 @@ public class NewDPoolDownloadController implements NewDownloadController
             }
           }
 
+          long t0PageCaching = System.currentTimeMillis();
           String localPath = cacheNewPage(location, storageProvider, result, redirectedLocation);
+          logRecord.setMsPageCaching(System.currentTimeMillis() - t0PageCaching);
           if (logRecord != null)
           {
             String urlHash = localPath.substring(localPath.lastIndexOf(File.separatorChar));
@@ -216,10 +227,12 @@ public class NewDPoolDownloadController implements NewDownloadController
 
     // irrespective of document origin, its now saved to a local location
     LocalDocumentCache localDocumentCache = new LocalDocumentCache(document);
+    long t0ConnectingPageLocalFile = System.currentTimeMillis();
     localDocumentCache.connect();
     PURLConnection purlConn = localDocumentCache.getPurlConnection();
     inputStream = purlConn == null ? null : purlConn.inputStream();
     good = inputStream != null;
+    logRecord.setMsPageLocalFileConnecting(System.currentTimeMillis() - t0ConnectingPageLocalFile);
 
     DocumentParser documentParser = localDocumentCache.getDocumentParser();
     // document parser is set only when URL is local directory
