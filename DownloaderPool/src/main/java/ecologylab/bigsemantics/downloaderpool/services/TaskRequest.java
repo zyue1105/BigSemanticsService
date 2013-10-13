@@ -19,6 +19,7 @@ import ecologylab.bigsemantics.downloaderpool.AssignedTasks;
 import ecologylab.bigsemantics.downloaderpool.Controller;
 import ecologylab.bigsemantics.downloaderpool.DownloaderRequest;
 import ecologylab.bigsemantics.downloaderpool.Task;
+import ecologylab.bigsemantics.downloaderpool.Utils;
 import ecologylab.serialization.formatenums.StringFormat;
 
 /**
@@ -29,6 +30,16 @@ import ecologylab.serialization.formatenums.StringFormat;
 @Path("/task")
 public class TaskRequest extends RequestHandlerForController
 {
+  
+  private static String EMPTY_ASSIGNMENT_XML;
+
+  private static String EMPTY_ASSIGNMENT_JSON;
+  
+  static
+  {
+    EMPTY_ASSIGNMENT_XML = Utils.serialize(AssignedTasks.EMPTY_ASSIGNMENT, StringFormat.XML);
+    EMPTY_ASSIGNMENT_JSON = Utils.serialize(AssignedTasks.EMPTY_ASSIGNMENT, StringFormat.JSON);
+  }
 
   /**
    * Assign one or more tasks to a downloader.
@@ -79,8 +90,12 @@ public class TaskRequest extends RequestHandlerForController
       logger.debug("{} task(s) will be assigned to Downloader[{}]@{}.", n, workerId, remoteIp);
     }
 
-    AssignedTasks result = new AssignedTasks();
-    result.setTasks(tasks);
+    AssignedTasks result = AssignedTasks.EMPTY_ASSIGNMENT;
+    if (n > 0)
+    {
+      result = new AssignedTasks();
+      result.setTasks(tasks);
+    }
 
     return result;
   }
@@ -95,6 +110,11 @@ public class TaskRequest extends RequestHandlerForController
   {
     String remoteIp = request.getRemoteAddr();
     AssignedTasks result = this.assign(remoteIp, workerId, blacklist, maxTaskCount);
+    
+    if (result == AssignedTasks.EMPTY_ASSIGNMENT)
+    {
+      return Response.ok(EMPTY_ASSIGNMENT_JSON, MediaType.APPLICATION_JSON).build();
+    }
 
     return generateResponse(result,
                             StringFormat.JSON,
@@ -112,6 +132,11 @@ public class TaskRequest extends RequestHandlerForController
   {
     String remoteIp = request.getRemoteAddr();
     AssignedTasks result = this.assign(remoteIp, workerId, blacklist, maxTaskCount);
+    
+    if (result == AssignedTasks.EMPTY_ASSIGNMENT)
+    {
+      return Response.ok(EMPTY_ASSIGNMENT_XML, MediaType.APPLICATION_XML).build();
+    }
 
     return generateResponse(result,
                             StringFormat.XML,

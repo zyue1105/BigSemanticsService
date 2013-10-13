@@ -8,21 +8,24 @@ import java.util.Properties;
 
 import ecologylab.appframework.types.prefs.Pref;
 import ecologylab.bigsemantics.actions.SemanticActionsKeyWords;
+import ecologylab.bigsemantics.collecting.DocumentCache;
 import ecologylab.bigsemantics.collecting.SemanticsGlobalScope;
 import ecologylab.bigsemantics.collecting.SemanticsSite;
 import ecologylab.bigsemantics.cyberneko.CybernekoWrapper;
-import ecologylab.bigsemantics.documentcache.IDocumentCache;
-import ecologylab.bigsemantics.documentcache.IDocumentCacheFactory;
+import ecologylab.bigsemantics.documentcache.EhCacheDocumentCache;
+import ecologylab.bigsemantics.documentcache.PersistentDocumentCache;
+import ecologylab.bigsemantics.documentcache.PersistentDocumentCacheFactory;
 import ecologylab.bigsemantics.documentparsers.DefaultHTMLDOMParser;
 import ecologylab.bigsemantics.documentparsers.DocumentParser;
 import ecologylab.bigsemantics.documentparsers.ParserBase;
 import ecologylab.bigsemantics.filestorage.FileSystemStorage;
 import ecologylab.bigsemantics.generated.library.RepositoryMetadataTranslationScope;
 import ecologylab.bigsemantics.html.dom.IDOMProvider;
-import ecologylab.bigsemantics.metadata.builtins.DocumentClosure;
+import ecologylab.bigsemantics.metadata.builtins.Document;
 import ecologylab.bigsemantics.service.dbinterface.SimpleDiskDocumentCacheFactory;
 import ecologylab.bigsemantics.service.downloader.controller.NewDPoolDownloadController;
 import ecologylab.bigsemantics.service.logging.Log4jLoggerFactory;
+import ecologylab.net.ParsedURL;
 import ecologylab.serialization.SimplTypesScope;
 import ecologylab.serialization.SimplTypesScope.GRAPH_SWITCH;
 
@@ -44,9 +47,15 @@ public class SemanticServiceScope extends SemanticsGlobalScope
   }
 
   @Override
-  public IDocumentCache getDocumentCache()
+  protected DocumentCache<ParsedURL, Document> getDocumentCache()
   {
-    IDocumentCache result = null;
+    return new EhCacheDocumentCache();
+  }
+
+  @Override
+  public PersistentDocumentCache getPersistentDocumentCache()
+  {
+    PersistentDocumentCache result = null;
 
     if (documentCacheFactory != null)
       result = documentCacheFactory.getDBDocumentProvider();
@@ -120,6 +129,6 @@ public class SemanticServiceScope extends SemanticsGlobalScope
     return value == null ? defaultValue : value;
   }
 
-  private static IDocumentCacheFactory documentCacheFactory;
+  private static PersistentDocumentCacheFactory documentCacheFactory;
 
 }

@@ -1,5 +1,6 @@
 package ecologylab.bigsemantics.service.metadata;
 
+import java.io.IOException;
 import java.util.Date;
 
 import javax.ws.rs.core.MediaType;
@@ -13,6 +14,7 @@ import ecologylab.bigsemantics.metadata.builtins.DocumentClosure;
 import ecologylab.bigsemantics.metametadata.MetaMetadata;
 import ecologylab.bigsemantics.service.SemanticServiceErrorCodes;
 import ecologylab.bigsemantics.service.SemanticServiceScope;
+import ecologylab.bigsemantics.service.downloader.controller.NewDPoolDownloadController;
 import ecologylab.bigsemantics.service.downloader.controller.NewDPoolDownloadControllerFactory;
 import ecologylab.bigsemantics.service.logging.ServiceLogRecord;
 import ecologylab.concurrent.DownloadableLogRecord;
@@ -177,8 +179,9 @@ public class MetadataServiceHelper extends Debug implements Continuation<Documen
 		// get or construct the document
 		Document document = semanticsServiceScope.getOrConstructDocument(thatPurl);
 		logRecord.setDocumentUrl(document.getLocation());
-		serviceLog
-				.debug("Document received from the service scope for URL[%s]: %s", thatPurl, document);
+		serviceLog.debug("Document from the service document collection for URL[%s]: %s",
+		                 thatPurl,
+		                 document);
 		serviceLog.debug("Download status of %s: %s", document, document.getDownloadStatus());
 
 		DocumentClosure closure = null;
@@ -204,6 +207,7 @@ public class MetadataServiceHelper extends Debug implements Continuation<Documen
 		switch (document.getDownloadStatus())
 		{
 		case UNPROCESSED:
+//		  download(document);
 			queueDocumentForDownload(document);
 			break;
 		case QUEUED:
@@ -228,6 +232,7 @@ public class MetadataServiceHelper extends Debug implements Continuation<Documen
 				// redownload and parse document
 				document = semanticsServiceScope.getOrConstructDocument(thatPurl);
 				this.document = document;
+//				download(document);
 				queueDocumentForDownload(document);
 			}
 			else
@@ -244,6 +249,22 @@ public class MetadataServiceHelper extends Debug implements Continuation<Documen
 		}
 	}
 
+  private void download(Document document)
+  {
+    DocumentClosure closure = document.getOrConstructClosure(new NewDPoolDownloadControllerFactory());
+    try
+    {
+      closure.performDownload();
+    }
+    catch (IOException e)
+    {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    this.document = closure.getDocument();
+    setFinished(true);
+  }
+
   /**
    * @param thatPurl
    * @param docPurl
@@ -251,11 +272,11 @@ public class MetadataServiceHelper extends Debug implements Continuation<Documen
   private void removeFromServiceDocumentCollection(ParsedURL thatPurl, ParsedURL docPurl)
   {
     serviceLog.debug("removing document [%s] from service global collection", thatPurl);
-    semanticsServiceScope.getGlobalCollection().removed(thatPurl);
+    semanticsServiceScope.getLocalDocumentCollection().remove(thatPurl);
     if (!docPurl.equals(thatPurl))
     {
     	serviceLog.debug("removing document [%s] from service global collection", docPurl);
-    	semanticsServiceScope.getGlobalCollection().removed(docPurl);
+    	semanticsServiceScope.getLocalDocumentCollection().remove(docPurl);
     }
   }
 
@@ -266,7 +287,7 @@ public class MetadataServiceHelper extends Debug implements Continuation<Documen
   {
     // remove from caches
     serviceLog.debug("removing document [%s] from caches", docPurl);
-    semanticsServiceScope.getDocumentCache().removeDocument(docPurl);
+    semanticsServiceScope.getPersistentDocumentCache().removeDocument(docPurl);
     FileSystemStorage.getStorageProvider().removeFileAndMetadata(docPurl);
   }
 
@@ -277,7 +298,7 @@ public class MetadataServiceHelper extends Debug implements Continuation<Documen
 		if (document != null && document != newDoc)
 		{
 			serviceLog.debug("remapping old %s to new %s", document, newDoc);
-			semanticsServiceScope.getGlobalCollection().remap(document, newDoc);
+			semanticsServiceScope.getLocalDocumentCollection().remap(document, newDoc);
 		}
 		document = newDoc;
 		// if (origDoc != newDoc)
