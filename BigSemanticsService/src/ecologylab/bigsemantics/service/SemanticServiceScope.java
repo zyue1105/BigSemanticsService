@@ -7,11 +7,14 @@ import java.io.InputStream;
 import java.util.Properties;
 
 import ecologylab.appframework.types.prefs.Pref;
+import ecologylab.bigsemantics.actions.SemanticActionsKeyWords;
 import ecologylab.bigsemantics.collecting.SemanticsGlobalScope;
 import ecologylab.bigsemantics.collecting.SemanticsSite;
 import ecologylab.bigsemantics.cyberneko.CybernekoWrapper;
 import ecologylab.bigsemantics.documentcache.IDocumentCache;
 import ecologylab.bigsemantics.documentcache.IDocumentCacheFactory;
+import ecologylab.bigsemantics.documentparsers.DefaultHTMLDOMParser;
+import ecologylab.bigsemantics.documentparsers.DocumentParser;
 import ecologylab.bigsemantics.documentparsers.ParserBase;
 import ecologylab.bigsemantics.filestorage.FileSystemStorage;
 import ecologylab.bigsemantics.generated.library.RepositoryMetadataTranslationScope;
@@ -78,6 +81,11 @@ public class SemanticServiceScope extends SemanticsGlobalScope
       SimplTypesScope.graphSwitch = GRAPH_SWITCH.ON;
       semanticServiceScope = new SemanticServiceScope(RepositoryMetadataTranslationScope.get(),
                                                       CybernekoWrapper.class);
+      
+      // This will disable content body recognization and image-text clipping derivation on the
+      // service.
+      DocumentParser.map(SemanticActionsKeyWords.HTML_IMAGE_DOM_TEXT_PARSER,
+                         DefaultHTMLDOMParser.class);
     }
     return semanticServiceScope;
   }
