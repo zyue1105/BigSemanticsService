@@ -4,7 +4,7 @@ import java.io.File;
 
 import ecologylab.appframework.PropertiesAndDirectories;
 import ecologylab.bigsemantics.collecting.SemanticsGlobalScope;
-import ecologylab.bigsemantics.documentcache.IDocumentCache;
+import ecologylab.bigsemantics.documentcache.PersistentDocumentCache;
 import ecologylab.bigsemantics.filestorage.FileMetadata;
 import ecologylab.bigsemantics.filestorage.FileStorageProvider;
 import ecologylab.bigsemantics.filestorage.FileSystemStorage;
@@ -26,7 +26,7 @@ import ecologylab.serialization.formatenums.Format;
  * 
  * @author quyin
  */
-public class SimpleDiskDocumentCache extends Debug implements IDocumentCache
+public class SimpleDiskDocumentCache extends Debug implements PersistentDocumentCache
 {
 
   static FileStorageProvider storage;

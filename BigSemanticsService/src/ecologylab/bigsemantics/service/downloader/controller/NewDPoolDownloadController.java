@@ -184,6 +184,7 @@ public class NewDPoolDownloadController implements NewDownloadController
             String urlHash = localPath.substring(localPath.lastIndexOf(File.separatorChar));
             logRecord.setUrlHash(urlHash);
           }
+          this.result = null; // release memory? FIXME if this is useful we should add recycle()
 
           // set local location
           document.setLocalLocation(ParsedURL.getAbsolute("file://" + localPath));
