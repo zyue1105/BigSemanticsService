@@ -24,5 +24,12 @@ public class AssignedTasks
   {
     this.tasks = tasks;
   }
+  
+  public static AssignedTasks EMPTY_ASSIGNMENT;
+  
+  static
+  {
+    EMPTY_ASSIGNMENT = new AssignedTasks();
+  }
 
 }
