@@ -1,7 +1,7 @@
 package ecologylab.bigsemantics.service.downloader.controller;
 
+import ecologylab.bigsemantics.downloaders.controllers.DownloadController;
 import ecologylab.bigsemantics.downloaders.controllers.DownloadControllerFactory;
-import ecologylab.bigsemantics.downloaders.controllers.NewDownloadController;
 import ecologylab.bigsemantics.metadata.builtins.DocumentClosure;
 
 /**
@@ -9,13 +9,13 @@ import ecologylab.bigsemantics.metadata.builtins.DocumentClosure;
  * 
  * @author quyin
  */
-public class NewDPoolDownloadControllerFactory implements DownloadControllerFactory
+public class DPoolDownloadControllerFactory implements DownloadControllerFactory
 {
   
   @Override
-  public NewDownloadController createDownloadController(DocumentClosure closure)
+  public DownloadController createDownloadController(DocumentClosure closure)
   {
-    NewDPoolDownloadController ctrl = new NewDPoolDownloadController();
+    DPoolDownloadController ctrl = new DPoolDownloadController();
     ctrl.setDocumentClosure(closure);
     return ctrl;
   }

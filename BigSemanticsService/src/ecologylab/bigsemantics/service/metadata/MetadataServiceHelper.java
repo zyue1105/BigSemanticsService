@@ -14,8 +14,7 @@ import ecologylab.bigsemantics.metadata.builtins.DocumentClosure;
 import ecologylab.bigsemantics.metametadata.MetaMetadata;
 import ecologylab.bigsemantics.service.SemanticServiceErrorCodes;
 import ecologylab.bigsemantics.service.SemanticServiceScope;
-import ecologylab.bigsemantics.service.downloader.controller.NewDPoolDownloadController;
-import ecologylab.bigsemantics.service.downloader.controller.NewDPoolDownloadControllerFactory;
+import ecologylab.bigsemantics.service.downloader.controller.DPoolDownloadControllerFactory;
 import ecologylab.bigsemantics.service.logging.ServiceLogRecord;
 import ecologylab.concurrent.DownloadableLogRecord;
 import ecologylab.generic.Continuation;
@@ -72,200 +71,230 @@ public class MetadataServiceHelper extends Debug implements Continuation<Documen
 		this.logRecord = new ServiceLogRecord();
 	}
 
-	private void waitForFinish()
-	{
-		if (!finished)
-		{
-			synchronized (lockFinished)
-			{
-				for (int i = 0; !finished && i < CONTINUATION_TIMOUT_CYCLES; ++i)
-				{
-					try
-					{
-						lockFinished.wait(CONTINUATION_CHECK_INTERVAL);
-					}
-					catch (InterruptedException e)
-					{
-						e.printStackTrace();
-					}
-				}
-				if (!finished)
-				{
-					serviceLog.error("Request timed out%s.", document != null ? document : "");
-				}
-			}
-		}
-	}
-
-	private void setFinished(boolean finished)
-	{
-		synchronized (lockFinished)
-		{
-			this.finished = finished;
-		}
-	}
-
-	private void queueDocumentForDownload(Document document)
-	{
-    DocumentClosure closure =
-        document.getOrConstructClosure(new NewDPoolDownloadControllerFactory());
-		                                                         
-		closure.addContinuation(this);
-		closure.setLogRecord(logRecord);
-		serviceLog.debug("Queueing %s for downloading.", document);
-		closure.queueDownload();
-	}
-
 	/**
-	 * The entry method that accepts a URL and returns a Response with extracted metadata.
-	 * 
-	 * @param url
-	 * @param format
-	 * @param reload
-	 * @return
-	 */
-	public Response getMetadataResponse(ParsedURL url, StringFormat format, boolean reload)
-	{
-		Response resp = null;
+   * The entry method that accepts a URL and returns a Response with extracted metadata.
+   * 
+   * @param url
+   * @param format
+   * @param reload
+   * @return
+   */
+  public Response getMetadataResponse(ParsedURL url, StringFormat format, boolean reload)
+  {
+  	Response resp = null;
+  
+  	logRecord.setBeginTime(new Date());
+  	Document document = getMetadata(url, reload);
+  	if (document != null)
+  	{
+  		try
+  		{
+  			long millis = System.currentTimeMillis();
+  			String responseBody = SimplTypesScope.serialize(document, format).toString();
+  			logRecord.setmSecInSerialization(System.currentTimeMillis() - millis);
+  
+  			resp = Response.status(Status.OK).entity(responseBody).build();
+  		}
+  		catch (SIMPLTranslationException e)
+  		{
+  			e.printStackTrace();
+  			serviceLog.error("exception while serializing document: %s", e.getMessage());
+  			resp = Response
+  			    .status(Status.INTERNAL_SERVER_ERROR)
+  					.entity(SemanticServiceErrorCodes.INTERNAL_ERROR)
+  					.type(MediaType.TEXT_PLAIN)
+  					.build();
+  		}
+  	}
+  	else
+  	{
+  		serviceLog.error("metadata couldn't be obtained for [%s]", url);
+  		resp = Response
+  		    .status(Status.NOT_FOUND)
+  				.entity(SemanticServiceErrorCodes.METADATA_NOT_FOUND)
+  				.type(MediaType.TEXT_PLAIN)
+  				.build();
+  	}
+  
+  	logRecord.setMsTotal(System.currentTimeMillis() - logRecord.getBeginTime().getTime());
+  	logRecord.setResponseCode(resp.getStatus());
+  	servicePerfLog.info(serializeToString(logRecord, StringFormat.JSON));
+  
+  	return resp;
+  }
 
-		Document document = getMetadata(url, reload);
-		if (document != null)
-		{
-			try
-			{
-				long millis = System.currentTimeMillis();
-				String responseBody = SimplTypesScope.serialize(document, format).toString();
-				logRecord.setmSecInSerialization(System.currentTimeMillis() - millis);
+  Document getMetadata(ParsedURL url, boolean reload)
+  {
+  	this.finished = false;
+  
+  	requestMetadata(url, reload);
+//  	waitForFinish();
+  
+  	return this.document;
+  }
 
-				resp = Response.status(Status.OK).entity(responseBody).build();
-			}
-			catch (SIMPLTranslationException e)
-			{
-				e.printStackTrace();
-				serviceLog.error("exception while serializing document: %s", e.getMessage());
-				resp = Response.status(Status.INTERNAL_SERVER_ERROR)
-						.entity(SemanticServiceErrorCodes.INTERNAL_ERROR).type(MediaType.TEXT_PLAIN).build();
-			}
-		}
-		else
-		{
-			serviceLog.error("metadata couldn't be obtained for [%s]", url);
-			resp = Response.status(Status.SERVICE_UNAVAILABLE)
-					.entity(SemanticServiceErrorCodes.METADATA_NOT_FOUND).type(MediaType.TEXT_PLAIN).build();
-		}
-
-		logRecord.setMsTotal(System.currentTimeMillis() - logRecord.getBeginTime().getTime());
-		logRecord.setResponseCode(resp.getStatus());
-		servicePerfLog.info(serializeToString(logRecord, StringFormat.JSON));
-
-		return resp;
-	}
-
-	Document getMetadata(ParsedURL url, boolean reload)
-	{
-		this.finished = false;
-
-		logRecord.setBeginTime(new Date());
-		requestMetadata(url, reload);
-		waitForFinish();
-
-		return this.document;
-	}
-
-	private void requestMetadata(ParsedURL thatPurl, boolean reload)
-	{
-		logRecord.setRequestUrl(thatPurl);
-
-		// get or construct the document
-		Document document = semanticsServiceScope.getOrConstructDocument(thatPurl);
-		logRecord.setDocumentUrl(document.getLocation());
-		serviceLog.debug("Document from the service document collection for URL[%s]: %s",
-		                 thatPurl,
-		                 document);
-		serviceLog.debug("Download status of %s: %s", document, document.getDownloadStatus());
-
-		DocumentClosure closure = null;
-		ParsedURL docPurl = document.getLocation();
-		
-		// deal with reload and noCache
-		MetaMetadata mmd = (MetaMetadata) document.getMetaMetadata();
-		assert mmd != null;
-		boolean noCache = mmd.isNoCache();
-		reload = reload
-		         || document.getDownloadStatus() == DownloadStatus.IOERROR
-		         || document.getDownloadStatus() == DownloadStatus.RECYCLED;
-		if (noCache || reload)
-		{
-			removeFromServiceDocumentCollection(thatPurl, docPurl);
-		}
-		if (reload)
-		{
-			removeFromCache(docPurl);
-		}
-
-		// take actions based on the status of the document
-		switch (document.getDownloadStatus())
-		{
-		case UNPROCESSED:
-//		  download(document);
-			queueDocumentForDownload(document);
-			break;
-		case QUEUED:
-		case CONNECTING:
-		case PARSING:
-			logRecord.setDocumentCollectionCacheHit(true);
-			serviceLog.debug("%s has been cached in service global document collection", document);
-
-			serviceLog.debug("adding continuation to the closure of %s", document);
-			closure = document.getOrConstructClosure(new NewDPoolDownloadControllerFactory());
-			closure.addContinuation(this);
-			this.document = document;
-			break;
-		case IOERROR:
-		case RECYCLED:
-			// intentionally fall through the next case.
-			// the idea is: when the document is in state IOERROR or RECYCLED, it should be reloaded.
-		case DOWNLOAD_DONE:
-			if (reload)
-			{
-
-				// redownload and parse document
-				document = semanticsServiceScope.getOrConstructDocument(thatPurl);
-				this.document = document;
-//				download(document);
-				queueDocumentForDownload(document);
-			}
-			else
-			{
+  private void requestMetadata(ParsedURL purl, boolean reload)
+  	{
+  		logRecord.setRequestUrl(purl);
+  
+  		// get or construct the document
+  		Document document = semanticsServiceScope.getOrConstructDocument(purl);
+  		logRecord.setDocumentUrl(document.getLocation());
+  		serviceLog.debug("Document from the service document collection for URL[%s]: %s",
+  		                 purl,
+  		                 document);
+  		serviceLog.debug("Download status of %s: %s", document, document.getDownloadStatus());
+  
+  		ParsedURL docPurl = document.getLocation();
+  		
+  		// deal with reload and noCache
+  		MetaMetadata mmd = (MetaMetadata) document.getMetaMetadata();
+  		assert mmd != null;
+  		boolean noCache = mmd.isNoCache();
+  		reload = reload
+  		         || document.getDownloadStatus() == DownloadStatus.IOERROR
+  		         || document.getDownloadStatus() == DownloadStatus.RECYCLED;
+  		if (noCache || reload)
+  		{
+  			removeFromServiceDocumentCollection(purl, docPurl);
+  		}
+  		if (reload)
+  		{
+  			removeFromCache(docPurl);
+  		}
+  
+  		// take actions based on the status of the document
+  		switch (document.getDownloadStatus())
+  		{
+  		case UNPROCESSED:
+  		  download(document);
+//  			queueDocumentForDownload(document);
+  			break;
+  		case QUEUED:
+  		case CONNECTING:
+  		case PARSING:
   			logRecord.setDocumentCollectionCacheHit(true);
-  			serviceLog.debug("%s has been cached in service global document collection", document);
+  			serviceLog.debug("%s has been cached in service global document collection; "
+  			                 + "adding continuation to its closure.", document);
+  			DocumentClosure closure = document.getOrConstructClosure(new DPoolDownloadControllerFactory());
+  			closure.addContinuation(this);
+  			this.document = document;
+  			break;
+  		case IOERROR:
+  		case RECYCLED:
+  		  reload = true;
+  			// intentionally fall through the next case.
+  			// the idea is: when the document is in state IOERROR or RECYCLED, it should be reloaded.
+  		case DOWNLOAD_DONE:
+  			if (reload)
+  			{
+  				// redownload and parse document
+  				document = semanticsServiceScope.getOrConstructDocument(purl);
+  				this.document = document;
+  				download(document);
+//  				queueDocumentForDownload(document);
+  			}
+  			else
+  			{
+    			logRecord.setDocumentCollectionCacheHit(true);
+    			serviceLog.debug("%s has been cached in service global document collection", document);
+  
+  			  // document is already in global document collection and we don't have to redownload
+  			  // use it directly and return results immediately
+  				this.document = document;
+//  				setFinished(true);
+  			}
+  			break;
+  		}
+  	}
 
-			  // document is already in global document collection and we don't have to redownload
-			  // use it directly and return results immediately
-				this.document = document;
-				setFinished(true);
-			}
-			break;
-		}
-	}
+  private void queueDocumentForDownload(Document document)
+  {
+    DocumentClosure closure =
+        document.getOrConstructClosure(new DPoolDownloadControllerFactory());
+  	                                                         
+  	closure.addContinuation(this);
+  	closure.setLogRecord(logRecord);
+  	serviceLog.debug("Queueing %s for downloading.", document);
+  	closure.queueDownload();
+  }
 
   private void download(Document document)
   {
-    DocumentClosure closure = document.getOrConstructClosure(new NewDPoolDownloadControllerFactory());
+    DocumentClosure closure = document.getOrConstructClosure(new DPoolDownloadControllerFactory());
+    assert closure != null : "null closure for " + document + "!";
+    closure.addContinuation(this);
     try
     {
       closure.performDownload();
+      callback(closure);
     }
     catch (IOException e)
     {
-      // TODO Auto-generated catch block
+      serviceLog.error("error: %s\n%s", e.getMessage(), e.getStackTrace());
       e.printStackTrace();
     }
-    this.document = closure.getDocument();
-    setFinished(true);
+  
+//    setFinished(true);
   }
 
-  /**
+  @Override
+	public synchronized void callback(DocumentClosure incomingClosure)
+	{
+		Document newDoc = incomingClosure.getDocument();
+		if (document != null && document != newDoc)
+		{
+			serviceLog.debug("remapping old %s to new %s", document, newDoc);
+			semanticsServiceScope.getLocalDocumentCollection().remap(document, newDoc);
+		}
+		document = newDoc;
+		// if (origDoc != newDoc)
+		// {
+		// semanticsServiceScope.getGlobalCollection().remap(origDoc, newDoc);
+		// }
+		// generateSpan(newDoc);
+
+//		setFinished(true);
+
+		DownloadableLogRecord docLogRecord = incomingClosure.getLogRecord();
+		if (docLogRecord != null)
+			serviceLog.info("%s", serializeToString(docLogRecord, StringFormat.JSON));
+	}
+	
+//  private void waitForFinish()
+//	{
+//		if (!finished)
+//		{
+//			synchronized (lockFinished)
+//			{
+//				for (int i = 0; !finished && i < CONTINUATION_TIMOUT_CYCLES; ++i)
+//				{
+//					try
+//					{
+//						lockFinished.wait(CONTINUATION_CHECK_INTERVAL);
+//					}
+//					catch (InterruptedException e)
+//					{
+//						e.printStackTrace();
+//					}
+//				}
+//				if (!finished)
+//				{
+//					serviceLog.error("Request timed out%s.", document != null ? document : "");
+//				}
+//			}
+//		}
+//	}
+//
+//	private void setFinished(boolean finished)
+//	{
+//		synchronized (lockFinished)
+//		{
+//			this.finished = finished;
+//		}
+//	}
+
+	/**
    * @param thatPurl
    * @param docPurl
    */
@@ -291,36 +320,13 @@ public class MetadataServiceHelper extends Debug implements Continuation<Documen
     FileSystemStorage.getStorageProvider().removeFileAndMetadata(docPurl);
   }
 
-  @Override
-	public synchronized void callback(DocumentClosure incomingClosure)
-	{
-		Document newDoc = incomingClosure.getDocument();
-		if (document != null && document != newDoc)
-		{
-			serviceLog.debug("remapping old %s to new %s", document, newDoc);
-			semanticsServiceScope.getLocalDocumentCollection().remap(document, newDoc);
-		}
-		document = newDoc;
-		// if (origDoc != newDoc)
-		// {
-		// semanticsServiceScope.getGlobalCollection().remap(origDoc, newDoc);
-		// }
-		// generateSpan(newDoc);
-
-		setFinished(true);
-
-		DownloadableLogRecord docLogRecord = incomingClosure.getLogRecord();
-		if (docLogRecord != null)
-			serviceLog.info("%s", serializeToString(docLogRecord, StringFormat.JSON));
-	}
-	
-	boolean isFinished()
-	{
-	  synchronized (lockFinished)
-	  {
-  	  return finished;
-	  }
-	}
+//	boolean isFinished()
+//	{
+//	  synchronized (lockFinished)
+//	  {
+//  	  return finished;
+//	  }
+//	}
 
 	ServiceLogRecord getServiceLogRecord()
 	{

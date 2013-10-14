@@ -24,7 +24,7 @@ import ecologylab.bigsemantics.documentparsers.DocumentParser;
 import ecologylab.bigsemantics.downloaderpool.DownloaderResult;
 import ecologylab.bigsemantics.downloaderpool.MessageScope;
 import ecologylab.bigsemantics.downloaders.LocalDocumentCache;
-import ecologylab.bigsemantics.downloaders.controllers.NewDownloadController;
+import ecologylab.bigsemantics.downloaders.controllers.DownloadController;
 import ecologylab.bigsemantics.filestorage.FileMetadata;
 import ecologylab.bigsemantics.filestorage.FileStorageProvider;
 import ecologylab.bigsemantics.filestorage.FileSystemStorage;
@@ -37,14 +37,14 @@ import ecologylab.net.ParsedURL;
 import ecologylab.serialization.SIMPLTranslationException;
 import ecologylab.serialization.formatenums.StringFormat;
 
-public class NewDPoolDownloadController implements NewDownloadController
+public class DPoolDownloadController implements DownloadController
 {
 
   private static Logger logger;
 
   static
   {
-    logger = LoggerFactory.getLogger(NewDPoolDownloadController.class);
+    logger = LoggerFactory.getLogger(DPoolDownloadController.class);
   }
 
   public static int     HTTP_DOWNLOAD_REQUEST_TIMEOUT = 45000;
@@ -97,12 +97,14 @@ public class NewDPoolDownloadController implements NewDownloadController
   private ParsedURL        redirectedLocation;
 
   private DownloaderResult result;
+  
+  private String           mimeType;
 
   private boolean          good;
   
   private InputStream      inputStream;
-
-  public NewDPoolDownloadController()
+  
+  public DPoolDownloadController()
   {
     assert SERVICE_LOCS != null;
     if (SERVICE_LOC == null)
@@ -144,6 +146,7 @@ public class NewDPoolDownloadController implements NewDownloadController
       logRecord = (ServiceLogRecord) downloadableLogRecord;
     }
 
+    // FIXME: this should really be: semanticsScope.getPersistentHtmlCache();
     FileStorageProvider storageProvider = FileSystemStorage.getStorageProvider();
     if (!location.isFile())
     {
@@ -184,7 +187,6 @@ public class NewDPoolDownloadController implements NewDownloadController
             String urlHash = localPath.substring(localPath.lastIndexOf(File.separatorChar));
             logRecord.setUrlHash(urlHash);
           }
-          this.result = null; // release memory? FIXME if this is useful we should add recycle()
 
           // set local location
           document.setLocalLocation(ParsedURL.getAbsolute("file://" + localPath));
@@ -217,6 +219,8 @@ public class NewDPoolDownloadController implements NewDownloadController
                          + redirectedLocation);
             handleRedirectLocation(semanticScope, closure, location, redirectedLocation);
           }
+          
+          mimeType = fileMetadata.getMimeType();
         }
         else
         {
@@ -349,6 +353,10 @@ public class NewDPoolDownloadController implements NewDownloadController
   @Override
   public String getMimeType()
   {
+    if (mimeType != null)
+    {
+      return mimeType;
+    }
     return result == null ? null : result.getMimeType();
   }
 

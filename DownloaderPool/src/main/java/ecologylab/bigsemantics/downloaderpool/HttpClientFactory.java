@@ -4,7 +4,6 @@ import org.apache.http.client.params.ClientPNames;
 import org.apache.http.client.protocol.RequestAcceptEncoding;
 import org.apache.http.client.protocol.ResponseContentEncoding;
 import org.apache.http.impl.client.AbstractHttpClient;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.PoolingClientConnectionManager;
 
 /**
@@ -25,7 +24,7 @@ public class HttpClientFactory
     connectionManager.setDefaultMaxPerRoute(20);
     connectionManager.setMaxTotal(200);
 
-    client = new DefaultHttpClient(connectionManager);
+    client = new RedirectHttpClient(connectionManager);
     prepareHttpClient(client);
   }
 

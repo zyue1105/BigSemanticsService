@@ -23,7 +23,7 @@ import ecologylab.bigsemantics.generated.library.RepositoryMetadataTranslationSc
 import ecologylab.bigsemantics.html.dom.IDOMProvider;
 import ecologylab.bigsemantics.metadata.builtins.Document;
 import ecologylab.bigsemantics.service.dbinterface.SimpleDiskDocumentCacheFactory;
-import ecologylab.bigsemantics.service.downloader.controller.NewDPoolDownloadController;
+import ecologylab.bigsemantics.service.downloader.controller.DPoolDownloadController;
 import ecologylab.bigsemantics.service.logging.Log4jLoggerFactory;
 import ecologylab.net.ParsedURL;
 import ecologylab.serialization.SimplTypesScope;
@@ -115,7 +115,7 @@ public class SemanticServiceScope extends SemanticsGlobalScope
       FileSystemStorage.setDownloadDirectory(serviceProps);
       
       String serviceLocs = getProperty(serviceProps, "DPOOL_SERVICE_LOCATIONS", null);
-      NewDPoolDownloadController.setServiceLocs(serviceLocs);
+      DPoolDownloadController.setServiceLocs(serviceLocs);
     }
     catch (Exception e)
     {
