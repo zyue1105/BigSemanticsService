@@ -157,6 +157,7 @@ public class MetadataServiceHelper extends Debug implements Continuation<Documen
   		if (noCache || reload)
   		{
   			removeFromServiceDocumentCollection(purl, docPurl);
+  			document = semanticsServiceScope.getOrConstructDocument(purl);
   		}
   		if (reload)
   		{

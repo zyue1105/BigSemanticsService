@@ -1,6 +1,9 @@
 package ecologylab.bigsemantics.downloaderpool;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +23,8 @@ import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 import com.google.common.io.BaseEncoding;
 
+import ecologylab.generic.StringBuilderBaseUtils;
+import ecologylab.generic.StringBuilderPool;
 import ecologylab.serialization.SIMPLTranslationException;
 import ecologylab.serialization.SimplTypesScope;
 import ecologylab.serialization.formatenums.StringFormat;
@@ -109,13 +114,48 @@ public class Utils
 
     return null;
   }
+  
+  static URIBuilder getUriBuilder(String url) throws UnsupportedEncodingException, URISyntaxException
+  {
+    URIBuilder ub = null;
+    try
+    {
+      ub = new URIBuilder(url);
+    }
+    catch (URISyntaxException e)
+    {
+      ub = parseAndGetUriBuilder(url);
+    }
+    return ub;
+  }
+  
+  static URIBuilder parseAndGetUriBuilder(String url)
+      throws URISyntaxException, UnsupportedEncodingException
+  {
+    int qpos = url.indexOf('?');
+    String urlBase = url.substring(0, qpos);
+    URIBuilder ub = new URIBuilder(urlBase);
+    String paramsStr = url.substring(qpos + 1);
+    if (paramsStr != null)
+    {
+      String[] params = paramsStr.split("&");
+      for (int i = 0; i < params.length; ++i)
+      {
+        int epos = params[i].indexOf('=');
+        String name = params[i].substring(0, epos);
+        String value = params[i].substring(epos + 1);
+        ub.addParameter(name, URLEncoder.encode(value, "ascii"));
+      }
+    }
+    return ub;
+  }
 
   public static HttpGet generateGetRequest(String url,
                                            Map<String, String> additionalParams)
   {
     try
     {
-      URIBuilder ub = new URIBuilder(url);
+      URIBuilder ub = getUriBuilder(url);
       if (additionalParams != null)
       {
         for (String key : additionalParams.keySet())
@@ -164,6 +204,36 @@ public class Utils
     post.setEntity(entity);
 
     return post;
+  }
+  
+  /**
+   * Used to filter out invalid characters in XML 1.0:
+   * Only the following characters are valid in XML 1.0:
+   * #x9 | #xA | #xD | [#x20-#xD7FF] | [#xE000-#xFFFD] | [#x10000-#x10FFFF]
+   */
+  static String xml10pattern = "[^"
+                               + "\u0009\r\n"
+                               + "\u0020-\uD7FF"
+                               + "\uE000-\uFFFD"
+                               + "\ud800\udc00-\udbff\udfff"
+                               + "]";
+  
+  public static String filterInvalidCharsXml10(String s)
+  {
+//    StringBuilder sb = StringBuilderBaseUtils.acquire();
+//    char[] a = s.toCharArray();
+//    for (int i = 0; i < a.length; ++i)
+//    {
+//      int v = (int) a[i];
+//      if (a[i] == '\r' || a[i] == '\n'
+//          || v == 0x0009
+//          || (v >= 0x0020 && v < 0xD800)
+//          || (v >= 0xE000 && v < 0xFFFE))
+//      {
+//        sb.append(a[i]);
+//      }
+//    }
+    return s.replaceAll(xml10pattern, " ");
   }
 
 }

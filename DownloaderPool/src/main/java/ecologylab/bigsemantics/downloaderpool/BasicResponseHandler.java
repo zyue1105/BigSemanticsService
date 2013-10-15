@@ -67,7 +67,19 @@ public class BasicResponseHandler implements ResponseHandler<BasicResponse>
       }
 
       // content
-      result.setContent(EntityUtils.toString(entity));
+      String content = EntityUtils.toString(entity);
+      if (!content.startsWith("<assigned_tasks>"))
+      {
+//        String pre = "<li class=\"interwiki-got\"><a href=\"//got.wikipedia.org/wiki/%F0%90%8D%80%F0%90%8C%B0%F0%90%8C%B1%F0%90%8C%BB%F0%90%8D%89_%F0%90%8D%80%F0%90%8C%B9%F0%90%8C%BA%F0%90%8C%B0%F0%90%8D%83%F0%90%8D%83%F0%90%8D%89\" title=\"";
+//        int pos = content.indexOf(pre) + pre.length();
+//        char c = content.charAt(pos);
+//        System.out.println("int: " + (int)c);
+//        int unicode = Character.getNumericValue(c);
+//        System.out.println("unicode: " + unicode);
+//        content = Utils.filterInvalidCharsXml10(content);
+//        System.out.println(content);
+      }
+      result.setContent(content);
     }
     else
     {
