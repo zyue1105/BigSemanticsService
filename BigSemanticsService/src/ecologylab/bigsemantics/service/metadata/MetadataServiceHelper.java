@@ -163,6 +163,8 @@ public class MetadataServiceHelper extends Debug implements Continuation<Documen
   		{
   			removeFromCache(docPurl);
   		}
+  		
+  		this.document = document;
   
   		// take actions based on the status of the document
   		switch (document.getDownloadStatus())
@@ -178,8 +180,11 @@ public class MetadataServiceHelper extends Debug implements Continuation<Documen
   			serviceLog.debug("%s has been cached in service global document collection; "
   			                 + "adding continuation to its closure.", document);
   			DocumentClosure closure = document.getOrConstructClosure(new DPoolDownloadControllerFactory());
-  			closure.addContinuation(this);
-  			this.document = document;
+  			if (!closure.addContinuationBeforeDownloadDone(this))
+  			{
+  			  // when trying to add continuation, the downloading already finishes.
+  			  callback(closure);
+  			}
   			break;
   		case IOERROR:
   		case RECYCLED:
@@ -202,7 +207,6 @@ public class MetadataServiceHelper extends Debug implements Continuation<Documen
   
   			  // document is already in global document collection and we don't have to redownload
   			  // use it directly and return results immediately
-  				this.document = document;
 //  				setFinished(true);
   			}
   			break;
@@ -228,7 +232,10 @@ public class MetadataServiceHelper extends Debug implements Continuation<Documen
     try
     {
       closure.performDownload();
-      callback(closure);
+      for (Continuation<DocumentClosure> continuation : closure.getContinuations())
+      {
+        continuation.callback(closure);
+      }
     }
     catch (IOException e)
     {
@@ -249,11 +256,6 @@ public class MetadataServiceHelper extends Debug implements Continuation<Documen
 			semanticsServiceScope.getLocalDocumentCollection().remap(document, newDoc);
 		}
 		document = newDoc;
-		// if (origDoc != newDoc)
-		// {
-		// semanticsServiceScope.getGlobalCollection().remap(origDoc, newDoc);
-		// }
-		// generateSpan(newDoc);
 
 //		setFinished(true);
 
