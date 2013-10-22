@@ -3,6 +3,7 @@ package ecologylab.bigsemantics.downloaderpool;
 import java.io.IOException;
 import java.util.Scanner;
 
+import ecologylab.bigsemantics.downloaderpool.httpclient.HttpClientFactory;
 import ecologylab.net.ParsedURL;
 
 

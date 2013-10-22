@@ -1,4 +1,4 @@
-package ecologylab.bigsemantics.downloaderpool;
+package ecologylab.bigsemantics.downloaderpool.httpclient;
 
 import java.io.IOException;
 

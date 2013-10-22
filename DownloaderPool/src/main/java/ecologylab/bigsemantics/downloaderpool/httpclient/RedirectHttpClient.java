@@ -1,4 +1,4 @@
-package ecologylab.bigsemantics.downloaderpool;
+package ecologylab.bigsemantics.downloaderpool.httpclient;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -19,7 +19,7 @@ import org.apache.http.protocol.HttpRequestExecutor;
 public class RedirectHttpClient extends DefaultHttpClient
 {
 
-  private final Log log = LogFactory.getLog(getClass());
+  private final Log log = LogFactory.getLog("org.apache.http.impl.client.RedirectHttpClient");
 
   public RedirectHttpClient(ClientConnectionManager conman)
   {

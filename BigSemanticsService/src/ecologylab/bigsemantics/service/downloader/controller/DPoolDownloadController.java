@@ -37,6 +37,11 @@ import ecologylab.net.ParsedURL;
 import ecologylab.serialization.SIMPLTranslationException;
 import ecologylab.serialization.formatenums.StringFormat;
 
+/**
+ * Connect to the DPool service for downloading a web page.
+ * 
+ * @author quyin
+ */
 public class DPoolDownloadController implements DownloadController
 {
 
@@ -47,7 +52,7 @@ public class DPoolDownloadController implements DownloadController
     logger = LoggerFactory.getLogger(DPoolDownloadController.class);
   }
 
-  public static int     HTTP_DOWNLOAD_REQUEST_TIMEOUT = 45000;
+  public static int     HTTP_DOWNLOAD_REQUEST_TIMEOUT = 60000;
 
   private static String SERVICE_LOCS;
 
@@ -157,9 +162,10 @@ public class DPoolDownloadController implements DownloadController
       if (filePath == null)
       {
         // not cached, network download:
+        logger.info("Not cached: " + location);
         logRecord.setHtmlCacheHit(false);
-        // htmlCacheLog.debug("Uncached URL: " + originalPURL);
 
+        // FIXME: move this to DocumentClosure
         if (userAgent == null)
         {
           userAgent = document.getMetaMetadata().getUserAgentString();
@@ -200,8 +206,8 @@ public class DPoolDownloadController implements DownloadController
       else
       {
         // cached:
+        logger.info("Not cached: " + location);
         logRecord.setHtmlCacheHit(true);
-        // htmlCacheLog.debug("Cached URL[" + originalPURL + "] at " + filePath);
 
         // document is present in local cache. read meta information as well
         document.setLocalLocation(ParsedURL.getAbsolute("file://" + filePath));
@@ -253,8 +259,6 @@ public class DPoolDownloadController implements DownloadController
                                         ParsedURL origLoc,
                                         String userAgentString) throws IOException
   {
-    try
-    {
       Client client = Client.create();
       client.setFollowRedirects(true);
       client.setReadTimeout(HTTP_DOWNLOAD_REQUEST_TIMEOUT);
@@ -268,26 +272,37 @@ public class DPoolDownloadController implements DownloadController
       URI requestUri = ub.build();
 
       WebResource r = client.resource(requestUri);
+
       ClientResponse resp = r.get(ClientResponse.class);
       if (resp != null && resp.getStatus() == ClientResponse.Status.OK.getStatusCode())
       {
         // got response from download controller:
         String resultStr = resp.getEntity(String.class);
-        DownloaderResult result =
-            (DownloaderResult) MessageScope.get().deserialize(resultStr, StringFormat.XML);
+        DownloaderResult result = null;
+        try
+        {
+          result = (DownloaderResult) MessageScope.get().deserialize(resultStr, StringFormat.XML);
+          assert result != null : "Deserialization results in null!";
+          String content = result.getContent();
+          logger.info("Service received DPool result for %s: "
+                      + "task id: %s, state: %s, status code: %d, content length: %d",
+                      origLoc,
+                      result.getTaskId(),
+                      result.getState(),
+                      result.getHttpRespCode(),
+                      content == null ? 0 : content.length());
+        }
+        catch (SIMPLTranslationException e)
+        {
+          logger.error("Error deserializing DPool result for " + origLoc, e);
+        }
         return result;
       }
       else
       {
-        logger.error("Pool controller error status when downloading "
+        logger.error("DPool controller error status when downloading "
                      + origLoc + ": " + resp.getStatus());
       }
-    }
-    catch (SIMPLTranslationException e)
-    {
-      logger.error("Exception when deserializing downloading result for page " + origLoc);
-      logger.error("" + e.getStackTrace());
-    }
 
     return null;
   }

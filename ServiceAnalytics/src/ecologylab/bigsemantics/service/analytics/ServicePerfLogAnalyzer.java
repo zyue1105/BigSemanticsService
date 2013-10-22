@@ -125,9 +125,9 @@ public class ServicePerfLogAnalyzer extends Debug
 				else
 					avgLatencyWoQueuedWait += latency;
 
-				avgTimeInDownloading += logRecord.getmSecInHtmlDownload();
-				avgTimeInExtraction += logRecord.getmSecInExtraction();
-				avgTimeInSerialization += logRecord.getmSecInSerialization();
+				avgTimeInDownloading += logRecord.getMsHtmlDownload();
+				avgTimeInExtraction += logRecord.getMsExtraction();
+				avgTimeInSerialization += logRecord.getMsSerialization();
 				
 				if (logRecord.getResponseCode() == STATUS_OK)
 				{
@@ -140,9 +140,9 @@ public class ServicePerfLogAnalyzer extends Debug
 					else
 						avgLatencyWoQueuedWaitS += latency;
 					
-					avgTimeInDownloadingS += logRecord.getmSecInHtmlDownload();
-					avgTimeInExtractionS += logRecord.getmSecInExtraction();
-					avgTimeInSerializationS += logRecord.getmSecInSerialization();					
+					avgTimeInDownloadingS += logRecord.getMsHtmlDownload();
+					avgTimeInExtractionS += logRecord.getMsExtraction();
+					avgTimeInSerializationS += logRecord.getMsSerialization();					
 				}
 			}
 
@@ -206,14 +206,14 @@ public class ServicePerfLogAnalyzer extends Debug
                          @Override
                          public int compare(ServiceLogRecord r1, ServiceLogRecord r2)
                          {
-                           long x = r1.getmSecInExtraction() - r2.getmSecInExtraction();
+                           long x = r1.getMsExtraction() - r2.getMsExtraction();
                            return (x>0)?(-1):((x==0)?0:1);
                          }
                        });
 
 	    for (ServiceLogRecord logRecord : sorted)
 	    {
-	      System.out.format("%s\t%s\n", logRecord.getDocumentUrl(), logRecord.getmSecInExtraction());
+	      System.out.format("%s\t%s\n", logRecord.getDocumentUrl(), logRecord.getMsExtraction());
 	    }
 	  }
 	}

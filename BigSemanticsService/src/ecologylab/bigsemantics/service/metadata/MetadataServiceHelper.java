@@ -7,20 +7,21 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import ecologylab.bigsemantics.Utils;
 import ecologylab.bigsemantics.collecting.DownloadStatus;
 import ecologylab.bigsemantics.filestorage.FileSystemStorage;
 import ecologylab.bigsemantics.metadata.builtins.Document;
 import ecologylab.bigsemantics.metadata.builtins.DocumentClosure;
 import ecologylab.bigsemantics.metametadata.MetaMetadata;
-import ecologylab.bigsemantics.service.SemanticServiceErrorCodes;
+import ecologylab.bigsemantics.service.SemanticServiceErrorMessages;
 import ecologylab.bigsemantics.service.SemanticServiceScope;
 import ecologylab.bigsemantics.service.downloader.controller.DPoolDownloadControllerFactory;
 import ecologylab.bigsemantics.service.logging.ServiceLogRecord;
-import ecologylab.concurrent.DownloadableLogRecord;
 import ecologylab.generic.Continuation;
 import ecologylab.generic.Debug;
-import ecologylab.logging.ILogger;
-import ecologylab.logging.ILoggerFactory;
 import ecologylab.net.ParsedURL;
 import ecologylab.serialization.SIMPLTranslationException;
 import ecologylab.serialization.SimplTypesScope;
@@ -31,125 +32,143 @@ import ecologylab.serialization.formatenums.StringFormat;
  * 
  * @author ajit
  */
-public class MetadataServiceHelper extends Debug implements Continuation<DocumentClosure>
+public class MetadataServiceHelper extends Debug
+    implements Continuation<DocumentClosure>, SemanticServiceErrorMessages
 {
 
   public static int                   CONTINUATION_TIMOUT = 60000;
 
-  static ILogger                      serviceLog;
+  private static Logger               logger;
 
-  static ILogger                      servicePerfLog;
+  private static Logger               perfLogger;
 
   private static SemanticServiceScope semanticsServiceScope;
 
   static
   {
-    ILoggerFactory loggerFactory = SemanticServiceScope.get().getLoggerFactory();
-    serviceLog = loggerFactory.getLogger(MetadataServiceHelper.class);
-    servicePerfLog = loggerFactory.getLogger("ecologylab.bigsemantics.service.PERF");
+    logger = LoggerFactory.getLogger(MetadataServiceHelper.class);
+    perfLogger = LoggerFactory.getLogger("ecologylab.bigsemantics.service.PERF");
     semanticsServiceScope = SemanticServiceScope.get();
   }
 
   private Document                    document;
 
-  private ServiceLogRecord            logRecord;
+  private ServiceLogRecord            perfLogRecord;
 
   private Object                      sigDownloadDone     = new Object();
 
   public MetadataServiceHelper()
   {
-    // this.urlSpanMap = new HashMap<String, Integer>();
-    this.logRecord = new ServiceLogRecord();
+    this.perfLogRecord = new ServiceLogRecord();
   }
 
   ServiceLogRecord getServiceLogRecord()
   {
-    return logRecord;
+    return perfLogRecord;
   }
 
   /**
    * The entry method that accepts a URL and returns a Response with extracted metadata.
    * 
-   * @param url
+   * @param purl
    * @param format
    * @param reload
    * @return
    */
-  public Response getMetadataResponse(ParsedURL url, StringFormat format, boolean reload)
+  public Response getMetadataResponse(ParsedURL purl, StringFormat format, boolean reload)
   {
-    logRecord.setBeginTime(new Date());
-
+    perfLogRecord.setBeginTime(new Date());
+    perfLogRecord.setRequestUrl(purl);
     Response resp = null;
+
     document = null;
-    getMetadata(url, reload);
-    if (document != null)
+    getMetadata(purl, reload);
+    if (document == null)
     {
-      try
-      {
-        long millis = System.currentTimeMillis();
-        String responseBody = SimplTypesScope.serialize(document, format).toString();
-        logRecord.setmSecInSerialization(System.currentTimeMillis() - millis);
-        resp = Response.status(Status.OK).entity(responseBody).build();
-      }
-      catch (SIMPLTranslationException e)
-      {
-        // FIXME use logger to capture exception and callstack trace
-        e.printStackTrace();
-        serviceLog.error("exception while serializing document: %s", e.getMessage());
-        resp = Response
-            .status(Status.INTERNAL_SERVER_ERROR)
-            .entity(SemanticServiceErrorCodes.INTERNAL_ERROR)
-            .type(MediaType.TEXT_PLAIN)
-            .build();
-      }
+      logger.error("Can't construct Document for [%s]", purl);
+      resp = Response
+          .status(Status.NOT_FOUND)
+          .entity(METADATA_NOT_FOUND)
+          .type(MediaType.TEXT_PLAIN)
+          .build();
     }
     else
     {
-      serviceLog.error("metadata couldn't be obtained for [%s]", url);
+      DownloadStatus docStatus = document.getDownloadStatus();
+      switch (docStatus)
+      {
+      case UNPROCESSED:
+      case QUEUED:
+      case CONNECTING:
+      case PARSING:
+        logger.error("Unfinished %s, status: %s", document, docStatus);
+        break;
+      case DOWNLOAD_DONE:
+        try
+        {
+          long t0 = System.currentTimeMillis();
+          String responseBody = SimplTypesScope.serialize(document, format).toString();
+          perfLogRecord.setMsSerialization(System.currentTimeMillis() - t0);
+          resp = Response.status(Status.OK).entity(responseBody).build();
+        }
+        catch (SIMPLTranslationException e)
+        {
+          logger.error("Exception while serializing " + document, e);
+        }
+        break;
+      case IOERROR:
+      case RECYCLED:
+        logger.error("Bad Document status for [%s]: %s", purl, docStatus);
+        break;
+      }
+    }
+
+    if (resp == null)
+    {
       resp = Response
-          .status(Status.NOT_FOUND)
-          .entity(SemanticServiceErrorCodes.METADATA_NOT_FOUND)
+          .status(Status.INTERNAL_SERVER_ERROR)
+          .entity(INTERNAL_ERROR)
           .type(MediaType.TEXT_PLAIN)
           .build();
     }
 
-    logRecord.setMsTotal(System.currentTimeMillis() - logRecord.getBeginTime().getTime());
-    logRecord.setResponseCode(resp.getStatus());
-    servicePerfLog.info(serializeToString(logRecord, StringFormat.JSON));
+    perfLogRecord.setMsTotal(System.currentTimeMillis() - perfLogRecord.getBeginTime().getTime());
+    perfLogRecord.setResponseCode(resp.getStatus());
+    perfLogger.info(Utils.serializeToString(perfLogRecord, StringFormat.JSON));
 
     return resp;
   }
 
   Document getMetadata(ParsedURL purl, boolean reload)
   {
-    logRecord.setRequestUrl(purl);
-
-    // get or construct the document
     document = semanticsServiceScope.getOrConstructDocument(purl);
+    assert document != null : "Null Document returned from the semantics scope!";
+
     ParsedURL docPurl = document.getLocation();
-    logRecord.setDocumentUrl(document.getLocation());
+    perfLogRecord.setDocumentUrl(document.getLocation());
     if (!docPurl.equals(purl))
     {
-      serviceLog.info("normalizing %s to %s", purl, docPurl);
+      logger.info("Normalizing %s to %s", purl, docPurl);
     }
+
     DownloadStatus docStatus = document.getDownloadStatus();
-    serviceLog.debug("Download status of %s: %s", document, docStatus);
+    logger.debug("Download status of %s: %s", document, docStatus);
     if (docStatus == DownloadStatus.DOWNLOAD_DONE)
     {
-      logRecord.setDocumentCollectionCacheHit(true);
-      serviceLog.debug("%s cached in service local document collection", document);
+      logger.info("%s found in service in-mem document cache", document);
+      perfLogRecord.setInMemDocumentCacheHit(true);
     }
 
     // take actions based on the status of the document
-    switch (document.getDownloadStatus())
+    DocumentClosure closure = document.getOrConstructClosure(new DPoolDownloadControllerFactory());
+    switch (docStatus)
     {
     case UNPROCESSED:
-      download(document);
+      download(closure);
       break;
     case QUEUED:
     case CONNECTING:
     case PARSING:
-      DocumentClosure closure = document.getOrConstructClosure(new DPoolDownloadControllerFactory());
       addCallbackAndWaitForDownloadDone(closure);
       break;
     case IOERROR:
@@ -162,8 +181,8 @@ public class MetadataServiceHelper extends Debug implements Continuation<Documen
       {
         removeFromPersistentDocumentCache(docPurl);
         // redownload and parse document
-        document = semanticsServiceScope.getOrConstructDocument(purl);
-        download(document);
+        closure.resetDownloadStatus();
+        download(closure);
       }
       break;
     }
@@ -175,16 +194,15 @@ public class MetadataServiceHelper extends Debug implements Continuation<Documen
       removeFromLocalDocumentCollection(purl);
       removeFromLocalDocumentCollection(docPurl);
     }
-    
+
     return this.document;
   }
 
-  private void download(Document document)
+  private void download(DocumentClosure closure)
   {
-    DocumentClosure closure = document.getOrConstructClosure(new DPoolDownloadControllerFactory());
     try
     {
-      synchronized(closure)
+      synchronized (closure)
       {
         closure.performDownload();
       }
@@ -193,7 +211,7 @@ public class MetadataServiceHelper extends Debug implements Continuation<Documen
           || closure.getDownloadStatus() == DownloadStatus.CONNECTING
           || closure.getDownloadStatus() == DownloadStatus.PARSING)
       {
-        serviceLog.error("closure status is not download done after calling performDownload()!");
+        logger.error("Closure status is not download done after calling performDownload()!");
       }
       else
       {
@@ -202,14 +220,10 @@ public class MetadataServiceHelper extends Debug implements Continuation<Documen
     }
     catch (IOException e)
     {
-      serviceLog.error("error in downloading %s: %s\n%s",
-                       document.getLocation(),
-                       e.getMessage(),
-                       e.getStackTrace());
-      e.printStackTrace();
+      logger.error("Error in downloading " + document, e);
     }
   }
-  
+
   private void addCallbackAndWaitForDownloadDone(DocumentClosure closure)
   {
     if (closure.addContinuationBeforeDownloadDone(this))
@@ -222,7 +236,7 @@ public class MetadataServiceHelper extends Debug implements Continuation<Documen
         }
         catch (InterruptedException e)
         {
-          serviceLog.debug("waiting for download done interrupted.");
+          logger.debug("Waiting for download done interrupted.");
         }
       }
     }
@@ -233,19 +247,15 @@ public class MetadataServiceHelper extends Debug implements Continuation<Documen
   }
 
   @Override
-  public synchronized void callback(DocumentClosure incomingClosure)
+  public synchronized void callback(DocumentClosure closure)
   {
-    Document newDoc = incomingClosure.getDocument();
+    Document newDoc = closure.getDocument();
     if (document != null && document != newDoc)
     {
-      serviceLog.debug("remapping old %s to new %s", document, newDoc);
+      logger.info("Remapping old %s to new %s", document, newDoc);
       semanticsServiceScope.getLocalDocumentCollection().remap(document, newDoc);
     }
     document = newDoc;
-
-    DownloadableLogRecord docLogRecord = incomingClosure.getLogRecord();
-    if (docLogRecord != null)
-      serviceLog.info("%s", serializeToString(docLogRecord, StringFormat.JSON));
 
     synchronized (sigDownloadDone)
     {
@@ -258,7 +268,7 @@ public class MetadataServiceHelper extends Debug implements Continuation<Documen
    */
   private void removeFromLocalDocumentCollection(ParsedURL docPurl)
   {
-    serviceLog.debug("removing document [%s] from service local document collection", docPurl);
+    logger.debug("removing document [%s] from service local document collection", docPurl);
     semanticsServiceScope.getLocalDocumentCollection().remove(docPurl);
   }
 
@@ -267,23 +277,9 @@ public class MetadataServiceHelper extends Debug implements Continuation<Documen
    */
   private void removeFromPersistentDocumentCache(ParsedURL docPurl)
   {
-    serviceLog.debug("removing document [%s] from persistent document caches", docPurl);
+    logger.debug("removing document [%s] from persistent document caches", docPurl);
     semanticsServiceScope.getPersistentDocumentCache().removeDocument(docPurl);
     FileSystemStorage.getStorageProvider().removeFileAndMetadata(docPurl);
-  }
-
-  private static String serializeToString(Object obj, StringFormat format)
-  {
-    try
-    {
-      return SimplTypesScope.serialize(obj, format).toString();
-    }
-    catch (SIMPLTranslationException e)
-    {
-      // FIXME logging
-      e.printStackTrace();
-      return "Cannot serialize " + obj + " to string: " + e.getMessage();
-    }
   }
 
 }

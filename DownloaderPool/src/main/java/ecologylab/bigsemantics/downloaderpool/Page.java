@@ -5,11 +5,11 @@ import java.io.IOException;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.AbstractHttpClient;
-import org.apache.http.params.CoreProtocolPNames;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ecologylab.bigsemantics.downloaderpool.DownloaderResult.State;
+import ecologylab.bigsemantics.downloaderpool.httpclient.HttpClientFactory;
 import ecologylab.concurrent.Downloadable;
 import ecologylab.concurrent.DownloadableLogRecord;
 import ecologylab.concurrent.Site;
@@ -91,11 +91,14 @@ public class Page implements Downloadable
   @Override
   public void performDownload()
   {
-    AbstractHttpClient client = clientFactory.get();
-
+    AbstractHttpClient client = null;
     if (userAgent != null && userAgent.length() > 0)
     {
-      client.getParams().setParameter(CoreProtocolPNames.USER_AGENT, userAgent);
+      client = clientFactory.get(userAgent);
+    }
+    else
+    {
+      client = clientFactory.get();
     }
     PageResponseHandler handler = new PageResponseHandler(result);
     PageRedirectStrategy redirectStrategy = new PageRedirectStrategy(result);

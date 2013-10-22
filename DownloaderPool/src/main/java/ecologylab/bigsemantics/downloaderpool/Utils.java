@@ -23,8 +23,6 @@ import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 import com.google.common.io.BaseEncoding;
 
-import ecologylab.generic.StringBuilderBaseUtils;
-import ecologylab.generic.StringBuilderPool;
 import ecologylab.serialization.SIMPLTranslationException;
 import ecologylab.serialization.SimplTypesScope;
 import ecologylab.serialization.formatenums.StringFormat;
@@ -115,7 +113,7 @@ public class Utils
     return null;
   }
   
-  static URIBuilder getUriBuilder(String url) throws UnsupportedEncodingException, URISyntaxException
+  public static URIBuilder getUriBuilder(String url) throws UnsupportedEncodingException, URISyntaxException
   {
     URIBuilder ub = null;
     try
@@ -132,19 +130,33 @@ public class Utils
   static URIBuilder parseAndGetUriBuilder(String url)
       throws URISyntaxException, UnsupportedEncodingException
   {
+    String path = null;
+    String queries = null;
     int qpos = url.indexOf('?');
-    String urlBase = url.substring(0, qpos);
-    URIBuilder ub = new URIBuilder(urlBase);
-    String paramsStr = url.substring(qpos + 1);
-    if (paramsStr != null)
+    if (qpos < 0)
     {
-      String[] params = paramsStr.split("&");
+      path = url;
+    }
+    else
+    {
+      path = url.substring(0, qpos);
+      queries = url.substring(qpos + 1);
+    }
+    
+    // TODO more escaping
+    path = path.replace(" ", "+");
+
+    URIBuilder ub = new URIBuilder(path);
+
+    if (queries != null)
+    {
+      String[] params = queries.split("&");
       for (int i = 0; i < params.length; ++i)
       {
         int epos = params[i].indexOf('=');
         String name = params[i].substring(0, epos);
         String value = params[i].substring(epos + 1);
-        ub.addParameter(name, URLEncoder.encode(value, "ascii"));
+        ub.addParameter(name, URLEncoder.encode(value, "UTF-8"));
       }
     }
     return ub;
@@ -156,6 +168,10 @@ public class Utils
     try
     {
       URIBuilder ub = getUriBuilder(url);
+
+      // handle special characters in path
+      String path = ub.getPath();
+
       if (additionalParams != null)
       {
         for (String key : additionalParams.keySet())
@@ -206,34 +222,4 @@ public class Utils
     return post;
   }
   
-  /**
-   * Used to filter out invalid characters in XML 1.0:
-   * Only the following characters are valid in XML 1.0:
-   * #x9 | #xA | #xD | [#x20-#xD7FF] | [#xE000-#xFFFD] | [#x10000-#x10FFFF]
-   */
-  static String xml10pattern = "[^"
-                               + "\u0009\r\n"
-                               + "\u0020-\uD7FF"
-                               + "\uE000-\uFFFD"
-                               + "\ud800\udc00-\udbff\udfff"
-                               + "]";
-  
-  public static String filterInvalidCharsXml10(String s)
-  {
-//    StringBuilder sb = StringBuilderBaseUtils.acquire();
-//    char[] a = s.toCharArray();
-//    for (int i = 0; i < a.length; ++i)
-//    {
-//      int v = (int) a[i];
-//      if (a[i] == '\r' || a[i] == '\n'
-//          || v == 0x0009
-//          || (v >= 0x0020 && v < 0xD800)
-//          || (v >= 0xE000 && v < 0xFFFE))
-//      {
-//        sb.append(a[i]);
-//      }
-//    }
-    return s.replaceAll(xml10pattern, " ");
-  }
-
 }
