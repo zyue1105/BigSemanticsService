@@ -43,7 +43,7 @@ public class TestMetadataServiceHelper
   {
     // mainly for testing if the helper can be constructed correctly, without exceptions
     assertNotNull(msh);
-    assertTrue(!msh.isFinished());
+//    assertTrue(!msh.isFinished());
     assertNotNull(msh.getServiceLogRecord());
   }
 
@@ -152,9 +152,9 @@ public class TestMetadataServiceHelper
     assertTrue(log.getResponseCode() > 0);
     
     assertNotNull(log.getDocumentUrl());
-    assertTrue(log.getmSecInHtmlDownload() > 0);
-    assertTrue(log.getmSecInExtraction() > 0);
-    assertTrue(log.getmSecInSerialization() > 0);
+    assertTrue(log.getMsHtmlDownload() > 0);
+    assertTrue(log.getMsExtraction() > 0);
+    assertTrue(log.getMsSerialization() > 0);
     
     assertNotNull(log.getQueuePeekIntervals());
     assertTrue(log.getQueuePeekIntervals().size() > 0);

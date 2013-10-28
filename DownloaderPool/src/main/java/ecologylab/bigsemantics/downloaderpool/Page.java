@@ -5,11 +5,12 @@ import java.io.IOException;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.AbstractHttpClient;
-import org.apache.http.params.CoreProtocolPNames;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ecologylab.bigsemantics.downloaderpool.DownloaderResult.State;
+import ecologylab.bigsemantics.httpclient.HttpClientFactory;
+import ecologylab.bigsemantics.httpclient.ModifiedHttpClientUtils;
 import ecologylab.concurrent.Downloadable;
 import ecologylab.concurrent.DownloadableLogRecord;
 import ecologylab.concurrent.Site;
@@ -70,7 +71,7 @@ public class Page implements Downloadable
     if (location != null)
     {
       String domain = location.domain();
-      return siteTable.getSite(domain, 0);
+      return siteTable.getSite(domain);
     }
     return null;
   }
@@ -91,20 +92,24 @@ public class Page implements Downloadable
   @Override
   public void performDownload()
   {
-    AbstractHttpClient client = clientFactory.get();
-
+    AbstractHttpClient client = null;
     if (userAgent != null && userAgent.length() > 0)
     {
-      client.getParams().setParameter(CoreProtocolPNames.USER_AGENT, userAgent);
+      client = clientFactory.get(userAgent);
+    }
+    else
+    {
+      client = clientFactory.get();
     }
     PageResponseHandler handler = new PageResponseHandler(result);
     PageRedirectStrategy redirectStrategy = new PageRedirectStrategy(result);
     client.setRedirectStrategy(redirectStrategy);
 
-    HttpGet httpGet = Utils.generateGetRequest(location.toString(), null);
+    HttpGet httpGet = ModifiedHttpClientUtils.generateGetRequest(location.toString(), null);
     try
     {
       client.execute(httpGet, handler);
+      result.setState(State.OK);
     }
     catch (ClientProtocolException e)
     {
@@ -169,7 +174,7 @@ public class Page implements Downloadable
 
   public String toString()
   {
-    return String.format("%s[%s]", this.getClass().getSimpleName(), this.location);
+    return String.format("%s[%s, result=%s]", this.getClass().getSimpleName(), location, result);
   }
 
 }

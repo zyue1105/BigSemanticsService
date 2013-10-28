@@ -1,4 +1,0 @@
-<?xml version="1.0"?>
-<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-
-<hibernate-mapping package="ecologylab.semantics.generated.library.slashdot"><joined-subclass name="ecologylab.semantics.generated.library.slashdot.SlashdotItem" table="slashdot_item" extends="ecologylab.semantics.generated.library.rss.Item"><key column="orm_id" not-null="true"/><property name="department" lazy="false" access="ecologylab.semantics.compiler.orm.scalartypes.MetadataScalarAccessor" type="ecologylab.semantics.compiler.orm.scalartypes.MetadataStringHibernateType" column="department" length="1024"/><property name="section" lazy="false" access="ecologylab.semantics.compiler.orm.scalartypes.MetadataScalarAccessor" type="ecologylab.semantics.compiler.orm.scalartypes.MetadataStringHibernateType" column="section" length="1024"/></joined-subclass></hibernate-mapping>

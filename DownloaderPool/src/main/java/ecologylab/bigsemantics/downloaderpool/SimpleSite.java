@@ -125,7 +125,7 @@ public class SimpleSite implements Site
     return downloadInterval;
   }
 
-  protected void setDownloadInterval(long downloadInterval)
+  protected synchronized void setDownloadInterval(long downloadInterval)
   {
     this.downloadInterval = downloadInterval;
   }

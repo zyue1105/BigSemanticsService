@@ -1,7 +1,0 @@
-<ResultSet mm_name="yahoo_geo_code"
-	location="http://where.yahooapis.com/geocode?gflags=R&amp;q=-96.28616666666667,30.604833333333332"
-	xmlns:simpl="http://ecologylab.net/research/simplGuide/serialization/index.html">
-	<Result county="Brazos County" postal="77845-5539" state="Texas"
-		line1="8500 Amethyst Ct" line2="College Station, TX  77845-5539" city="College Station"
-		country="United States"></Result>
-</ResultSet>

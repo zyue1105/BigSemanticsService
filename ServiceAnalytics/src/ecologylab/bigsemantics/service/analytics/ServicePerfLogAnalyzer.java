@@ -11,10 +11,14 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 
 import ecologylab.bigsemantics.service.logging.ServiceLogRecord;
 import ecologylab.generic.Debug;
+import ecologylab.net.ParsedURL;
 import ecologylab.serialization.SIMPLTranslationException;
 import ecologylab.serialization.SimplTypesScope;
 import ecologylab.serialization.formatenums.StringFormat;
@@ -61,7 +65,12 @@ public class ServicePerfLogAnalyzer extends Debug
 					{
 						try
 						{
-							rec = rec.substring(rec.indexOf('{')); // discard log4j header
+						  int logBeginPos = rec.indexOf('{');
+						  if (logBeginPos < 0)
+						  {
+						    continue;
+						  }
+							rec = rec.substring(logBeginPos); // discard log4j header
 							ServiceLogRecord logRecord = (ServiceLogRecord) tscope.deserialize(rec,
 									StringFormat.JSON);
 							if (logRecord != null)
@@ -116,9 +125,9 @@ public class ServicePerfLogAnalyzer extends Debug
 				else
 					avgLatencyWoQueuedWait += latency;
 
-				avgTimeInDownloading += logRecord.getmSecInHtmlDownload();
-				avgTimeInExtraction += logRecord.getmSecInExtraction();
-				avgTimeInSerialization += logRecord.getmSecInSerialization();
+				avgTimeInDownloading += logRecord.getMsHtmlDownload();
+				avgTimeInExtraction += logRecord.getMsExtraction();
+				avgTimeInSerialization += logRecord.getMsSerialization();
 				
 				if (logRecord.getResponseCode() == STATUS_OK)
 				{
@@ -131,9 +140,9 @@ public class ServicePerfLogAnalyzer extends Debug
 					else
 						avgLatencyWoQueuedWaitS += latency;
 					
-					avgTimeInDownloadingS += logRecord.getmSecInHtmlDownload();
-					avgTimeInExtractionS += logRecord.getmSecInExtraction();
-					avgTimeInSerializationS += logRecord.getmSecInSerialization();					
+					avgTimeInDownloadingS += logRecord.getMsHtmlDownload();
+					avgTimeInExtractionS += logRecord.getMsExtraction();
+					avgTimeInSerializationS += logRecord.getMsSerialization();					
 				}
 			}
 
@@ -169,6 +178,44 @@ public class ServicePerfLogAnalyzer extends Debug
 			
 			debug("===================================================\n");
 		}
+	}
+	
+	private void getExtractionTimes() throws IOException
+	{
+	  readPerfLogs();
+	  
+	  if (logRecords != null)
+	  {
+	    List<ServiceLogRecord> sorted = new ArrayList<ServiceLogRecord>();
+
+	    for (ServiceLogRecord logRecord : logRecords)
+	    {
+	      if (logRecord != null)
+	      {
+  	      ParsedURL purl = logRecord.getDocumentUrl();
+  	      if (purl != null)
+  	      {
+  	        sorted.add(logRecord);
+  	      }
+	      }
+	    }
+	    
+      Collections.sort(sorted,
+                       new Comparator<ServiceLogRecord>()
+                       {
+                         @Override
+                         public int compare(ServiceLogRecord r1, ServiceLogRecord r2)
+                         {
+                           long x = r1.getMsExtraction() - r2.getMsExtraction();
+                           return (x>0)?(-1):((x==0)?0:1);
+                         }
+                       });
+
+	    for (ServiceLogRecord logRecord : sorted)
+	    {
+	      System.out.format("%s\t%s\n", logRecord.getDocumentUrl(), logRecord.getMsExtraction());
+	    }
+	  }
 	}
 
 	public static void main(String[] args) throws IOException
@@ -237,6 +284,7 @@ public class ServicePerfLogAnalyzer extends Debug
 		}
 
 		ServicePerfLogAnalyzer s1 = new ServicePerfLogAnalyzer(logFiles, fromTime, toTime);
-		s1.getPerformanceMetrics();
+		s1.getExtractionTimes();
+		//s1.getPerformanceMetrics();
 	}
 }

@@ -113,11 +113,6 @@
         	<version>14.0.1</version>
         </dependency>
         <dependency>
-        	<groupId>org.slf4j</groupId>
-        	<artifactId>slf4j-simple</artifactId>
-        	<version>1.7.5</version>
-        </dependency>
-        <dependency>
         	<groupId>org.springframework</groupId>
         	<artifactId>spring-core</artifactId>
         	<version>${spring.version}</version>
@@ -156,6 +151,33 @@
         	<groupId>commons-configuration</groupId>
         	<artifactId>commons-configuration</artifactId>
         	<version>1.9</version>
+        </dependency>
+        <dependency>
+        	<groupId>javax.servlet</groupId>
+        	<artifactId>javax.servlet-api</artifactId>
+        	<version>3.0.1</version>
+        </dependency>
+        <dependency>
+        	<groupId>org.eclipse.jetty</groupId>
+        	<artifactId>jetty-server</artifactId>
+        	<version>8.1.8.v20121106</version>
+        	<scope>test</scope>
+        </dependency>
+        <dependency>
+        	<groupId>org.eclipse.jetty</groupId>
+        	<artifactId>jetty-webapp</artifactId>
+        	<version>8.1.8.v20121106</version>
+        	<scope>test</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-log4j12</artifactId>
+          <version>1.7.5</version>
+        </dependency>
+        <dependency>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-api</artifactId>
+          <version>1.7.5</version>
         </dependency>
     </dependencies>
     <properties>

@@ -1,18 +1,18 @@
 package ecologylab.bigsemantics.service.dbinterface;
 
-import ecologylab.bigsemantics.dbinterface.IDocumentCache;
-import ecologylab.bigsemantics.dbinterface.IDocumentCacheFactory;
+import ecologylab.bigsemantics.documentcache.PersistentDocumentCache;
+import ecologylab.bigsemantics.documentcache.PersistentDocumentCacheFactory;
 import ecologylab.generic.Debug;
 
 /**
  * 
  * @author quyin
  */
-public class SimpleDiskDocumentCacheFactory extends Debug implements IDocumentCacheFactory
+public class SimpleDiskDocumentCacheFactory extends Debug implements PersistentDocumentCacheFactory
 {
 
   @Override
-  public IDocumentCache getDBDocumentProvider()
+  public PersistentDocumentCache getDBDocumentProvider()
   {
     return new SimpleDiskDocumentCache();
   }

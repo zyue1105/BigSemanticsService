@@ -33,6 +33,10 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ecologylab.bigsemantics.httpclient.BasicResponseHandler;
+import ecologylab.bigsemantics.httpclient.HttpClientFactory;
+import ecologylab.bigsemantics.httpclient.ModifiedHttpClientUtils;
+
 /**
  * Integration tests that involve both a controller and downloaders.
  * 
@@ -74,10 +78,10 @@ public class IntegratedTestWithControllerAndDownloaders
     server.start();
     while (!server.isRunning())
     {
-      Utils.sleep(500);
+      DPoolUtils.sleep(500);
     }
     logger.info("Server is now running.");
-    Utils.sleep(2000);
+    DPoolUtils.sleep(2000);
 
     configs = new PropertiesConfiguration("dpool-testing.properties");
   }
@@ -102,7 +106,7 @@ public class IntegratedTestWithControllerAndDownloaders
 
     Map<String, String> params = new HashMap<String, String>();
     params.put("tid", tid);
-    HttpPost post = Utils.generatePostRequest(BASE_URL + "page/report", params);
+    HttpPost post = ModifiedHttpClientUtils.generatePostRequest(BASE_URL + "page/report", params);
 
     HttpClient client = new DefaultHttpClient();
     BasicResponse result = new BasicResponse();
@@ -136,7 +140,7 @@ public class IntegratedTestWithControllerAndDownloaders
       }
       downloaders = null;
     }
-    Utils.sleep(1000); // allow some grace period for DownloadMonitors to actually exit
+    DPoolUtils.sleep(1000); // allow some grace period for DownloadMonitors to actually exit
   }
 
   /**
@@ -147,7 +151,7 @@ public class IntegratedTestWithControllerAndDownloaders
    * @throws ExecutionException
    */
   // running downloaders will have overhead, thus the time limit is 2 DELAY_TIME
-  @Test(timeout = DELAY_TIME * 2)
+  @Test(timeout = DELAY_TIME * 4)
   public void testIntegration() throws InterruptedException, ExecutionException
   {
     int n = 10;
@@ -169,7 +173,7 @@ public class IntegratedTestWithControllerAndDownloaders
           params.put("int", "1000");
           params.put("natt", "3");
           params.put("tatt", "10000");
-          HttpGet get = Utils.generateGetRequest(BASE_URL + "page/download.xml", params);
+          HttpGet get = ModifiedHttpClientUtils.generateGetRequest(BASE_URL + "page/download.xml", params);
           logger.info("HttpGet URI: " + get.getURI());
           BasicResponse resp = client.execute(get, new BasicResponseHandler());
           return resp;
