@@ -18,10 +18,12 @@ import ecologylab.bigsemantics.documentcache.PersistentDocumentCacheFactory;
 import ecologylab.bigsemantics.documentparsers.DefaultHTMLDOMParser;
 import ecologylab.bigsemantics.documentparsers.DocumentParser;
 import ecologylab.bigsemantics.documentparsers.ParserBase;
+import ecologylab.bigsemantics.downloaders.controllers.DownloadController;
 import ecologylab.bigsemantics.filestorage.FileSystemStorage;
 import ecologylab.bigsemantics.generated.library.RepositoryMetadataTranslationScope;
 import ecologylab.bigsemantics.html.dom.IDOMProvider;
 import ecologylab.bigsemantics.metadata.builtins.Document;
+import ecologylab.bigsemantics.metadata.builtins.DocumentClosure;
 import ecologylab.bigsemantics.service.dbinterface.SimpleDiskDocumentCacheFactory;
 import ecologylab.bigsemantics.service.downloader.controller.DPoolDownloadController;
 import ecologylab.bigsemantics.service.logging.Log4jLoggerFactory;
@@ -60,6 +62,14 @@ public class SemanticServiceScope extends SemanticsGlobalScope
     if (documentCacheFactory != null)
       result = documentCacheFactory.getDBDocumentProvider();
 
+    return result;
+  }
+  
+  @Override
+  public DownloadController createDownloadController(DocumentClosure closure)
+  {
+    DPoolDownloadController result = new DPoolDownloadController();
+    result.setDocumentClosure(closure);
     return result;
   }
 

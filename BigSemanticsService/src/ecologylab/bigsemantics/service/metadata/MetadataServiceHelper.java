@@ -18,9 +18,7 @@ import ecologylab.bigsemantics.metadata.builtins.DocumentClosure;
 import ecologylab.bigsemantics.metametadata.MetaMetadata;
 import ecologylab.bigsemantics.service.SemanticServiceErrorMessages;
 import ecologylab.bigsemantics.service.SemanticServiceScope;
-import ecologylab.bigsemantics.service.downloader.controller.DPoolDownloadControllerFactory;
 import ecologylab.bigsemantics.service.logging.ServiceLogRecord;
-import ecologylab.generic.Continuation;
 import ecologylab.generic.Debug;
 import ecologylab.net.ParsedURL;
 import ecologylab.serialization.SIMPLTranslationException;
@@ -33,7 +31,7 @@ import ecologylab.serialization.formatenums.StringFormat;
  * @author ajit
  */
 public class MetadataServiceHelper extends Debug
-    implements Continuation<DocumentClosure>, SemanticServiceErrorMessages
+    implements SemanticServiceErrorMessages
 {
 
   public static int                   CONTINUATION_TIMOUT = 60000;
@@ -54,8 +52,6 @@ public class MetadataServiceHelper extends Debug
   private Document                    document;
 
   private ServiceLogRecord            perfLogRecord;
-
-  private Object                      sigDownloadDone     = new Object();
 
   public MetadataServiceHelper()
   {
@@ -85,7 +81,7 @@ public class MetadataServiceHelper extends Debug
     getMetadata(purl, reload);
     if (document == null)
     {
-      logger.error("Can't construct Document for [%s]", purl);
+      logger.error("Can't construct Document for [{}]", purl);
       resp = Response
           .status(Status.NOT_FOUND)
           .entity(METADATA_NOT_FOUND)
@@ -101,7 +97,7 @@ public class MetadataServiceHelper extends Debug
       case QUEUED:
       case CONNECTING:
       case PARSING:
-        logger.error("Unfinished %s, status: %s", document, docStatus);
+        logger.error("Unfinished {}, status: {}", document, docStatus);
         break;
       case DOWNLOAD_DONE:
         try
@@ -118,7 +114,7 @@ public class MetadataServiceHelper extends Debug
         break;
       case IOERROR:
       case RECYCLED:
-        logger.error("Bad Document status for [%s]: %s", purl, docStatus);
+        logger.error("Bad Document status for [{}]: {}", purl, docStatus);
         break;
       }
     }
@@ -148,28 +144,27 @@ public class MetadataServiceHelper extends Debug
     perfLogRecord.setDocumentUrl(document.getLocation());
     if (!docPurl.equals(purl))
     {
-      logger.info("Normalizing %s to %s", purl, docPurl);
+      logger.info("Normalizing {} to {}", purl, docPurl);
     }
 
     DownloadStatus docStatus = document.getDownloadStatus();
-    logger.debug("Download status of %s: %s", document, docStatus);
+    logger.debug("Download status of {}: {}", document, docStatus);
     if (docStatus == DownloadStatus.DOWNLOAD_DONE)
     {
-      logger.info("%s found in service in-mem document cache", document);
+      logger.info("{} found in service in-mem document cache", document);
       perfLogRecord.setInMemDocumentCacheHit(true);
     }
 
     // take actions based on the status of the document
-    DocumentClosure closure = document.getOrConstructClosure(new DPoolDownloadControllerFactory());
+    DocumentClosure closure = document.getOrConstructClosure();
+    closure.setLogRecord(perfLogRecord);
     switch (docStatus)
     {
     case UNPROCESSED:
-      download(closure);
-      break;
     case QUEUED:
     case CONNECTING:
     case PARSING:
-      addCallbackAndWaitForDownloadDone(closure);
+      download(closure);
       break;
     case IOERROR:
     case RECYCLED:
@@ -181,7 +176,7 @@ public class MetadataServiceHelper extends Debug
       {
         removeFromPersistentDocumentCache(docPurl);
         // redownload and parse document
-        closure.resetDownloadStatus();
+        closure.reset();
         download(closure);
       }
       break;
@@ -202,64 +197,18 @@ public class MetadataServiceHelper extends Debug
   {
     try
     {
-      synchronized (closure)
+      closure.performDownloadSynchronously();
+      Document newDoc = closure.getDocument();
+      if (document != null && document != newDoc)
       {
-        closure.performDownload();
+        logger.info("Remapping old {} to new {}", document, newDoc);
+        semanticsServiceScope.getLocalDocumentCollection().remap(document, newDoc);
       }
-
-      if (closure.getDownloadStatus() == DownloadStatus.QUEUED
-          || closure.getDownloadStatus() == DownloadStatus.CONNECTING
-          || closure.getDownloadStatus() == DownloadStatus.PARSING)
-      {
-        logger.error("Closure status is not download done after calling performDownload()!");
-      }
-      else
-      {
-        callback(closure);
-      }
+      document = newDoc;
     }
     catch (IOException e)
     {
       logger.error("Error in downloading " + document, e);
-    }
-  }
-
-  private void addCallbackAndWaitForDownloadDone(DocumentClosure closure)
-  {
-    if (closure.addContinuationBeforeDownloadDone(this))
-    {
-      synchronized (sigDownloadDone)
-      {
-        try
-        {
-          sigDownloadDone.wait(CONTINUATION_TIMOUT);
-        }
-        catch (InterruptedException e)
-        {
-          logger.debug("Waiting for download done interrupted.");
-        }
-      }
-    }
-    else
-    {
-      callback(closure);
-    }
-  }
-
-  @Override
-  public synchronized void callback(DocumentClosure closure)
-  {
-    Document newDoc = closure.getDocument();
-    if (document != null && document != newDoc)
-    {
-      logger.info("Remapping old %s to new %s", document, newDoc);
-      semanticsServiceScope.getLocalDocumentCollection().remap(document, newDoc);
-    }
-    document = newDoc;
-
-    synchronized (sigDownloadDone)
-    {
-      sigDownloadDone.notifyAll();
     }
   }
 
@@ -268,7 +217,7 @@ public class MetadataServiceHelper extends Debug
    */
   private void removeFromLocalDocumentCollection(ParsedURL docPurl)
   {
-    logger.debug("removing document [%s] from service local document collection", docPurl);
+    logger.debug("Removing document [{}] from service local document collection", docPurl);
     semanticsServiceScope.getLocalDocumentCollection().remove(docPurl);
   }
 
@@ -277,7 +226,7 @@ public class MetadataServiceHelper extends Debug
    */
   private void removeFromPersistentDocumentCache(ParsedURL docPurl)
   {
-    logger.debug("removing document [%s] from persistent document caches", docPurl);
+    logger.debug("Removing document [{}] from persistent document caches", docPurl);
     semanticsServiceScope.getPersistentDocumentCache().removeDocument(docPurl);
     FileSystemStorage.getStorageProvider().removeFileAndMetadata(docPurl);
   }

@@ -165,11 +165,6 @@ public class DPoolDownloadController implements DownloadController
         logger.info("Not cached: " + location);
         logRecord.setHtmlCacheHit(false);
 
-        // FIXME: move this to DocumentClosure
-        if (userAgent == null)
-        {
-          userAgent = document.getMetaMetadata().getUserAgentString();
-        }
         result = downloadPage(site, location, userAgent);
 
         if (result.getHttpRespCode() == ClientResponse.Status.OK.getStatusCode())
@@ -199,7 +194,7 @@ public class DPoolDownloadController implements DownloadController
         }
         else
         {
-          logger.error("Failed to download " + location + ": " + result.getHttpRespCode());
+          logger.error("Failed to download {}: {}", location, result.getHttpRespCode());
           return false;
         }
       }
@@ -219,10 +214,7 @@ public class DPoolDownloadController implements DownloadController
           redirectedLocation = fileMetadata.getRedirectedLocation();
           if (redirectedLocation != null)
           {
-            logger.debug("Changing "
-                         + document
-                         + " using redirected location "
-                         + redirectedLocation);
+            logger.debug("Changing {} using redirected location {}", document, redirectedLocation);
             handleRedirectLocation(semanticScope, closure, location, redirectedLocation);
           }
           
@@ -284,8 +276,8 @@ public class DPoolDownloadController implements DownloadController
           result = (DownloaderResult) MessageScope.get().deserialize(resultStr, StringFormat.XML);
           assert result != null : "Deserialization results in null!";
           String content = result.getContent();
-          logger.info("Service received DPool result for %s: "
-                      + "task id: %s, state: %s, status code: %d, content length: %d",
+          logger.info("Service received DPool result for {}: "
+                      + "task id: {}, state: {}, status code: {}, content length: {}",
                       origLoc,
                       result.getTaskId(),
                       result.getState(),
@@ -300,8 +292,9 @@ public class DPoolDownloadController implements DownloadController
       }
       else
       {
-        logger.error("DPool controller error status when downloading "
-                     + origLoc + ": " + resp.getStatus());
+        logger.error("DPool controller error status when downloading {}: {}",
+                     origLoc,
+                     resp.getStatus());
       }
 
     return null;
