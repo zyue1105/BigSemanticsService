@@ -200,10 +200,8 @@ public class Downloader extends Routine implements DownloaderConfigNames
 
   public void routineBody()
   {
-    logger.debug("routineBody()");
     if (downloadMonitor.toDownloadSize() <= 0)
     {
-      logger.debug("routineBody(): request tasks and queue downloads");
       List<Task> tasks = requestTasks();
       updateSiteIntervals(tasks);
       createAndQueuePages(tasks);
