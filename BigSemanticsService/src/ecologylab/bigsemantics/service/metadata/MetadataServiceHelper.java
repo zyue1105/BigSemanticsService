@@ -102,6 +102,7 @@ public class MetadataServiceHelper extends Debug
       case DOWNLOAD_DONE:
         try
         {
+          logger.error("{} downloaded and parsed, generating response", document);
           long t0 = System.currentTimeMillis();
           String responseBody = SimplTypesScope.serialize(document, format).toString();
           perfLogRecord.setMsSerialization(System.currentTimeMillis() - t0);
@@ -164,10 +165,12 @@ public class MetadataServiceHelper extends Debug
     case QUEUED:
     case CONNECTING:
     case PARSING:
+      logger.info("about to download {}, current status: {}", document, docStatus);
       download(closure);
       break;
     case IOERROR:
     case RECYCLED:
+      logger.info("about to reload {}, current status: {}", document, docStatus);
       reload = true;
       // intentionally fall through the next case.
       // the idea is: when the document is in state IOERROR or RECYCLED, it should be reloaded.
@@ -198,6 +201,7 @@ public class MetadataServiceHelper extends Debug
     try
     {
       closure.performDownloadSynchronously();
+      logger.info("performed downloading on {}", document);
       Document newDoc = closure.getDocument();
       if (document != null && document != newDoc)
       {
