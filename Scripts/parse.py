@@ -30,7 +30,8 @@ if len(sys.argv) <= 1:
   print 'Usage: {0} <perf_log_file>'.format(sys.argv[0])
   quit()
 
-print '#url\tms_d\tms_page_cache_lookup\tms_page_caching\tms_local_file\tms_ext\tms_read_dom\tms_body_clippings\tms_super_parse\tms_md_cache_lookup\tms_md_caching\tq_ttl\tms_ttl\tpk_ints'
+# print '#url\tms_d\tms_page_cache_lookup\tms_page_caching\tms_local_file\tms_ext\tms_read_dom\tms_body_clippings\tms_super_parse\tms_md_cache_lookup\tms_md_caching\tq_ttl\tms_ttl\tpk_ints'
+print '#url,pc_download,pc_extraction,pc_dne,ms_total'
 
 fn = sys.argv[1]
 f = open(fn)
@@ -57,7 +58,7 @@ for line in lines:
   ms_metadata_caching = extract(p_metadata_caching, line, 1, '0')
 
   if loc is not None and line.find('cache_hit') < 0:
-    print '{}: download: {:.2%}, extraction: {:.2%}, d+e: {:.2%}, ms_total: {}'.format(
+    print '"{}", {:.2%}, {:.2%}, {:.2%}, {}'.format(
       loc,
       float(ms_d)/float(ms_ttl),
       float(ms_ext)/float(ms_ttl),
