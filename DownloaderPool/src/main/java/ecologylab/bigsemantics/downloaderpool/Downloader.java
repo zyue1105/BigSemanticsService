@@ -82,7 +82,14 @@ public class Downloader extends Routine implements DownloaderConfigNames
     {
       String echoUrl = baseUrl + "echo/get";
       if (tryEcho(echoUrl))
+      {
+        logger.info("Connected to controller using " + echoUrl);
         return baseUrl;
+      }
+      else
+      {
+        logger.info("No controller found using " + echoUrl);
+      }
     }
     return null;
   }

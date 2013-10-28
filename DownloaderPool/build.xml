@@ -93,6 +93,7 @@
                 <fileset refid="lib-deps" />
                 <fileset refid="maven-deps" />
             </lib>
+            <fileset dir="${resources.dir}" includes="one-jar.properties" />
         </one-jar>
     </target>
 
