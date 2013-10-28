@@ -24,7 +24,8 @@
   <property name="jetty.dir" value="/bigsemantics-service/jetty-dist" />
 
   <!-- declare maven -->
-  <path id="maven-ant-tasks.classpath" path="${basedir}/antlib/maven-ant-tasks-2.1.1.jar" />
+  <path id="maven-ant-tasks.classpath"
+        path="${basedir}/antlib/maven-ant-tasks-2.1.1.jar" />
   <typedef resource="org/apache/maven/artifact/ant/antlib.xml"
            uri="antlib:org.apache.maven.artifact.ant"
            classpathref="maven-ant-tasks.classpath" />
@@ -63,6 +64,7 @@
       <fileset dir="${lib.dir}/" includes="BigSemanticsWrappers.jar" />
       <fileset dir="${lib.dir}/" includes="cyberneko.jar" />
       <fileset dir="${lib.dir}/" includes="DownloaderPoolMessages.jar" />
+      <fileset dir="${lib.dir}/" includes="ModifiedHttpClient.jar" />
       <fileset dir="${lib.dir}/" includes="imageMetadataExtractor.jar" />
     </copy>
     <echo>...done.</echo>

@@ -34,6 +34,7 @@
             <fileset dir="${lib.dir}/" includes="simplCore.jar" />
             <fileset dir="${lib.dir}/" includes="simplSunSpecifics.jar" />
             <fileset dir="${lib.dir}/" includes="DownloaderPoolMessages.jar" />
+            <fileset dir="${lib.dir}/" includes="ModifiedHttpClient.jar" />
         </copy>
 
         <!-- maven dependencies -->
