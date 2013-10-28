@@ -7,18 +7,27 @@ import java.io.InputStream;
 import java.util.Properties;
 
 import ecologylab.appframework.types.prefs.Pref;
+import ecologylab.bigsemantics.actions.SemanticActionsKeyWords;
+import ecologylab.bigsemantics.collecting.DocumentCache;
 import ecologylab.bigsemantics.collecting.SemanticsGlobalScope;
+import ecologylab.bigsemantics.collecting.SemanticsSite;
 import ecologylab.bigsemantics.cyberneko.CybernekoWrapper;
-import ecologylab.bigsemantics.dbinterface.IDocumentCache;
-import ecologylab.bigsemantics.dbinterface.IDocumentCacheFactory;
+import ecologylab.bigsemantics.documentcache.EhCacheDocumentCache;
+import ecologylab.bigsemantics.documentcache.PersistentDocumentCache;
+import ecologylab.bigsemantics.documentcache.PersistentDocumentCacheFactory;
+import ecologylab.bigsemantics.documentparsers.DefaultHTMLDOMParser;
+import ecologylab.bigsemantics.documentparsers.DocumentParser;
 import ecologylab.bigsemantics.documentparsers.ParserBase;
-import ecologylab.bigsemantics.downloaders.controllers.HTTPDownloadController;
+import ecologylab.bigsemantics.downloaders.controllers.DownloadController;
 import ecologylab.bigsemantics.filestorage.FileSystemStorage;
 import ecologylab.bigsemantics.generated.library.RepositoryMetadataTranslationScope;
 import ecologylab.bigsemantics.html.dom.IDOMProvider;
-import ecologylab.bigsemantics.service.dbinterface.DBDocumentCacheFactory;
+import ecologylab.bigsemantics.metadata.builtins.Document;
+import ecologylab.bigsemantics.metadata.builtins.DocumentClosure;
 import ecologylab.bigsemantics.service.dbinterface.SimpleDiskDocumentCacheFactory;
+import ecologylab.bigsemantics.service.downloader.controller.DPoolDownloadController;
 import ecologylab.bigsemantics.service.logging.Log4jLoggerFactory;
+import ecologylab.net.ParsedURL;
 import ecologylab.serialization.SimplTypesScope;
 import ecologylab.serialization.SimplTypesScope.GRAPH_SWITCH;
 
@@ -31,7 +40,7 @@ import ecologylab.serialization.SimplTypesScope.GRAPH_SWITCH;
  */
 public class SemanticServiceScope extends SemanticsGlobalScope
 {
-
+  
   private SemanticServiceScope(SimplTypesScope metadataTScope,
                                Class<? extends IDOMProvider> domProviderClass)
   {
@@ -40,16 +49,30 @@ public class SemanticServiceScope extends SemanticsGlobalScope
   }
 
   @Override
-  public IDocumentCache getDBDocumentProvider()
+  protected DocumentCache<ParsedURL, Document> getDocumentCache()
   {
-    IDocumentCache result = null;
+    return new EhCacheDocumentCache();
+  }
+
+  @Override
+  public PersistentDocumentCache getPersistentDocumentCache()
+  {
+    PersistentDocumentCache result = null;
 
     if (documentCacheFactory != null)
       result = documentCacheFactory.getDBDocumentProvider();
 
     return result;
   }
-
+  
+  @Override
+  public DownloadController createDownloadController(DocumentClosure closure)
+  {
+    DPoolDownloadController result = new DPoolDownloadController();
+    result.setDocumentClosure(closure);
+    return result;
+  }
+  
   @Override
   public boolean isService()
   {
@@ -71,10 +94,17 @@ public class SemanticServiceScope extends SemanticsGlobalScope
       ParserBase.DONOT_LOOK_FOR_FAVICON = true;
 
       loadProperties();
+      
+      SemanticsSite.disableDownloadInterval = true;
 
       SimplTypesScope.graphSwitch = GRAPH_SWITCH.ON;
       semanticServiceScope = new SemanticServiceScope(RepositoryMetadataTranslationScope.get(),
                                                       CybernekoWrapper.class);
+      
+      // This will disable content body recognization and image-text clipping derivation on the
+      // service.
+      DocumentParser.map(SemanticActionsKeyWords.HTML_IMAGE_DOM_TEXT_PARSER,
+                         DefaultHTMLDOMParser.class);
     }
     return semanticServiceScope;
   }
@@ -90,15 +120,12 @@ public class SemanticServiceScope extends SemanticsGlobalScope
       serviceProps.load(in);
       in.close();
 
-      if (getProperty(serviceProps, "USE_SIMPLE_DISK_DOCUMENT_PROVIDER", "").equals("true"))
-        documentCacheFactory = new SimpleDiskDocumentCacheFactory();
-      else if (getProperty(serviceProps, "USE_DB_DOCUMENT_PROVIDER", "").equals("true"))
-        documentCacheFactory = new DBDocumentCacheFactory();
+      documentCacheFactory = new SimpleDiskDocumentCacheFactory();
 
       FileSystemStorage.setDownloadDirectory(serviceProps);
       
-      HTTPDownloadController.SERVICE_LOC =
-          getProperty(serviceProps, "DOWNLOAD_SERVICE_LOCATION", null);
+      String serviceLocs = getProperty(serviceProps, "DPOOL_SERVICE_LOCATIONS", null);
+      DPoolDownloadController.setServiceLocs(serviceLocs);
     }
     catch (Exception e)
     {
@@ -112,6 +139,6 @@ public class SemanticServiceScope extends SemanticsGlobalScope
     return value == null ? defaultValue : value;
   }
 
-  private static IDocumentCacheFactory documentCacheFactory;
+  private static PersistentDocumentCacheFactory documentCacheFactory;
 
 }

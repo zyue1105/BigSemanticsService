@@ -1,0 +1,4 @@
+# additional things to ignore:
+build/
+.settings/
+

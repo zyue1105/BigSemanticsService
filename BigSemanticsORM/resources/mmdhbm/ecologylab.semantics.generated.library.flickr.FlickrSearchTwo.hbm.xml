@@ -1,4 +1,0 @@
-<?xml version="1.0"?>
-<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-
-<hibernate-mapping package="ecologylab.semantics.generated.library.flickr"><joined-subclass name="ecologylab.semantics.generated.library.flickr.FlickrSearchTwo" table="flickr_search_two" extends="ecologylab.semantics.metadata.builtins.CompoundDocument"><key column="orm_id" not-null="true"/><list name="flickrResults" lazy="true" table="flickr_search_two__flickr_results"><key column="orm_id" not-null="true"/><index column="flickr_search_two__flickr_results__index"/><many-to-many column="flickr_image_detail_id" class="ecologylab.semantics.generated.library.flickr.FlickrImageDetail" lazy="proxy"/></list></joined-subclass></hibernate-mapping>

@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.configuration.Configuration;
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
@@ -16,6 +18,9 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ecologylab.bigsemantics.httpclient.BasicResponseHandler;
+import ecologylab.bigsemantics.httpclient.HttpClientFactory;
+import ecologylab.bigsemantics.httpclient.ModifiedHttpClientUtils;
 import ecologylab.concurrent.DownloadMonitor;
 import ecologylab.concurrent.Site;
 import ecologylab.net.ParsedURL;
@@ -62,7 +67,8 @@ public class Downloader extends Routine implements DownloaderConfigNames
     this.numDownloadThreads = configs.getInt(NUM_DOWNLOADING_THREADS, 4);
     this.maxTaskCount = configs.getInt(MAX_TASK_COUNT, 10);
 
-    downloadMonitor = new DownloadMonitor<Page>("DownloadMonitor[" + name + "]", numDownloadThreads);
+    downloadMonitor =
+        new DownloadMonitor<Page>("DownloadMonitor[" + name + "]", numDownloadThreads);
     siteTable = new SimpleSiteTable();
     clientFactory = new HttpClientFactory();
 
@@ -85,9 +91,9 @@ public class Downloader extends Routine implements DownloaderConfigNames
   {
     Map<String, String> params = new HashMap<String, String>();
     String ts = String.valueOf(System.currentTimeMillis());
-    String msg = Utils.base64urlEncode(Utils.hashToBytes(ts));
+    String msg = DPoolUtils.base64urlEncode(DPoolUtils.hashToBytes(ts));
     params.put("msg", msg);
-    HttpGet get = Utils.generateGetRequest(echoUrl, params);
+    HttpGet get = ModifiedHttpClientUtils.generateGetRequest(echoUrl, params);
     HttpClient client = new DefaultHttpClient();
     BasicResponse resp = null;
     try
@@ -135,7 +141,8 @@ public class Downloader extends Routine implements DownloaderConfigNames
     }
     params.put("ntask", String.valueOf(this.maxTaskCount));
     String assignUrl = controllerBaseUrl + "task/assign.xml";
-    HttpGet get = Utils.generateGetRequest(assignUrl, params);
+    HttpGet get = ModifiedHttpClientUtils.generateGetRequest(assignUrl, params);
+    // logger.info("request for tasks: " + get.getURI()); // -- hated!
 
     int status = -1;
     try
@@ -146,7 +153,7 @@ public class Downloader extends Routine implements DownloaderConfigNames
       String content = result.getContent();
       if (status == HttpStatus.SC_OK)
       {
-        AssignedTasks assignedTasks = (AssignedTasks) Utils.deserialize(content,
+        AssignedTasks assignedTasks = (AssignedTasks) DPoolUtils.deserialize(content,
                                                                         MessageScope.get(),
                                                                         StringFormat.XML);
         return assignedTasks.getTasks();
@@ -219,7 +226,7 @@ public class Downloader extends Routine implements DownloaderConfigNames
         if (purl != null)
         {
           String domain = purl.domain();
-          siteTable.getSite(domain, task.getDomainInterval());
+          siteTable.updateSiteDownloadInterval(domain, task.getDomainInterval());
         }
       }
     }
@@ -292,6 +299,14 @@ public class Downloader extends Routine implements DownloaderConfigNames
   {
     downloadMonitor.stop();
     super.stop();
+  }
+
+  public static void main(String[] args) throws ConfigurationException, InterruptedException
+  {
+    Configuration configs = new PropertiesConfiguration("dpool.properties");
+    Downloader d = new Downloader(configs);
+    d.start();
+    d.join();
   }
 
 }

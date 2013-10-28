@@ -39,7 +39,7 @@ public class SimpleSiteTable
    *          object for this domain already exists.
    * @return
    */
-  public Site getSite(String domain, long downloadInterval)
+  public Site getSite(String domain)
   {
     SimpleSite site;
     if (sites.containsKey(domain))
@@ -48,16 +48,27 @@ public class SimpleSiteTable
     }
     else
     {
-      logger.debug("Creating Site object for " + domain);
+      logger.info("Creating Site object for " + domain);
       site = new SimpleSite(domain);
       SimpleSite existingSite = sites.putIfAbsent(domain, site);
       if (existingSite != null)
       {
         site = existingSite;
       }
-      site.setDownloadInterval(downloadInterval);
     }
     return site;
+  }
+  
+  public boolean updateSiteDownloadInterval(String domain, long downloadInterval)
+  {
+    SimpleSite site = (SimpleSite) getSite(domain);
+    if (site.getDownloadInterval() != downloadInterval)
+    {
+      logger.info("Updating downloading interval for " + domain + " to " + downloadInterval);
+      site.setDownloadInterval(downloadInterval);
+      return true;
+    }
+    return false;
   }
 
   /**

@@ -1,4 +1,0 @@
-<?xml version="1.0"?>
-<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-
-<hibernate-mapping package="ecologylab.semantics.generated.library.search"><joined-subclass name="ecologylab.semantics.generated.library.search.YahooResultSet" table="yahoo_result_set" extends="ecologylab.semantics.metadata.builtins.Document"><key column="orm_id" not-null="true"/><list name="results" lazy="true" table="yahoo_result_set__results"><key column="orm_id" not-null="true"/><index column="yahoo_result_set__results__index"/><many-to-many column="yahoo_result_id" class="ecologylab.semantics.generated.library.search.YahooResult" lazy="proxy"/></list></joined-subclass></hibernate-mapping>

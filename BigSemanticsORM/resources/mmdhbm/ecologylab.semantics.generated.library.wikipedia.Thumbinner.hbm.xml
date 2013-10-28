@@ -1,4 +1,0 @@
-<?xml version="1.0"?>
-<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-
-<hibernate-mapping package="ecologylab.semantics.generated.library.wikipedia"><joined-subclass name="ecologylab.semantics.generated.library.wikipedia.Thumbinner" table="thumbinner" extends="ecologylab.semantics.metadata.Metadata"><key column="orm_id" not-null="true"/><property name="thumbImgCaption" lazy="false" access="ecologylab.semantics.compiler.orm.scalartypes.MetadataScalarAccessor" type="ecologylab.semantics.compiler.orm.scalartypes.MetadataStringHibernateType" column="thumb_img_caption" length="1024"/><property name="thumbImgSrc" lazy="false" access="ecologylab.semantics.compiler.orm.scalartypes.MetadataScalarAccessor" type="ecologylab.semantics.compiler.orm.scalartypes.MetadataParsedURLHibernateType" column="thumb_img_src" length="1024"/></joined-subclass></hibernate-mapping>

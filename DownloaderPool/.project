@@ -3,6 +3,7 @@
 	<name>DownloaderPool</name>
 	<comment></comment>
 	<projects>
+		<project>ModifiedHttpClient</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
@@ -33,4 +34,15 @@
 		<nature>org.eclipse.m2e.core.maven2Nature</nature>
 		<nature>org.eclipse.wst.common.project.facet.core.nature</nature>
 	</natures>
+	<filteredResources>
+		<filter>
+			<id>1382922732736</id>
+			<name></name>
+			<type>26</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-projectRelativePath-matches-false-false-build/dist</arguments>
+			</matcher>
+		</filter>
+	</filteredResources>
 </projectDescription>

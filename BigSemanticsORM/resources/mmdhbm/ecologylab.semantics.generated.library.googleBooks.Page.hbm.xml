@@ -1,4 +1,0 @@
-<?xml version="1.0"?>
-<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-
-<hibernate-mapping package="ecologylab.semantics.generated.library.googleBooks"><joined-subclass name="ecologylab.semantics.generated.library.googleBooks.Page" table="page" extends="ecologylab.semantics.metadata.builtins.Document"><key column="orm_id" not-null="true"/><property name="pageThumbnail" lazy="false" access="ecologylab.semantics.compiler.orm.scalartypes.MetadataScalarAccessor" type="ecologylab.semantics.compiler.orm.scalartypes.MetadataParsedURLHibernateType" column="page_thumbnail" length="1024"/><property name="pageNumber" lazy="false" access="ecologylab.semantics.compiler.orm.scalartypes.MetadataScalarAccessor" type="ecologylab.semantics.compiler.orm.scalartypes.MetadataIntegerHibernateType" column="page_number"/></joined-subclass></hibernate-mapping>

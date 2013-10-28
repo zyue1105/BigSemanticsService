@@ -3,16 +3,6 @@
 	<name>BigSemanticsService</name>
 	<comment></comment>
 	<projects>
-		<project>BigSemanticsSDK</project>
-		<project>simplCore</project>
-		<project>BigSemanticsORM</project>
-		<project>BigSemanticsCore</project>
-		<project>cyberneko</project>
-		<project>BigSemanticsWrappers</project>
-		<project>BigSemanticsSunSpecifics</project>
-		<project>BigSemanticsCybernekoWrapper</project>
-		<project>BigSemanticsGeneratedClassesJava</project>
-		<project>imageMetadataExtractor</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
@@ -49,11 +39,4 @@
 		<nature>org.eclipse.jdt.core.javanature</nature>
 		<nature>org.eclipse.wst.jsdt.core.jsNature</nature>
 	</natures>
-	<linkedResources>
-		<link>
-			<name>MmdRepository</name>
-			<type>2</type>
-			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/MetaMetadataRepository/MmdRepository</locationURI>
-		</link>
-	</linkedResources>
 </projectDescription>

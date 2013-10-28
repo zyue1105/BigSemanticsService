@@ -19,7 +19,7 @@ import org.apache.log4j.NDC;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import ecologylab.bigsemantics.service.SemanticServiceErrorCodes;
+import ecologylab.bigsemantics.service.SemanticServiceErrorMessages;
 import ecologylab.bigsemantics.service.SemanticServiceScope;
 import ecologylab.logging.ILogger;
 import ecologylab.net.ParsedURL;
@@ -66,7 +66,7 @@ public class MMDJSONService
 
 		//invalid params
 		if (resp == null)
-			resp = Response.status(Status.BAD_REQUEST).entity(SemanticServiceErrorCodes.BAD_REQUEST)
+			resp = Response.status(Status.BAD_REQUEST).entity(SemanticServiceErrorMessages.BAD_REQUEST)
 					.type(MediaType.TEXT_PLAIN).build();
 		
 		logger.debug("Time taken (ms): " + (System.currentTimeMillis() - requestTime));

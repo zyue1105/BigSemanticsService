@@ -30,6 +30,8 @@ public abstract class Routine implements Runnable
 
   private Object lockStatus       = new Object();
 
+  private Thread thread;
+
   public Status getStatus()
   {
     return status;
@@ -78,7 +80,7 @@ public abstract class Routine implements Runnable
         routineBody();
       }
 
-      Utils.sleep(sleepBetweenLoop);
+      DPoolUtils.sleep(sleepBetweenLoop);
     }
 
     synchronized (lockStatus)
@@ -97,8 +99,8 @@ public abstract class Routine implements Runnable
         if (status == Status.READY)
         {
           status = Status.RUNNING;
-          Thread t = new Thread(this);
-          t.start();
+          thread = new Thread(this);
+          thread.start();
         }
       }
     }
@@ -145,6 +147,14 @@ public abstract class Routine implements Runnable
           }
         }
       }
+    }
+  }
+  
+  public void join() throws InterruptedException
+  {
+    if (thread != null)
+    {
+      thread.join();
     }
   }
 

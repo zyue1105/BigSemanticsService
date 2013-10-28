@@ -11,7 +11,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import ecologylab.bigsemantics.downloaderpool.Utils;
+import ecologylab.bigsemantics.downloaderpool.DPoolUtils;
 
 /**
  * Test Jersey.
@@ -35,7 +35,7 @@ public class HelloJersey
     message += "\nCalling from " + ip;
     if (delay > 0)
     {
-      Utils.sleep(delay);
+      DPoolUtils.sleep(delay);
     }
     return Response.ok().entity(message).build();
   }
@@ -53,7 +53,7 @@ public class HelloJersey
     message += "\nCalling from " + ip;
     if (delay > 0)
     {
-      Utils.sleep(delay);
+      DPoolUtils.sleep(delay);
     }
     return Response.ok().entity(message).build();
   }

@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ecologylab.bigsemantics.downloaderpool.DownloaderResult.State;
+import ecologylab.bigsemantics.httpclient.BasicResponseHandler;
 
 /**
  * Extracts useful info from HttpResponse and fills them into the DwonloaderResult object for this

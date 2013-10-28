@@ -12,7 +12,7 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
 import ecologylab.bigsemantics.metametadata.MetaMetadata;
-import ecologylab.bigsemantics.service.SemanticServiceErrorCodes;
+import ecologylab.bigsemantics.service.SemanticServiceErrorMessages;
 import ecologylab.bigsemantics.service.SemanticServiceScope;
 import ecologylab.logging.ILogger;
 import ecologylab.net.ParsedURL;
@@ -87,7 +87,7 @@ public class MMDServiceHelper
     }
     else
       return Response.status(Status.NOT_FOUND)
-          .entity(SemanticServiceErrorCodes.METAMETADATA_NOT_FOUND).type(MediaType.TEXT_PLAIN)
+          .entity(SemanticServiceErrorMessages.METAMETADATA_NOT_FOUND).type(MediaType.TEXT_PLAIN)
           .build();
   }
 
@@ -123,12 +123,12 @@ public class MMDServiceHelper
       {
         e.printStackTrace();
         return Response.status(Status.INTERNAL_SERVER_ERROR)
-            .entity(SemanticServiceErrorCodes.INTERNAL_ERROR).type(MediaType.TEXT_PLAIN).build();
+            .entity(SemanticServiceErrorMessages.INTERNAL_ERROR).type(MediaType.TEXT_PLAIN).build();
       }
     }
     else
       return Response.status(Status.NOT_FOUND)
-          .entity(SemanticServiceErrorCodes.METAMETADATA_NOT_FOUND).type(MediaType.TEXT_PLAIN)
+          .entity(SemanticServiceErrorMessages.METAMETADATA_NOT_FOUND).type(MediaType.TEXT_PLAIN)
           .build();
   }
 
