@@ -61,13 +61,13 @@ public class TestDownloader
     // d should keep sending requests, since 1) initially there is no tasks ongoing; 2) each task
     // it gets can be processed and finished immediately because we are using a mock page which does
     // not need to really download the page.
-    Utils.sleep(dt * 3);
+    DPoolUtils.sleep(dt * 3);
     // in approx. 3 cycles, it should do 3 requests.
     assertEquals(3, d.numTasksRequested);
 
     d.stop();
     d.numTasksRequested = 0;
-    Utils.sleep(dt * 3);
+    DPoolUtils.sleep(dt * 3);
     // when the downloader is stopped there should be no requests made.
     assertEquals(0, d.numTasksRequested);
   }
@@ -81,14 +81,14 @@ public class TestDownloader
     d.presetTasks.add(new Task("2", "http://yahoo.com"));
     d.start();
 
-    Utils.sleep(dt * 3);
+    DPoolUtils.sleep(dt * 3);
     // in approx. 3 cycles, the downloader should queue 6 pages (2 pages per cycle since there are 2
     // tasks preset).
     assertEquals(6, d.numPagesQueued);
 
     d.stop();
     d.numPagesQueued = 0;
-    Utils.sleep(dt * 3);
+    DPoolUtils.sleep(dt * 3);
     // when the downloader is stopped there should be no pages queued.
     assertEquals(0, d.numPagesQueued);
   }
@@ -101,7 +101,7 @@ public class TestDownloader
     d.presetTasks.add(new Task("1", "http://1.google.com"));
     d.usePresetTasksOnce = true;
     d.start();
-    Utils.sleep(dt);
+    DPoolUtils.sleep(dt);
     d.stop();
 
     assertEquals(1, d.presetResponder.numCallbacks);
@@ -130,21 +130,21 @@ public class TestDownloader
     d.start();
 
     // 0.5dt after start: both domains are still busy
-    Utils.sleep(dt / 2);
+    DPoolUtils.sleep(dt / 2);
     assertBlacklisted(d, "google.com");
     assertBlacklisted(d, "yahoo.com");
 
-    Utils.sleep(dt / 2 + dt);
+    DPoolUtils.sleep(dt / 2 + dt);
     // 2dt after start: both are busy
     assertBlacklisted(d, "google.com");
     assertBlacklisted(d, "yahoo.com");
 
-    Utils.sleep(dt / 2 + dt);
+    DPoolUtils.sleep(dt / 2 + dt);
     // 3.5dt after start: google.com should be available after at most 3dt
     assertNotBlacklisted(d, "google.com");
     assertBlacklisted(d, "yahoo.com");
 
-    Utils.sleep(dt * 3);
+    DPoolUtils.sleep(dt * 3);
     // 6.5dt after start: yahoo.com should be available after at most 6dt
     assertNotBlacklisted(d, "google.com");
     assertNotBlacklisted(d, "yahoo.com");

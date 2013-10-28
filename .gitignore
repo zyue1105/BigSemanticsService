@@ -12,9 +12,13 @@ Servers/
 *.class
 bin/
 target/
+build/
 
 # Package Files #
 # *.jar
 *.war
 *.ear
+
+# logs
+*.log
 

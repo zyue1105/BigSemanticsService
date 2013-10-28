@@ -19,7 +19,7 @@ import ecologylab.bigsemantics.downloaderpool.AssignedTasks;
 import ecologylab.bigsemantics.downloaderpool.Controller;
 import ecologylab.bigsemantics.downloaderpool.DownloaderRequest;
 import ecologylab.bigsemantics.downloaderpool.Task;
-import ecologylab.bigsemantics.downloaderpool.Utils;
+import ecologylab.bigsemantics.downloaderpool.DPoolUtils;
 import ecologylab.serialization.formatenums.StringFormat;
 
 /**
@@ -37,8 +37,8 @@ public class TaskRequest extends RequestHandlerForController
   
   static
   {
-    EMPTY_ASSIGNMENT_XML = Utils.serialize(AssignedTasks.EMPTY_ASSIGNMENT, StringFormat.XML);
-    EMPTY_ASSIGNMENT_JSON = Utils.serialize(AssignedTasks.EMPTY_ASSIGNMENT, StringFormat.JSON);
+    EMPTY_ASSIGNMENT_XML = DPoolUtils.serialize(AssignedTasks.EMPTY_ASSIGNMENT, StringFormat.XML);
+    EMPTY_ASSIGNMENT_JSON = DPoolUtils.serialize(AssignedTasks.EMPTY_ASSIGNMENT, StringFormat.JSON);
   }
 
   /**

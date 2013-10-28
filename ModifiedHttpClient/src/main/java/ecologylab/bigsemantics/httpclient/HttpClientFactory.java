@@ -1,4 +1,4 @@
-package ecologylab.bigsemantics.downloaderpool.httpclient;
+package ecologylab.bigsemantics.httpclient;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,7 +28,6 @@ public class HttpClientFactory
     connectionManager.setDefaultMaxPerRoute(20);
     connectionManager.setMaxTotal(200);
     clients = new HashMap<String, AbstractHttpClient>();
-
   }
   
   public AbstractHttpClient get()
@@ -40,6 +39,9 @@ public class HttpClientFactory
   {
     if (!clients.containsKey(userAgent))
     {
+      // From Apache HttpClient doc: "HttpClient is fully thread-safe when used
+      // with a thread-safe connection manager." The
+      // PoolingClientConnectionManager we are using is such as thread-safe one.
       AbstractHttpClient client = new RedirectHttpClient(connectionManager);
       prepareHttpClient(client);
       if (userAgent.length() > 0)

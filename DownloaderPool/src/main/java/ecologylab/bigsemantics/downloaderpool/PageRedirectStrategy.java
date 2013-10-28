@@ -7,7 +7,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.ProtocolException;
 import org.apache.http.protocol.HttpContext;
 
-import ecologylab.bigsemantics.downloaderpool.httpclient.BasicRedirectStrategy;
+import ecologylab.bigsemantics.httpclient.BasicRedirectStrategy;
 
 /**
  * This strategy helps find redirected locations for a page. Used with HttpClient.

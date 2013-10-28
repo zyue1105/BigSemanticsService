@@ -1,4 +1,4 @@
-package ecologylab.bigsemantics.downloaderpool;
+package ecologylab.bigsemantics.httpclient;
 
 import java.io.IOException;
 
@@ -10,6 +10,8 @@ import org.apache.http.client.ResponseHandler;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import ecologylab.bigsemantics.downloaderpool.BasicResponse;
 
 /**
  * A handler that modifies or returns a BasicResponse.
@@ -32,6 +34,11 @@ public class BasicResponseHandler implements ResponseHandler<BasicResponse>
   {
     super();
     this.result = result;
+  }
+  
+  public BasicResponse getResponse()
+  {
+    return result;
   }
 
   @Override

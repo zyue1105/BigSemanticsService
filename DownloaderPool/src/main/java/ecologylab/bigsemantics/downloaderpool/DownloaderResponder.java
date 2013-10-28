@@ -14,6 +14,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ecologylab.bigsemantics.downloaderpool.DownloaderResult.State;
+import ecologylab.bigsemantics.httpclient.BasicResponseHandler;
+import ecologylab.bigsemantics.httpclient.ModifiedHttpClientUtils;
 import ecologylab.generic.Continuation;
 
 /**
@@ -69,14 +71,14 @@ public class DownloaderResponder implements Continuation<Page>
     params.put("state", result.getState().toString());
     params.put("code", String.valueOf(result.getHttpRespCode()));
     params.put("msg", result.getHttpRespMsg());
-    Utils.putNonEmpty(params, "mime", result.getMimeType());
-    Utils.putNonEmpty(params, "charset", result.getCharset());
-    Utils.putNonEmpty(params, "descr", result.getContentDescription());
+    DPoolUtils.putNonEmpty(params, "mime", result.getMimeType());
+    DPoolUtils.putNonEmpty(params, "charset", result.getCharset());
+    DPoolUtils.putNonEmpty(params, "descr", result.getContentDescription());
     String content = result.getContent();
     int contentLen = content == null ? 0 : content.length();
     logger.info("form params except content[len={}]: {}", contentLen, params);
-    Utils.putNonEmpty(params, "content", content);
-    HttpPost post = Utils.generatePostRequest(controllerReportUrl, params);
+    DPoolUtils.putNonEmpty(params, "content", content);
+    HttpPost post = ModifiedHttpClientUtils.generatePostRequest(controllerReportUrl, params);
 
     try
     {

@@ -9,7 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ecologylab.bigsemantics.downloaderpool.DownloaderResult.State;
-import ecologylab.bigsemantics.downloaderpool.httpclient.HttpClientFactory;
+import ecologylab.bigsemantics.httpclient.HttpClientFactory;
+import ecologylab.bigsemantics.httpclient.ModifiedHttpClientUtils;
 import ecologylab.concurrent.Downloadable;
 import ecologylab.concurrent.DownloadableLogRecord;
 import ecologylab.concurrent.Site;
@@ -104,7 +105,7 @@ public class Page implements Downloadable
     PageRedirectStrategy redirectStrategy = new PageRedirectStrategy(result);
     client.setRedirectStrategy(redirectStrategy);
 
-    HttpGet httpGet = Utils.generateGetRequest(location.toString(), null);
+    HttpGet httpGet = ModifiedHttpClientUtils.generateGetRequest(location.toString(), null);
     try
     {
       client.execute(httpGet, handler);

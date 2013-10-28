@@ -40,7 +40,7 @@ import ecologylab.serialization.SimplTypesScope.GRAPH_SWITCH;
  */
 public class SemanticServiceScope extends SemanticsGlobalScope
 {
-
+  
   private SemanticServiceScope(SimplTypesScope metadataTScope,
                                Class<? extends IDOMProvider> domProviderClass)
   {
@@ -72,7 +72,7 @@ public class SemanticServiceScope extends SemanticsGlobalScope
     result.setDocumentClosure(closure);
     return result;
   }
-
+  
   @Override
   public boolean isService()
   {

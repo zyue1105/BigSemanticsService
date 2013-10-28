@@ -19,7 +19,7 @@ import ecologylab.bigsemantics.downloaderpool.DownloaderResult;
 import ecologylab.bigsemantics.downloaderpool.Task;
 import ecologylab.bigsemantics.downloaderpool.Task.ObservableEventType;
 import ecologylab.bigsemantics.downloaderpool.Task.State;
-import ecologylab.bigsemantics.downloaderpool.Utils;
+import ecologylab.bigsemantics.downloaderpool.DPoolUtils;
 import ecologylab.generic.StringBuilderBaseUtils;
 import ecologylab.serialization.formatenums.StringFormat;
 
@@ -61,8 +61,8 @@ public class PageRequest extends RequestHandlerForController
     
     StringBuilder sb = StringBuilderBaseUtils.acquire();
     sb.append(remoteIp).append("|").append(System.currentTimeMillis()).append("|").append(url);
-    byte[] hash = Utils.hashToBytes(sb.toString());
-    String tid = Utils.base64urlEncode(hash).substring(0, ctrl.getTaskIdLen());
+    byte[] hash = DPoolUtils.hashToBytes(sb.toString());
+    String tid = DPoolUtils.base64urlEncode(hash).substring(0, ctrl.getTaskIdLen());
     StringBuilderBaseUtils.release(sb);
     if (outTid != null && outTid.length >= 1)
     {

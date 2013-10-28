@@ -72,7 +72,7 @@ public class TestSimpleSiteTable
     assertSiteBusy(bs, "yahoo.com");
     assertSiteNotBusy(bs, "bing.com");
 
-    Utils.sleep(dt - dt / 2);
+    DPoolUtils.sleep(dt - dt / 2);
     // 0.5dt from beginning
     bs = sst.getBusySites();
     System.out.println(bs);
@@ -80,7 +80,7 @@ public class TestSimpleSiteTable
     assertSiteBusy(bs, "yahoo.com");
     assertSiteNotBusy(bs, "bing.com");
 
-    Utils.sleep(dt / 2 + dt / 2);
+    DPoolUtils.sleep(dt / 2 + dt / 2);
     // 1.5dt from beginning
     // google.com can be accessed now (downloadInterval = 1dt)
     bs = sst.getBusySites();
@@ -88,7 +88,7 @@ public class TestSimpleSiteTable
     assertSiteBusy(bs, "yahoo.com");
     assertSiteNotBusy(bs, "bing.com");
 
-    Utils.sleep(dt + dt / 2);
+    DPoolUtils.sleep(dt + dt / 2);
     // 3dt from beginning
     // yahoo.com can also be accessed now (downloadInterval = 2dt)
     bs = sst.getBusySites();
@@ -101,7 +101,7 @@ public class TestSimpleSiteTable
     bs = sst.getBusySites();
     // now google.com becomes busy again
     assertSiteBusy(bs, "google.com");
-    Utils.sleep(dt + dt / 2);
+    DPoolUtils.sleep(dt + dt / 2);
     bs = sst.getBusySites();
     // after 1.5dt, google.com becomes available again
     assertSiteNotBusy(bs, "google.com");

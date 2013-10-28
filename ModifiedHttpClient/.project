@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>DownloaderPool</name>
+	<name>ModifiedHttpClient</name>
 	<comment></comment>
 	<projects>
-		<project>ModifiedHttpClient</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
@@ -17,12 +16,12 @@
 			</arguments>
 		</buildCommand>
 		<buildCommand>
-			<name>org.eclipse.m2e.core.maven2Builder</name>
+			<name>org.eclipse.wst.validation.validationbuilder</name>
 			<arguments>
 			</arguments>
 		</buildCommand>
 		<buildCommand>
-			<name>org.eclipse.wst.validation.validationbuilder</name>
+			<name>org.eclipse.m2e.core.maven2Builder</name>
 			<arguments>
 			</arguments>
 		</buildCommand>
@@ -36,12 +35,12 @@
 	</natures>
 	<filteredResources>
 		<filter>
-			<id>1382922732736</id>
+			<id>1382922594487</id>
 			<name></name>
 			<type>26</type>
 			<matcher>
 				<id>org.eclipse.ui.ide.multiFilter</id>
-				<arguments>1.0-projectRelativePath-matches-false-false-build/dist</arguments>
+				<arguments>1.0-projectRelativePath-matches-false-false-build/classes</arguments>
 			</matcher>
 		</filter>
 	</filteredResources>

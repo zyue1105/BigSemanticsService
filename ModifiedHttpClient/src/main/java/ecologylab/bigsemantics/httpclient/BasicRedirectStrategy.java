@@ -1,4 +1,4 @@
-package ecologylab.bigsemantics.downloaderpool.httpclient;
+package ecologylab.bigsemantics.httpclient;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
@@ -10,8 +10,6 @@ import org.apache.http.impl.client.DefaultRedirectStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ecologylab.bigsemantics.downloaderpool.Utils;
-
 /**
  * This strategy fixes some problems with the default redirect strategy.
  * 
@@ -20,7 +18,7 @@ import ecologylab.bigsemantics.downloaderpool.Utils;
 public class BasicRedirectStrategy extends DefaultRedirectStrategy
 {
 
-  private static Logger    logger;
+  private static Logger logger;
 
   static
   {
@@ -33,18 +31,16 @@ public class BasicRedirectStrategy extends DefaultRedirectStrategy
     URIBuilder ub;
     try
     {
-      ub = Utils.getUriBuilder(location);
+      ub = ModifiedHttpClientUtils.getUriBuilder(location);
       return ub.build();
     }
     catch (UnsupportedEncodingException e)
     {
-      logger.error("Can't create location URI using response's location header: [" + location + "]",
-                   e);
+      logger.error("Can't create URI using response's location header: [" + location + "]", e);
     }
     catch (URISyntaxException e)
     {
-      logger.error("Can't create location URI using response's location header: [" + location + "]",
-                   e);
+      logger.error("Can't create URI using response's location header: [" + location + "]", e);
     }
     return null;
   }

@@ -13,7 +13,8 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
 import org.junit.Test;
 
-import ecologylab.bigsemantics.downloaderpool.httpclient.HttpClientFactory;
+import ecologylab.bigsemantics.httpclient.HttpClientFactory;
+import ecologylab.bigsemantics.httpclient.ModifiedHttpClientUtils;
 
 public class TestURI
 {
@@ -22,10 +23,10 @@ public class TestURI
   public void testUri() throws URISyntaxException, ClientProtocolException, IOException
   {
     String url = "http://www.lovelyundergrad.com/search/label/Real+Life+Dorms";
-    URIBuilder ub = Utils.getUriBuilder(url);
+    URIBuilder ub = ModifiedHttpClientUtils.getUriBuilder(url);
     URI uri = ub.build();
     System.out.println(uri);
-    
+
     HttpGet get = new HttpGet(uri);
     HttpClientFactory factory = new HttpClientFactory();
     HttpClient client = factory.get();

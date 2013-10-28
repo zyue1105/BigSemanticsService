@@ -8,7 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ecologylab.bigsemantics.downloaderpool.Controller;
-import ecologylab.bigsemantics.downloaderpool.Utils;
+import ecologylab.bigsemantics.downloaderpool.DPoolUtils;
 import ecologylab.serialization.formatenums.StringFormat;
 
 /**
@@ -46,7 +46,7 @@ public class RequestHandlerForController
                                       String mediaType,
                                       String errorMsg)
   {
-    String content = Utils.serialize(result, serialFormat);
+    String content = DPoolUtils.serialize(result, serialFormat);
     Response resp = content == null
         ? Response.status(Status.NOT_FOUND).type(MediaType.TEXT_PLAIN).entity(errorMsg).build()
         : Response.ok(content, mediaType).build();
