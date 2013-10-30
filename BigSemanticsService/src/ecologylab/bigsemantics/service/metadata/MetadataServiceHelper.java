@@ -102,7 +102,7 @@ public class MetadataServiceHelper extends Debug
       case DOWNLOAD_DONE:
         try
         {
-          logger.error("{} downloaded and parsed, generating response", document);
+          logger.info("{} downloaded and parsed, generating response", document);
           long t0 = System.currentTimeMillis();
           String responseBody = SimplTypesScope.serialize(document, format).toString();
           perfLogRecord.setMsSerialization(System.currentTimeMillis() - t0);
