@@ -109,6 +109,10 @@ public class DownloaderResponder implements Continuation<Page>
                    + " with "
                    + associatedTask, e);
     }
+    finally
+    {
+      post.releaseConnection();
+    }
   }
 
   /**

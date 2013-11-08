@@ -176,6 +176,7 @@ public class IntegratedTestWithControllerAndDownloaders
           HttpGet get = ModifiedHttpClientUtils.generateGetRequest(BASE_URL + "page/download.xml", params);
           logger.info("HttpGet URI: " + get.getURI());
           BasicResponse resp = client.execute(get, new BasicResponseHandler());
+          get.releaseConnection();
           return resp;
         }
       });

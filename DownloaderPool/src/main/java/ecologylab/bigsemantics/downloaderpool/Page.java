@@ -123,6 +123,10 @@ public class Page implements Downloadable
       result.setState(State.ERR_IO);
       httpGet.abort();
     }
+    finally
+    {
+      httpGet.releaseConnection();
+    }
   }
 
   public DownloaderResult getResult()
@@ -133,43 +137,38 @@ public class Page implements Downloadable
   @Override
   public void handleIoError(Throwable e)
   {
-    // TODO Auto-generated method stub
-
+    logger.error("I/O error occurred!", e);
   }
 
   @Override
   public boolean isCached()
   {
-    // TODO Auto-generated method stub
     return false;
   }
 
   @Override
   public boolean isImage()
   {
-    // TODO Auto-generated method stub
+    // TODO determine if it is image using cues such as suffix, mime-type, etc.
     return false;
   }
 
   @Override
   public boolean isRecycled()
   {
-    // TODO Auto-generated method stub
     return false;
   }
 
   @Override
   public void recycle()
   {
-    // TODO Auto-generated method stub
-
+    // TODO recycle mechanism for Pages.
   }
 
   @Override
   public String message()
   {
-    // TODO Auto-generated method stub
-    return null;
+    return toString();
   }
 
   public String toString()
