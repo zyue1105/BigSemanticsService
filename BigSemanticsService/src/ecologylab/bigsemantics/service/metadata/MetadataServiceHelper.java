@@ -158,7 +158,15 @@ public class MetadataServiceHelper extends Debug
 
     // take actions based on the status of the document
     DocumentClosure closure = document.getOrConstructClosure();
-    closure.setLogRecord(perfLogRecord);
+    if (closure == null && docStatus != DownloadStatus.DOWNLOAD_DONE)
+    {
+      logger.error("DocumentClosure is null for " + purl);
+      return null;
+    }
+    if (closure != null)
+    {
+      closure.setLogRecord(perfLogRecord);
+    }
     switch (docStatus)
     {
     case UNPROCESSED:
@@ -179,6 +187,7 @@ public class MetadataServiceHelper extends Debug
       {
         removeFromPersistentDocumentCache(docPurl);
         // redownload and parse document
+        document.resetRecycleStatus();
         closure.reset();
         download(closure);
       }

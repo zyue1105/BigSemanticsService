@@ -27,7 +27,7 @@ public class PageTool
         break;
       }
       
-      if (!url.startsWith("http://"))
+      if (!url.startsWith("http://") && !url.startsWith("https://"))
       {
         url = "http://" + url;
       }

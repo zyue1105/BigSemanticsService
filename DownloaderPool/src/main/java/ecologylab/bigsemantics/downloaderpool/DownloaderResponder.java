@@ -17,6 +17,9 @@ import ecologylab.bigsemantics.downloaderpool.DownloaderResult.State;
 import ecologylab.bigsemantics.httpclient.BasicResponseHandler;
 import ecologylab.bigsemantics.httpclient.ModifiedHttpClientUtils;
 import ecologylab.generic.Continuation;
+import ecologylab.serialization.SIMPLTranslationException;
+import ecologylab.serialization.SimplTypesScope;
+import ecologylab.serialization.formatenums.StringFormat;
 
 /**
  * This object sends the downloading result to the controller. An object of this class corresponds
@@ -64,20 +67,22 @@ public class DownloaderResponder implements Continuation<Page>
 
     searchPatternInContent(result, associatedTask.getFailRegex(), State.ERR_CONTENT);
     searchPatternInContent(result, associatedTask.getBanRegex(), State.ERR_BANNED);
+    
+    String resultXml = null;
+    try
+    {
+      resultXml = SimplTypesScope.serialize(result, StringFormat.XML).toString();
+    }
+    catch (SIMPLTranslationException e)
+    {
+      logger.error("Can't serialize result for task " + associatedTask.getId(), e);
+      return;
+    }
 
     Map<String, String> params = new HashMap<String, String>();
     params.put("wid", downloader.getName());
     params.put("tid", associatedTask.getId());
-    params.put("state", result.getState().toString());
-    params.put("code", String.valueOf(result.getHttpRespCode()));
-    params.put("msg", result.getHttpRespMsg());
-    DPoolUtils.putNonEmpty(params, "mime", result.getMimeType());
-    DPoolUtils.putNonEmpty(params, "charset", result.getCharset());
-    DPoolUtils.putNonEmpty(params, "descr", result.getContentDescription());
-    String content = result.getContent();
-    int contentLen = content == null ? 0 : content.length();
-    logger.info("form params except content[len={}]: {}", contentLen, params);
-    DPoolUtils.putNonEmpty(params, "content", content);
+    params.put("result", resultXml);
     HttpPost post = ModifiedHttpClientUtils.generatePostRequest(controllerReportUrl, params);
 
     try
