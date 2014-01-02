@@ -82,7 +82,14 @@ public class Downloader extends Routine implements DownloaderConfigNames
     {
       String echoUrl = baseUrl + "echo/get";
       if (tryEcho(echoUrl))
+      {
+        logger.info("Connected to controller using " + echoUrl);
         return baseUrl;
+      }
+      else
+      {
+        logger.info("No controller found using " + echoUrl);
+      }
     }
     return null;
   }
@@ -107,6 +114,10 @@ public class Downloader extends Routine implements DownloaderConfigNames
     catch (IOException e)
     {
       logger.info("I/O error when trying " + echoUrl);
+    }
+    finally
+    {
+      get.releaseConnection();
     }
     if (resp != null
         && resp.getHttpRespCode() == HttpStatus.SC_OK
@@ -153,9 +164,8 @@ public class Downloader extends Routine implements DownloaderConfigNames
       String content = result.getContent();
       if (status == HttpStatus.SC_OK)
       {
-        AssignedTasks assignedTasks = (AssignedTasks) DPoolUtils.deserialize(content,
-                                                                        MessageScope.get(),
-                                                                        StringFormat.XML);
+        AssignedTasks assignedTasks =
+            (AssignedTasks) DPoolUtils.deserialize(content, MessageScope.get(), StringFormat.XML);
         return assignedTasks.getTasks();
       }
       else
@@ -175,6 +185,10 @@ public class Downloader extends Routine implements DownloaderConfigNames
       logger.error("Exception when accessing " + get.getURI(), e);
       e.printStackTrace();
       get.abort();
+    }
+    finally
+    {
+      get.releaseConnection();
     }
 
     logger.error("Empty response [status code: {}] from {}", status, get.getURI());
@@ -200,10 +214,8 @@ public class Downloader extends Routine implements DownloaderConfigNames
 
   public void routineBody()
   {
-    logger.debug("routineBody()");
     if (downloadMonitor.toDownloadSize() <= 0)
     {
-      logger.debug("routineBody(): request tasks and queue downloads");
       List<Task> tasks = requestTasks();
       updateSiteIntervals(tasks);
       createAndQueuePages(tasks);

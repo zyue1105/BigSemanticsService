@@ -102,6 +102,7 @@ public class MetadataServiceHelper extends Debug
       case DOWNLOAD_DONE:
         try
         {
+          logger.info("{} downloaded and parsed, generating response", document);
           long t0 = System.currentTimeMillis();
           String responseBody = SimplTypesScope.serialize(document, format).toString();
           perfLogRecord.setMsSerialization(System.currentTimeMillis() - t0);
@@ -157,17 +158,27 @@ public class MetadataServiceHelper extends Debug
 
     // take actions based on the status of the document
     DocumentClosure closure = document.getOrConstructClosure();
-    closure.setLogRecord(perfLogRecord);
+    if (closure == null && docStatus != DownloadStatus.DOWNLOAD_DONE)
+    {
+      logger.error("DocumentClosure is null for " + purl);
+      return null;
+    }
+    if (closure != null)
+    {
+      closure.setLogRecord(perfLogRecord);
+    }
     switch (docStatus)
     {
     case UNPROCESSED:
     case QUEUED:
     case CONNECTING:
     case PARSING:
+      logger.info("about to download {}, current status: {}", document, docStatus);
       download(closure);
       break;
     case IOERROR:
     case RECYCLED:
+      logger.info("about to reload {}, current status: {}", document, docStatus);
       reload = true;
       // intentionally fall through the next case.
       // the idea is: when the document is in state IOERROR or RECYCLED, it should be reloaded.
@@ -176,6 +187,7 @@ public class MetadataServiceHelper extends Debug
       {
         removeFromPersistentDocumentCache(docPurl);
         // redownload and parse document
+        document.resetRecycleStatus();
         closure.reset();
         download(closure);
       }
@@ -198,6 +210,7 @@ public class MetadataServiceHelper extends Debug
     try
     {
       closure.performDownloadSynchronously();
+      logger.info("performed downloading on {}", document);
       Document newDoc = closure.getDocument();
       if (document != null && document != newDoc)
       {

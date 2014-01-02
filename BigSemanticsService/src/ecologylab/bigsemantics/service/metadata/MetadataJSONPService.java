@@ -46,7 +46,7 @@ public class MetadataJSONPService
         String.format("Request from %s: metadata.xml, reload=%s, url=%s", clientIp, reload, url);
     byte[] fpBytes = Utils.fingerprintBytes("" + System.currentTimeMillis() + "|" + msg);
     String fp = Utils.base64urlEncode(fpBytes);
-    logger.info("[FP%s] %s", fp, msg);
+    logger.info("[FP{}] {}", fp, msg);
     NDC.push(String.format("[FP%s] ", fp));
 
     long requestTime = System.currentTimeMillis();
@@ -75,7 +75,7 @@ public class MetadataJSONPService
     String respEntity = callback + "(" + ((String) resp.getEntity()) + ");";
     Response jsonpResp = Response.status(resp.getStatus()).entity(respEntity).build();
 
-    logger.info("[FP%s] Total time (ms): %d", fp, System.currentTimeMillis() - requestTime);
+    logger.info("[FP{}] Total time (ms): {}", fp, System.currentTimeMillis() - requestTime);
     NDC.remove();
 
     return jsonpResp;

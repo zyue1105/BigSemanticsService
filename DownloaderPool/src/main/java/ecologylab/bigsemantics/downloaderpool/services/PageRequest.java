@@ -15,12 +15,14 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import ecologylab.bigsemantics.downloaderpool.Controller;
+import ecologylab.bigsemantics.downloaderpool.DPoolUtils;
 import ecologylab.bigsemantics.downloaderpool.DownloaderResult;
+import ecologylab.bigsemantics.downloaderpool.MessageScope;
 import ecologylab.bigsemantics.downloaderpool.Task;
 import ecologylab.bigsemantics.downloaderpool.Task.ObservableEventType;
 import ecologylab.bigsemantics.downloaderpool.Task.State;
-import ecologylab.bigsemantics.downloaderpool.DPoolUtils;
 import ecologylab.generic.StringBuilderBaseUtils;
+import ecologylab.serialization.SIMPLTranslationException;
 import ecologylab.serialization.formatenums.StringFormat;
 
 /**
@@ -31,7 +33,7 @@ import ecologylab.serialization.formatenums.StringFormat;
 @Path("/page")
 public class PageRequest extends RequestHandlerForController
 {
-
+  
   /**
    * Download a web page.
    * 
@@ -245,36 +247,45 @@ public class PageRequest extends RequestHandlerForController
   public Response report(@Context HttpServletRequest request,
                          @FormParam("wid") String workerId,
                          @FormParam("tid") String taskId,
-                         @FormParam("state") DownloaderResult.State state,
-                         @FormParam("code") int respCode,
-                         @FormParam("msg") String respMsg,
-                         @FormParam("mime") String mimeType,
-                         @FormParam("charset") String charset,
-                         @FormParam("content") String content,
-                         @FormParam("descr") String contentDescription)
+                         @FormParam("result") String resultXml)
   {
+    DownloaderResult result = toDownloaderResult(resultXml, taskId);
+    String content = result == null ? null : result.getContent();
+
     String ip = request.getRemoteAddr();
     logger.info("Downloader[{}]@{} reported results for task[{}]; code: {}; content-length: {}.",
                 workerId,
                 ip,
                 taskId,
-                respCode,
+                result == null ? -1 : result.getHttpRespCode(),
                 content == null ? 0 : content.length());
-    Controller ctrl = getController();
 
-    DownloaderResult result = new DownloaderResult();
-    result.setTaskId(taskId);
-    result.setState(state);
-    result.setHttpRespCode(respCode);
-    result.setHttpRespMsg(respMsg);
-    result.setMimeType(mimeType);
-    result.setCharset(charset);
-    result.setContent(content);
-    result.setContentDescription(contentDescription);
-
-    ctrl.report(taskId, result);
-
-    return Response.ok("Task[" + taskId + "] received.").build();
+    if (result != null)
+    {
+      Controller ctrl = getController();
+      ctrl.report(taskId, result);
+      return Response.ok("Task[" + taskId + "] received.").build();
+    }
+    else
+    {
+      return Response
+          .serverError()
+          .entity("Please report the following diagnosis string: " + taskId)
+          .build();
+    }
+  }
+  
+  private DownloaderResult toDownloaderResult(String xml, String taskId)
+  {
+    try
+    {
+      return (DownloaderResult) MessageScope.get().deserialize(xml, StringFormat.XML);
+    }
+    catch (SIMPLTranslationException e)
+    {
+      logger.error("Deserialization failed for task " + taskId, e);
+    }
+    return null;
   }
 
 }

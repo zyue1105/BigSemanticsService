@@ -76,11 +76,11 @@ public class DPoolDownloadController implements DownloadController
     for (String loc : locs)
     {
       logger.info("Trying dpool service at " + loc);
+      String testLoc = loc.replace("page/download.xml", "echo/get?msg=TEST");
+      AbstractHttpClient client = httpClientFactory.get();
+      HttpGet get = new HttpGet(testLoc);
       try
       {
-        String testLoc = loc.replace("page/download.xml", "echo/get?msg=TEST");
-        AbstractHttpClient client = httpClientFactory.get();
-        HttpGet get = new HttpGet(testLoc);
         client.execute(get, handler);
         BasicResponse resp = handler.getResponse();
         if (resp != null && resp.getHttpRespCode() == HttpStatus.SC_OK)
@@ -97,6 +97,10 @@ public class DPoolDownloadController implements DownloadController
       catch (Throwable t)
       {
         logger.error("Cannot locate the download controller!");
+      }
+      finally
+      {
+        get.releaseConnection();
       }
     }
   }
@@ -262,9 +266,8 @@ public class DPoolDownloadController implements DownloadController
 
   private DownloaderResult downloadPage(SemanticsSite site,
                                         ParsedURL origLoc,
-                                        String userAgentString) throws IOException
+                                        String userAgentString)
   {
-
     Map<String, String> params = new HashMap<String, String>();
     params.put("url", origLoc.toString());
     params.put("agent", userAgentString);
@@ -276,7 +279,18 @@ public class DPoolDownloadController implements DownloadController
     AbstractHttpClient client = httpClientFactory.get();
     client.getParams().setParameter("http.connection.timeout", HTTP_DOWNLOAD_REQUEST_TIMEOUT);
     BasicResponseHandler handler = new BasicResponseHandler();
-    client.execute(get, handler);
+    try
+    {
+      client.execute(get, handler);
+    }
+    catch (IOException e)
+    {
+      logger.error("Error downloading " + origLoc + " using DPool!", e);
+    }
+    finally
+    {
+      get.releaseConnection();
+    }
 
     BasicResponse resp = handler.getResponse();
     if (resp != null && resp.getHttpRespCode() == HttpStatus.SC_OK)
