@@ -25,3 +25,6 @@ build/
 # sensitive data: identity and hosts for distributed downloaders
 Scripts/dpool/nodes.csv
 
+# compiled python module
+*.pyc
+
