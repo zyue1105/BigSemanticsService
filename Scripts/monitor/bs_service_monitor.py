@@ -1,68 +1,30 @@
 #!/usr/bin/python
 
-import urllib2
+from bs_service_tester import ServiceTester
 import smtplib
 from email.mime.text import MIMEText
 
-class Monitor:
+class ServiceMonitor:
   def __init__(self, config):
     self.config = config
-    self.tests = config["tests"]
+    self.service_tester = ServiceTester(config)
 
-  def test_bs_service(self):
-    msg_body = ""
+  def test_service(self):
+    (code, fatal, non_fatal) = self.service_tester.test_service()
 
-    for t in self.tests:
-      url = t["url"]
-      include = t["include"]
-
-      resp = self.access_and_download(url)
-      code = resp["code"]
-      content = resp["content"]
-      error = resp["error"]
-
-      if code < 0:
-        error_msg = "(no error message available)"
-        if error is not None:
-          error = unicode(error)
-        self.send_notification("BigSemantics service connection failure",
-                     "Runtime error: " + error_msg + "\n"
-                     + "when trying " + url)
-        return
-      elif code != 200:
-        self.send_notification("BigSemantics service failure",
-                     "Access error, HTTP code: " + unicode(code)
-                     + "\n" + "when trying " + url)
-        return
+    if code < 0:
+      self.send_notification("BigSemantics service connection failure", fatal)
+    elif code != 200:
+      self.send_notification("BigSemantics service failure", fatal)
+    else:
+      if len(non_fatal) > 0:
+        self.send_notification("BigSemantics service issue(s)", non_fatal)
       else:
-        if content.find(include) < 0:
-          msg_body +=\
-            "Expected content not found for {}: {}\n".format(url, include)
-
-    if len(msg_body) > 0:
-      self.send_notification("BigSemantics service issue(s)", msg_body)
-
-  def access_and_download(self, url):
-    f = None
-    code = -1
-    content = None
-    error = None
-    try:
-      f = urllib2.urlopen(url)
-      code = f.getcode()
-      content = u'\n'.join(f.readlines())
-    except Exception as e:
-      code = -1
-      error = e
-    finally:
-      if f is not None:
-        f.close()
-    return {"code": code, "content": content, "error": error}
+        print "BS service seems to be working fine."
 
   def send_notification(subject, message):
-    execfile('bot.conf', config)
-    login = config['bot_email_login']
-    passwd = config['bot_email_passwd']
+    login = self.config['bot_email_login']
+    passwd = self.config['bot_email_passwd']
     receiver = "bigsemantics@ecologylab.net"
 
     mail_text = MIMEText(message)
@@ -78,9 +40,10 @@ class Monitor:
     return (quit_status, problems)
 
 
+
 if __name__ == '__main__':
   config = {}
-  execfile(config_file_path, config)
-  monitor = Monitor(config)
-  monitor.test_bs_service()
+  execfile('bot.conf', config)
+  monitor = ServiceMonitor(config)
+  monitor.test_service()
 
