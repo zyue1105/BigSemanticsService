@@ -12,12 +12,11 @@ import org.slf4j.LoggerFactory;
 
 import ecologylab.bigsemantics.Utils;
 import ecologylab.bigsemantics.collecting.DownloadStatus;
-import ecologylab.bigsemantics.filestorage.FileSystemStorage;
 import ecologylab.bigsemantics.metadata.builtins.Document;
 import ecologylab.bigsemantics.metadata.builtins.DocumentClosure;
 import ecologylab.bigsemantics.metametadata.MetaMetadata;
 import ecologylab.bigsemantics.service.SemanticServiceErrorMessages;
-import ecologylab.bigsemantics.service.SemanticServiceScope;
+import ecologylab.bigsemantics.service.SemanticsServiceScope;
 import ecologylab.bigsemantics.service.logging.ServiceLogRecord;
 import ecologylab.generic.Debug;
 import ecologylab.net.ParsedURL;
@@ -34,24 +33,24 @@ public class MetadataServiceHelper extends Debug
     implements SemanticServiceErrorMessages
 {
 
-  public static int                   CONTINUATION_TIMOUT = 60000;
+  public static int                    CONTINUATION_TIMOUT = 60000;
 
-  private static Logger               logger;
+  private static Logger                logger;
 
-  private static Logger               perfLogger;
+  private static Logger                perfLogger;
 
-  private static SemanticServiceScope semanticsServiceScope;
+  private static SemanticsServiceScope semanticsServiceScope;
 
   static
   {
     logger = LoggerFactory.getLogger(MetadataServiceHelper.class);
     perfLogger = LoggerFactory.getLogger("ecologylab.bigsemantics.service.PERF");
-    semanticsServiceScope = SemanticServiceScope.get();
+    semanticsServiceScope = SemanticsServiceScope.get();
   }
 
-  private Document                    document;
+  private Document                     document;
 
-  private ServiceLogRecord            perfLogRecord;
+  private ServiceLogRecord             perfLogRecord;
 
   public MetadataServiceHelper()
   {
@@ -71,10 +70,14 @@ public class MetadataServiceHelper extends Debug
    * @param reload
    * @return
    */
-  public Response getMetadataResponse(ParsedURL purl, StringFormat format, boolean reload)
+  public Response getMetadataResponse(String requesterIp,
+                                      ParsedURL purl,
+                                      StringFormat format,
+                                      boolean reload)
   {
-    perfLogRecord.setBeginTime(new Date());
+    perfLogRecord.setRequesterIp(requesterIp);
     perfLogRecord.setRequestUrl(purl);
+    perfLogRecord.setBeginTime(new Date());
     Response resp = null;
 
     document = null;
@@ -209,8 +212,8 @@ public class MetadataServiceHelper extends Debug
   {
     try
     {
+      logger.info("performing downloading on {}", document);
       closure.performDownloadSynchronously();
-      logger.info("performed downloading on {}", document);
       Document newDoc = closure.getDocument();
       if (document != null && document != newDoc)
       {
@@ -218,6 +221,7 @@ public class MetadataServiceHelper extends Debug
         semanticsServiceScope.getLocalDocumentCollection().remap(document, newDoc);
       }
       document = newDoc;
+      logger.info("downloading done on {}", document);
     }
     catch (IOException e)
     {
@@ -240,8 +244,7 @@ public class MetadataServiceHelper extends Debug
   private void removeFromPersistentDocumentCache(ParsedURL docPurl)
   {
     logger.debug("Removing document [{}] from persistent document caches", docPurl);
-    semanticsServiceScope.getPersistentDocumentCache().removeDocument(docPurl);
-    FileSystemStorage.getStorageProvider().removeFileAndMetadata(docPurl);
+    semanticsServiceScope.getPersistentDocumentCache().remove(docPurl);
   }
 
 }

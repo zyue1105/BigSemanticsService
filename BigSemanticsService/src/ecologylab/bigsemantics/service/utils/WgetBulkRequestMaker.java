@@ -6,7 +6,7 @@ package ecologylab.bigsemantics.service.utils;
 import java.io.File;
 import java.io.IOException;
 
-import ecologylab.bigsemantics.filestorage.SHA256FileNameGenerator;
+import ecologylab.bigsemantics.documentcache.DiskPersistentDocumentCache;
 
 /**
  * @author quyin
@@ -25,7 +25,7 @@ public class WgetBulkRequestMaker extends AbstractBulkRequestMaker
   @Override
   public int request(String url)
   {
-    String fn = "/tmp/cache/" + SHA256FileNameGenerator.getName(url) + ".html";
+    String fn = "/tmp/cache/" + DiskPersistentDocumentCache.getDocId(url) + ".html";
     ProcessBuilder pb = new ProcessBuilder();
     pb.command("/usr/local/bin/wget", "-O", fn, "-U", userAgent, url);
     Process p = null;

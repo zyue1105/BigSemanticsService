@@ -142,7 +142,7 @@ public class TestMetadataServiceHelper
   public void testServiceLogRecordBeingGeneratedCorrectly()
   {
     ParsedURL purl = ParsedURL.getAbsolute("http://www.amazon.com/Musicians-Gear-Tubular-Guitar-Stand/dp/B0018TIADQ/");
-    msh.getMetadataResponse(purl, StringFormat.XML, false);
+    msh.getMetadataResponse("192.168.0.1", purl, StringFormat.XML, false);
     
     ServiceLogRecord log = msh.getServiceLogRecord();
     assertNotNull(log.getBeginTime());

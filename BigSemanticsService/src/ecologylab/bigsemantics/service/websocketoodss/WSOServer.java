@@ -3,7 +3,7 @@ package ecologylab.bigsemantics.service.websocketoodss;
 import java.io.IOException;
 import java.net.InetAddress;
 
-import ecologylab.bigsemantics.service.SemanticServiceScope;
+import ecologylab.bigsemantics.service.SemanticsServiceScope;
 import ecologylab.bigsemantics.service.oodss.SemanticsServiceMessageScope;
 import ecologylab.net.NetTools;
 import ecologylab.oodss.distributed.server.DoubleThreadedNIOServer;
@@ -25,7 +25,7 @@ public class WSOServer
 		 * Creates a scope for the server to use as an application scope as well as individual client
 		 * session scopes.
 		 */
-		SemanticServiceScope sessionScope = SemanticServiceScope.get();
+		SemanticsServiceScope sessionScope = SemanticsServiceScope.get();
 
 		/*
 		 * Initialize the ECHO_HISTORY registry in the application scope so that the performService(...)

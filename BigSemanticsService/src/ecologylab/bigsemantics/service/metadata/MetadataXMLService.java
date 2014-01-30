@@ -57,7 +57,7 @@ public class MetadataXMLService
 			if (purl != null)
 			{
 				MetadataServiceHelper helper = new MetadataServiceHelper();
-				resp = helper.getMetadataResponse(purl, StringFormat.XML, reload);
+				resp = helper.getMetadataResponse(clientIp, purl, StringFormat.XML, reload);
 			}
 		}
 

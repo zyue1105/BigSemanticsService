@@ -9,35 +9,27 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
 import org.apache.log4j.NDC;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import ecologylab.bigsemantics.service.SemanticServiceScope;
-import ecologylab.logging.ILogger;
 import ecologylab.serialization.formatenums.StringFormat;
 
 /**
  * mmdrepository.jsonp root resource
  * 
  * @author ajit
- * 
  */
-
 @Path("/mmdrepository.jsonp")
 @Component
 @Scope("singleton")
 public class MMDRepositoryJSONPService
 {
 
-  static ILogger  logger;
+  static Logger   logger = LoggerFactory.getLogger(MMDRepositoryJSONPService.class);
 
-  static Response resp = null;
-
-  static
-  {
-    logger =
-        SemanticServiceScope.get().getLoggerFactory().getLogger(MMDRepositoryJSONService.class);
-  }
+  static Response resp   = null;
 
   @GET
   @Produces("application/json")
@@ -50,13 +42,13 @@ public class MMDRepositoryJSONPService
     if (resp == null)
       resp = MMDRepositoryServiceHelper.getMmdRepository(StringFormat.JSON);
 
-    String respEntity = callback + "(" + (String)resp.getEntity() + ");";
-	Response jsonpResp = Response.status(resp.getStatus()).entity(respEntity).build();
-    
+    String respEntity = callback + "(" + (String) resp.getEntity() + ");";
+    Response jsonpResp = Response.status(resp.getStatus()).entity(respEntity).build();
+
     logger.debug("Time taken (ms): " + (System.currentTimeMillis() - requestTime));
     NDC.remove();
-    
+
     return jsonpResp;
   }
-  
+
 }

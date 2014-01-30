@@ -6,7 +6,7 @@ package ecologylab.bigsemantics.service.oodss;
 import java.io.IOException;
 import java.net.InetAddress;
 
-import ecologylab.bigsemantics.service.SemanticServiceScope;
+import ecologylab.bigsemantics.service.SemanticsServiceScope;
 import ecologylab.net.NetTools;
 import ecologylab.oodss.distributed.server.DoubleThreadedNIOServer;
 import ecologylab.serialization.SimplTypesScope;
@@ -34,7 +34,7 @@ public class MetadataOODSSServer
 		 * Creates a scope for the server to use as an application scope as well as individual client
 		 * session scopes.
 		 */
-		SemanticServiceScope sessionScope = SemanticServiceScope.get();
+		SemanticsServiceScope sessionScope = SemanticsServiceScope.get();
 
 		/*
 		 * Initialize the ECHO_HISTORY registry in the application scope so that the performService(...)

@@ -18,12 +18,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
-
-import ecologylab.bigsemantics.filestorage.SHA256FileNameGenerator;
-import ecologylab.net.ParsedURL;
 
 /**
  * utility class to extract clipping source urls from the maches. maches can be added one-by-one,
