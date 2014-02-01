@@ -14,6 +14,8 @@ if [ -d "$_BSS_DIR" ]; then
   #   sudo iptables -t nat -I PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 8080
   nohup java -server -jar start.jar 2>&1 > /dev/null &
 
+  sleep 60
+
   cd $_BSS_DIR/downloader
   nohup java -server -Xms128m -Xmx256m -jar Downloader.jar 2>&1 >/dev/null &
 else
