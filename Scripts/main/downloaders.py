@@ -40,13 +40,14 @@ class Downloaders:
                             userhost + ":" + remote_file, local_file]))
     return out_errs
 
-  def do(self, cmd, use_fork = False):
-    call_func = fork if use_fork else call
+  def do(self, cmd, run_on_host = None):
     out_errs = []
     for d in self.downloaders:
+      if run_on_host is not None and not run_on_host(d.host):
+        continue
       userhost = d.user + "@" + d.host
       out_errs.append(
-        call_func(["ssh", "-i", d.login_id, "-p", str(d.port), userhost, cmd]))
+        call(["ssh", "-i", d.login_id, "-p", str(d.port), userhost, cmd]))
     return out_errs
 
   def update_jars(self):
@@ -54,11 +55,11 @@ class Downloaders:
     remote_jar = "~/downloader/Downloader.jar"
     self.put(local_jar, remote_jar)
 
-  def run_downloaders(self):
+  def run_downloaders(self, run_on_host = None):
+    self.do("killall java", run_on_host)
     run_cmd =\
-      "nohup java -server -Xms128m -Xmx128m -jar ~/downloader/Downloader.jar >/dev/null 2>&1 &"
-    self.do("killall java")
-    self.do(run_cmd)
+      "nohup java -server -Xmx100m -jar ~/downloader/Downloader.jar >/dev/null 2>&1 &"
+    self.do(run_cmd, run_on_host)
 
 
 
