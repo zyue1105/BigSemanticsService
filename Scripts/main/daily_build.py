@@ -5,15 +5,14 @@ import shutil
 import time
 import datetime
 from copy import copy
-from os import listdir, remove, devnull
+from os import listdir, remove
 from os.path import dirname, join
-from subprocess import Popen, PIPE, STDOUT
 
 from simple_config import load_config
 from bot_email import send_bot_email_to_maintainers
+from forker import fork, call, check_call
 import bs_service_tester
 
-DEVNULL = open(devnull, 'w')
 builder_config = load_config("builder.conf")
 
 class ServiceBuilder:
@@ -39,47 +38,29 @@ class ServiceBuilder:
     self.prod_user = config["prod_user"]
     self.prod_host = config["prod_host"]
 
-  def _fork(self, cmds, wd):
-    print "forking " + " ".join(cmds)
-    p = Popen(cmds, stderr=STDOUT, stdout=DEVNULL, cwd = wd)
-
-  def _call(self, cmds, wd):
-    print "calling " + " ".join(cmds)
-    p = Popen(cmds, stdout=PIPE, stderr=PIPE, cwd = wd)
-    (out, err) = p.communicate()
-    return (p.returncode, out, err)
-
-  def _check_call(self, cmds, wd):
-    (code, out, err) = self._call(cmds, wd)
-    if code != 0:
-      raise exceptions.RuntimeError(
-              "Failed to execute {}\n  OUT:\n{}\n  ERROR:\n{}\n".format(
-                cmds, out, err))
-
   def pull_wrappers(self):
     # clean local wrapper changes
-    self._check_call(["git", "checkout", "--", "*"], wd=self.wrapper_repo)
+    check_call(["git", "checkout", "--", "*"], wd=self.wrapper_repo)
     # pull down latest wrappers
-    self._check_call(["git", "pull"], wd=self.wrapper_repo)
+    check_call(["git", "pull"], wd=self.wrapper_repo)
 
   def compile_wrappers_to_jars(self):
-    self._check_call(["ant", "clean"], wd=self.wrapper_proj)
-    self._check_call("ant", wd=self.wrapper_proj)
+    check_call(["ant", "clean"], wd=self.wrapper_proj)
+    check_call("ant", wd=self.wrapper_proj)
 
   def build_service_war(self):
-    self._check_call(["ant", "clean"], wd=self.service_build)
-    self._check_call(["ant", "buildwar"], wd=self.service_build)
+    check_call(["ant", "clean"], wd=self.service_build)
+    check_call(["ant", "buildwar"], wd=self.service_build)
     shutil.copy2(join(self.service_build, "BigSemanticsService.war"),
                  self.webapps_dir)
 
   def start_local_service(self):
-    self._fork(["killall", "java"], wd=self.jetty_dir)
+    fork(["killall", "java"], wd=self.jetty_dir)
     time.sleep(3)
-    self._fork(["nohup", "java", "-server", "-jar", "start.jar"],
-               wd=self.jetty_dir)
+    fork(["nohup", "java", "-server", "-jar", "start.jar"], wd=self.jetty_dir)
     time.sleep(30)
-    self._fork(["nohup", "java", "-server", "-Xms128m", "-Xmx256m", "-jar",
-                "Downloader.jar"], wd=self.downloader_dir)
+    fork(["nohup", "java", "-server", "-Xms128m", "-Xmx256m", "-jar",
+          "Downloader.jar"], wd=self.downloader_dir)
     time.sleep(5)
 
   def test_local_service_and_release(self):
@@ -113,7 +94,7 @@ class ServiceBuilder:
                                     self.prod_host,
                                     self.prod_webapps_dir)
     cmds = ["scp", "-i", self.prod_login_id, war_file, dest_dir]
-    self._check_call(cmds, wd = self.webapps_dir)
+    check_call(cmds, wd = self.webapps_dir)
 
 
 
