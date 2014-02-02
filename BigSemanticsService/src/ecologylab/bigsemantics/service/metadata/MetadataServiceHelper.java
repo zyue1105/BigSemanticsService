@@ -119,6 +119,7 @@ public class MetadataServiceHelper extends Debug
       case IOERROR:
       case RECYCLED:
         logger.error("Bad Document status for [{}]: {}", purl, docStatus);
+        removeFromLocalDocumentCollection(purl);
         break;
       }
     }
@@ -142,7 +143,11 @@ public class MetadataServiceHelper extends Debug
   Document getMetadata(ParsedURL purl, boolean reload)
   {
     document = semanticsServiceScope.getOrConstructDocument(purl);
-    assert document != null : "Null Document returned from the semantics scope!";
+    if (document == null)
+    {
+      logger.error("Null Document returned from the semantics scope!");
+      return null;
+    }
 
     ParsedURL docPurl = document.getLocation();
     perfLogRecord.setDocumentUrl(document.getLocation());
@@ -153,7 +158,7 @@ public class MetadataServiceHelper extends Debug
 
     DownloadStatus docStatus = document.getDownloadStatus();
     logger.debug("Download status of {}: {}", document, docStatus);
-    if (docStatus == DownloadStatus.DOWNLOAD_DONE)
+    if (!reload && docStatus == DownloadStatus.DOWNLOAD_DONE)
     {
       logger.info("{} found in service in-mem document cache", document);
       perfLogRecord.setInMemDocumentCacheHit(true);
@@ -176,18 +181,17 @@ public class MetadataServiceHelper extends Debug
     case QUEUED:
     case CONNECTING:
     case PARSING:
-      logger.info("about to download {}, current status: {}", document, docStatus);
       download(closure);
       break;
     case IOERROR:
     case RECYCLED:
-      logger.info("about to reload {}, current status: {}", document, docStatus);
       reload = true;
       // intentionally fall through the next case.
       // the idea is: when the document is in state IOERROR or RECYCLED, it should be reloaded.
     case DOWNLOAD_DONE:
       if (reload)
       {
+        logger.info("Reloading {}", document);
         removeFromPersistentDocumentCache(docPurl);
         // redownload and parse document
         document.resetRecycleStatus();
@@ -201,6 +205,7 @@ public class MetadataServiceHelper extends Debug
     MetaMetadata mmd = (MetaMetadata) document.getMetaMetadata();
     if (mmd.isNoCache())
     {
+      logger.info("Meta-metadata specified no_cache, purging {}", document);
       removeFromLocalDocumentCollection(purl);
       removeFromLocalDocumentCollection(docPurl);
     }
@@ -215,13 +220,17 @@ public class MetadataServiceHelper extends Debug
       logger.info("performing downloading on {}", document);
       closure.performDownloadSynchronously();
       Document newDoc = closure.getDocument();
+      logger.info("download status of {}: {}", document, closure.getDownloadStatus());
       if (document != null && document != newDoc)
       {
         logger.info("Remapping old {} to new {}", document, newDoc);
         semanticsServiceScope.getLocalDocumentCollection().remap(document, newDoc);
+        document = newDoc;
       }
-      document = newDoc;
-      logger.info("downloading done on {}", document);
+      if (closure.getDownloadStatus() == DownloadStatus.IOERROR)
+      {
+        logger.warn("I/O error when downloading {}", document);
+      }
     }
     catch (IOException e)
     {
