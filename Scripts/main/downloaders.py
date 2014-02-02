@@ -25,41 +25,41 @@ class Downloaders:
     check_call(["ant", "downloader-jar"], wd = self.dpool_dir)
 
   def put(self, local_file, remote_file):
-    out_errs = []
+    code_out_errs = []
     for d in self.downloaders:
       userhost = d.user + "@" + d.host
-      out_errs.append(call(["scp", "-i", d.login_id, "-P", str(d.port),
-                            local_file, userhost + ":" + remote_file]))
-    return out_errs
+      code_out_errs.append(call(["scp", "-i", d.login_id, "-P", str(d.port),
+                                 local_file, userhost + ":" + remote_file]))
+    return code_out_errs
 
   def get(self, remote_file, local_file):
-    out_errs = []
+    code_out_errs = []
     for d in self.downloaders:
       userhost = d.user + "@" + d.host
-      out_errs.append(call(["scp", "-i", d.login_id, "-P", str(d.port),
-                            userhost + ":" + remote_file, local_file]))
-    return out_errs
+      code_out_errs.append(call(["scp", "-i", d.login_id, "-P", str(d.port),
+                                 userhost + ":" + remote_file, local_file]))
+    return code_out_errs
 
   def do(self, cmd, run_on_host = None):
-    out_errs = []
+    code_out_errs = []
     for d in self.downloaders:
       if run_on_host is not None and not run_on_host(d.host):
         continue
       userhost = d.user + "@" + d.host
-      out_errs.append(
+      code_out_errs.append(
         call(["ssh", "-i", d.login_id, "-p", str(d.port), userhost, cmd]))
-    return out_errs
+    return code_out_errs
 
   def update_jars(self):
     local_jar = join(self.dpool_dir, "build/Downloader.jar")
     remote_jar = "~/downloader/Downloader.jar"
-    self.put(local_jar, remote_jar)
+    return self.put(local_jar, remote_jar)
 
   def run_downloaders(self, run_on_host = None):
     self.do("killall java", run_on_host)
-    run_cmd =\
-      "nohup java -server -Xmx100m -jar ~/downloader/Downloader.jar >/dev/null 2>&1 &"
-    self.do(run_cmd, run_on_host)
+    run_cmd = "nohup java -server -Xmx100m -jar ~/downloader/Downloader.jar "\
+              + ">/dev/null 2>&1 &"
+    return self.do(run_cmd, run_on_host)
 
 
 

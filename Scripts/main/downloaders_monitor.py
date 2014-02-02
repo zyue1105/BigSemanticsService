@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 from downloaders import downloader_config, Downloaders
+from bot_email import send_bot_email_to_maintainers
 
 nodes = downloader_config["downloaders"]
 ds = Downloaders()
@@ -13,6 +14,11 @@ for (code, out, err) in code_out_errs:
   else:
     print "Not running: " + node.host
     run_on_host = lambda h: h == node.host
-    ds.run_downloaders(run_on_host)
+    (ncode, nout, nerr) = ds.run_downloaders(run_on_host)[0]
+    if ncode != 0:
+      print "Sending failure notification for " + node.host
+      send_bot_email_to_maintainers(
+        "Failed to relaunch downloader: " + node.host,
+        "Output:\n" + nout + "\nError:\n" + nerr)
   i += 1
 
