@@ -95,6 +95,14 @@ class ServiceBuilder:
                                     self.prod_webapps_dir)
     cmds = ["scp", "-i", self.prod_login_id, war_file, dest_dir]
     check_call(cmds, wd = self.webapps_dir)
+    onto_vis_dir = join(self.wrapper_proj, "OntoVis")
+    onto_vis_data_file = "mmd_repo.json"
+    dest_static_html_dir = join(self.prod_webapps_dir, "root")
+    dest_dir = "{0}@{1}:{2}".format(self.prod_user,
+                                    self.prod_host,
+                                    dest_static_html_dir)
+    cmds = ["scp", "-i", self.prod_login_id, onto_vis_data_file, dest_dir]
+    check_call(cmds, wd = onto_vis_dir)
 
 
 
@@ -106,6 +114,9 @@ if __name__ == "__main__":
     builder.build_service_war()
     builder.start_local_service()
     builder.test_local_service_and_release()
+    print "everything done."
   except Exception as e:
+    import sys
+    sys.stderr.write("dev build failed! see email notification.")
     send_bot_email_to_maintainers("Dev build failed.", str(e))
 
