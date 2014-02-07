@@ -41,12 +41,14 @@ class ServiceBuilder:
   def pull_wrappers(self):
     # clean local wrapper changes
     check_call(["git", "checkout", "--", "*"], wd=self.wrapper_repo)
+    check_call(["git", "clean", "-f"], wd=self.wrapper_repo)
+    check_call(["git", "clean", "-f", "-d"], wd=self.wrapper_repo)
     # pull down latest wrappers
     check_call(["git", "pull"], wd=self.wrapper_repo)
 
   def compile_wrappers_to_jars(self):
     check_call(["ant", "clean"], wd=self.wrapper_proj)
-    check_call("ant", wd=self.wrapper_proj)
+    check_call(["ant"], wd=self.wrapper_proj)
 
   def build_service_war(self):
     check_call(["ant", "clean"], wd=self.service_build)
@@ -95,7 +97,7 @@ class ServiceBuilder:
                                     self.prod_webapps_dir)
     cmds = ["scp", "-i", self.prod_login_id, war_file, dest_dir]
     check_call(cmds, wd = self.webapps_dir)
-    onto_vis_dir = join(self.wrapper_proj, "OntoVis")
+    onto_vis_dir = join(self.wrapper_proj, "OntoViz")
     onto_vis_data_file = "mmd_repo.json"
     dest_static_html_dir = join(self.prod_webapps_dir, "root")
     dest_dir = "{0}@{1}:{2}".format(self.prod_user,
