@@ -66,7 +66,6 @@ public class DiskPersistentDocumentCache implements PersistentDocumentCache<Docu
     metaTScope = SimplTypesScope.get("PersistenceMetadata", PersistenceMetadata.class);
     docTScope = RepositoryMetadataTranslationScope.get();
     this.semanticsScope = semanticsScope;
-    repositoryVersion = semanticsScope.getMetaMetadataRepositoryVersion();
     repositoryHash = semanticsScope.getMetaMetadataRepositoryHash();
   }
 

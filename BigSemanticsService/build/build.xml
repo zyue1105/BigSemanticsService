@@ -77,15 +77,13 @@
   </target>
 
   <target name="build-service">
-    <javac debug="on"
-           debuglevel="lines,vars,source"
-           classpathref="classpath"
+    <javac classpathref="classpath"
            srcdir="${source.dir}"
            destdir="${distclasses.dir}"
            source="1.6"
            target="1.6"
+           fork="yes"
            includeantruntime="true">
-      <compilerarg value="-g" />
     </javac>
   </target>
 
