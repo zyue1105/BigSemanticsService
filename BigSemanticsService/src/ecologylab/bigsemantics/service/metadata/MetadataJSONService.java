@@ -57,7 +57,7 @@ public class MetadataJSONService
 			if (purl != null)
 			{
 				MetadataServiceHelper helper = new MetadataServiceHelper();
-				resp = helper.getMetadataResponse(purl, StringFormat.JSON, reload);
+				resp = helper.getMetadataResponse(clientIp, purl, StringFormat.JSON, reload);
 			}
 		}
 

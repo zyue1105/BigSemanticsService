@@ -11,7 +11,7 @@
   <!-- semantic service sub-directories -->
   <property name="source.dir" value="${service.dir}/src" />
   <property name="context.dir" value="${service.dir}/context" />
-  <property name="config.dir" value="${service.dir}/config" />
+  <property name="resources.dir" value="${service.dir}/resources" />
   <property name="dist.dir" value="${basedir}/dist" />
   <property name="distlib.dir" value="${dist.dir}/WEB-INF/lib" />
   <property name="distclasses.dir" value="${dist.dir}/WEB-INF/classes" />
@@ -77,15 +77,13 @@
   </target>
 
   <target name="build-service">
-    <javac debug="on"
-           debuglevel="lines,vars,source"
-           classpathref="classpath"
+    <javac classpathref="classpath"
            srcdir="${source.dir}"
            destdir="${distclasses.dir}"
            source="1.6"
            target="1.6"
+           fork="yes"
            includeantruntime="true">
-      <compilerarg value="-g" />
     </javac>
   </target>
 
@@ -94,8 +92,8 @@
 
     <antcall target="build-service" />
 
-    <copy file="${config.dir}/service.properties" todir="${distclasses.dir}" />
-    <copy file="${config.dir}/log4j.properties" todir="${distclasses.dir}" />
+    <copy file="${resources.dir}/service.properties" todir="${distclasses.dir}" />
+    <copy file="${resources.dir}/log4j.properties" todir="${distclasses.dir}" />
   </target>
 
   <target name="buildwar" depends="compile">

@@ -14,7 +14,8 @@
 		<constructor-arg value="dpool-defaults.properties" />
 	</bean>
 
-	<bean id="controller" class="ecologylab.bigsemantics.downloaderpool.Controller">
+	<bean id="controller" class="ecologylab.bigsemantics.downloaderpool.Controller"
+        destroy-method="stop">
 		<constructor-arg ref="configs" />
 	</bean>
 

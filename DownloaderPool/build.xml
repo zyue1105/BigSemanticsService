@@ -73,8 +73,6 @@
         </war>
     </target>
     
-    <target name="main" depends="war" />
-
     <taskdef name="one-jar"
              classname="com.simontuffs.onejar.ant.OneJarTask"
              classpath="${lib.dir}/one-jar-ant-task-0.97.jar" />
@@ -96,5 +94,7 @@
             <fileset dir="${resources.dir}" includes="one-jar.properties" />
         </one-jar>
     </target>
+
+    <target name="main" depends="war,downloader-jar" />
 
 </project>

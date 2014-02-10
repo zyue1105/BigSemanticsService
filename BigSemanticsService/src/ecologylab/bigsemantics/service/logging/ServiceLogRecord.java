@@ -11,81 +11,75 @@ import ecologylab.serialization.annotations.simpl_scalar;
 public class ServiceLogRecord extends DocumentLogRecord
 {
 
-	@simpl_scalar
-	Date beginTime;
-	
-	@simpl_scalar
-	long msTotal;
-	
-	@simpl_scalar
-	String requesterIp;
-	
-	@simpl_scalar
-	ParsedURL requestUrl;
-	
-	@simpl_scalar
-	int responseCode;
-	
-	@simpl_scalar
-	long msPageCacheLookup;
-	
-	@simpl_scalar
-	long msPageCaching;
-	
-	@simpl_scalar
-	long msPageLocalFileConnecting;
+  @simpl_scalar
+  private String    requesterIp;
 
-	public Date getBeginTime()
-	{
-		return beginTime;
-	}
+  @simpl_scalar
+  private ParsedURL requestUrl;
 
-	public void setBeginTime(Date beginTime)
-	{
-		this.beginTime = beginTime;
-	}
+  @simpl_scalar
+  private Date      beginTime;
 
-	public long getMsTotal()
-	{
-		return msTotal;
-	}
+  @simpl_scalar
+  private long      msTotal;
 
-	public void setMsTotal(long msTotal)
-	{
-		this.msTotal = msTotal;
-	}
+  @simpl_scalar
+  private int       responseCode;
 
-	public String getRequesterIp()
-	{
-		return requesterIp;
-	}
+  @simpl_scalar
+  private long      msPageCacheLookup;
 
-	public void setRequesterIp(String requesterIp)
-	{
-		this.requesterIp = requesterIp;
-	}
+  public Date getBeginTime()
+  {
+    return beginTime;
+  }
 
-	public ParsedURL getRequestUrl()
-	{
-		return requestUrl;
-	}
+  public void setBeginTime(Date beginTime)
+  {
+    this.beginTime = beginTime;
+  }
 
-	public void setRequestUrl(ParsedURL requestUrl)
-	{
-		this.requestUrl = requestUrl;
-	}
+  public long getMsTotal()
+  {
+    return msTotal;
+  }
 
-	public int getResponseCode()
-	{
-		return responseCode;
-	}
+  public void setMsTotal(long msTotal)
+  {
+    this.msTotal = msTotal;
+  }
 
-	public void setResponseCode(int responseCode)
-	{
-		this.responseCode = responseCode;
-	}
-	
-	public long getMsPageCacheLookup()
+  public String getRequesterIp()
+  {
+    return requesterIp;
+  }
+
+  public void setRequesterIp(String requesterIp)
+  {
+    this.requesterIp = requesterIp;
+  }
+
+  public ParsedURL getRequestUrl()
+  {
+    return requestUrl;
+  }
+
+  public void setRequestUrl(ParsedURL requestUrl)
+  {
+    this.requestUrl = requestUrl;
+  }
+
+  public int getResponseCode()
+  {
+    return responseCode;
+  }
+
+  public void setResponseCode(int responseCode)
+  {
+    this.responseCode = responseCode;
+  }
+
+  public long getMsPageCacheLookup()
   {
     return msPageCacheLookup;
   }
@@ -95,39 +89,19 @@ public class ServiceLogRecord extends DocumentLogRecord
     this.msPageCacheLookup = msPageCacheLookup;
   }
 
-  public long getMsPageCaching()
-  {
-    return msPageCaching;
-  }
-
-  public void setMsPageCaching(long msPageCaching)
-  {
-    this.msPageCaching = msPageCaching;
-  }
-
-  public long getMsPageLocalFileConnecting()
-  {
-    return msPageLocalFileConnecting;
-  }
-
-  public void setMsPageLocalFileConnecting(long msConnectingPageLocalFile)
-  {
-    this.msPageLocalFileConnecting = msConnectingPageLocalFile;
-  }
-
   @Override
-	public String toString()
-	{
-	  return String.format("%s[%s]",
-	                       ServiceLogRecord.class.getSimpleName(),
-	                       requestUrl == null ? "NullLocation" : requestUrl.toString());
-	}
+  public String toString()
+  {
+    return String.format("%s[%s]",
+                         ServiceLogRecord.class.getSimpleName(),
+                         requestUrl == null ? "NullLocation" : requestUrl.toString());
+  }
 
-	static final public ServiceLogRecord DUMMY;
-	
-	static
-	{
-	  DUMMY = new ServiceLogRecord();
-	}
+  static final public ServiceLogRecord DUMMY;
+
+  static
+  {
+    DUMMY = new ServiceLogRecord();
+  }
 
 }

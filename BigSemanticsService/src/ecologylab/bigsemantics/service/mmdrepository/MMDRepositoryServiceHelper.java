@@ -6,7 +6,7 @@ import javax.ws.rs.core.Response.Status;
 
 import ecologylab.bigsemantics.metametadata.MetaMetadataRepository;
 import ecologylab.bigsemantics.service.SemanticServiceErrorMessages;
-import ecologylab.bigsemantics.service.SemanticServiceScope;
+import ecologylab.bigsemantics.service.SemanticsServiceScope;
 import ecologylab.serialization.SIMPLTranslationException;
 import ecologylab.serialization.SimplTypesScope;
 import ecologylab.serialization.formatenums.StringFormat;
@@ -20,11 +20,11 @@ import ecologylab.serialization.formatenums.StringFormat;
 
 public class MMDRepositoryServiceHelper {
 	
-	static SemanticServiceScope			semanticsServiceScope;
+	static SemanticsServiceScope			semanticsServiceScope;
 	
 	static 
 	{
-		semanticsServiceScope = SemanticServiceScope.get();
+		semanticsServiceScope = SemanticsServiceScope.get();
 	}
 	
 	public static Response getMmdRepository(StringFormat format)

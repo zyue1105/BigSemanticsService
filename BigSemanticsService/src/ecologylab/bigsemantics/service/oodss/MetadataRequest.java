@@ -5,7 +5,7 @@ package ecologylab.bigsemantics.service.oodss;
 
 import ecologylab.bigsemantics.metadata.builtins.Document;
 import ecologylab.bigsemantics.metadata.builtins.DocumentClosure;
-import ecologylab.bigsemantics.service.SemanticServiceScope;
+import ecologylab.bigsemantics.service.SemanticsServiceScope;
 import ecologylab.collections.Scope;
 import ecologylab.generic.Continuation;
 import ecologylab.net.ParsedURL;
@@ -28,7 +28,7 @@ public class MetadataRequest extends RequestMessage implements Continuation<Docu
 
 	Document							metadata;
 
-	SemanticServiceScope	semanticServiceScope;
+	SemanticsServiceScope	semanticServiceScope;
 
 	public MetadataRequest()
 	{
@@ -43,7 +43,7 @@ public class MetadataRequest extends RequestMessage implements Continuation<Docu
 	public MetadataResponse performService(Scope clientSessionScope)
 	{
 		ParsedURL thatPurl = ParsedURL.getAbsolute(url);
-		semanticServiceScope = SemanticServiceScope.get();
+		semanticServiceScope = SemanticsServiceScope.get();
 
 		Document document = semanticServiceScope.getOrConstructDocument(thatPurl);
 		DocumentClosure documentClosure = document.getOrConstructClosure();

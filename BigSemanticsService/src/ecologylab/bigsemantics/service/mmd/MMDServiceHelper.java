@@ -11,10 +11,12 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ecologylab.bigsemantics.metametadata.MetaMetadata;
 import ecologylab.bigsemantics.service.SemanticServiceErrorMessages;
-import ecologylab.bigsemantics.service.SemanticServiceScope;
-import ecologylab.logging.ILogger;
+import ecologylab.bigsemantics.service.SemanticsServiceScope;
 import ecologylab.net.ParsedURL;
 import ecologylab.serialization.SIMPLTranslationException;
 import ecologylab.serialization.SimplTypesScope;
@@ -24,26 +26,23 @@ import ecologylab.serialization.formatenums.StringFormat;
  * Helper class for mmd.xml and mmd.json root resources
  * 
  * @author ajit
- * 
  */
-
 public class MMDServiceHelper
 {
-  static SemanticServiceScope          semanticsServiceScope;
+
+  static Logger                        logger;
+
+  static SemanticsServiceScope         semanticsServiceScope = SemanticsServiceScope.get();
 
   // url to name mapping
-  static HashMap<ParsedURL, String>    purlNameMap = new HashMap<ParsedURL, String>();
+  static HashMap<ParsedURL, String>    purlNameMap           = new HashMap<ParsedURL, String>();
 
   // name to mmd maaping
-  static HashMap<String, MetaMetadata> mmdCache    = new HashMap<String, MetaMetadata>();
-
-  // static Logger log4j = Logger.getLogger(ServiceLogger.mmdLogger);
-  static ILogger                       logger;
+  static HashMap<String, MetaMetadata> mmdCache              = new HashMap<String, MetaMetadata>();
 
   static
   {
-    semanticsServiceScope = SemanticServiceScope.get();
-    logger = SemanticServiceScope.get().getLoggerFactory().getLogger(MMDServiceHelper.class);
+    logger = LoggerFactory.getLogger(MMDServiceHelper.class);
   }
 
   public static Response redirectToMmdByName(ParsedURL url, UriInfo uriInfo)
@@ -86,8 +85,10 @@ public class MMDServiceHelper
       return Response.status(Status.SEE_OTHER).location(nameURI).build();
     }
     else
-      return Response.status(Status.NOT_FOUND)
-          .entity(SemanticServiceErrorMessages.METAMETADATA_NOT_FOUND).type(MediaType.TEXT_PLAIN)
+      return Response
+          .status(Status.NOT_FOUND)
+          .entity(SemanticServiceErrorMessages.METAMETADATA_NOT_FOUND)
+          .type(MediaType.TEXT_PLAIN)
           .build();
   }
 
@@ -122,13 +123,18 @@ public class MMDServiceHelper
       catch (SIMPLTranslationException e)
       {
         e.printStackTrace();
-        return Response.status(Status.INTERNAL_SERVER_ERROR)
-            .entity(SemanticServiceErrorMessages.INTERNAL_ERROR).type(MediaType.TEXT_PLAIN).build();
+        return Response
+            .status(Status.INTERNAL_SERVER_ERROR)
+            .entity(SemanticServiceErrorMessages.INTERNAL_ERROR)
+            .type(MediaType.TEXT_PLAIN)
+            .build();
       }
     }
     else
-      return Response.status(Status.NOT_FOUND)
-          .entity(SemanticServiceErrorMessages.METAMETADATA_NOT_FOUND).type(MediaType.TEXT_PLAIN)
+      return Response
+          .status(Status.NOT_FOUND)
+          .entity(SemanticServiceErrorMessages.METAMETADATA_NOT_FOUND)
+          .type(MediaType.TEXT_PLAIN)
           .build();
   }
 
