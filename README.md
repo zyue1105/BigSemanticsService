@@ -1,6 +1,6 @@
 BigSemanticsService
 ===================
 
-Provides a RESTful service for BigSemantics. Supports thin desktop, mobile and
-cloud clients.
+Provides a RESTful service for BigSemanticsService. Supports thin desktop, mobile and
+cloud clients. See https://github.com/ecologylab/BigSemantics for additional information.
 
