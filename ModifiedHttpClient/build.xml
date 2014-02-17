@@ -56,6 +56,6 @@
     <copy file="${jar.file}" todir="${lib.dir}" /> 
   </target>
 
-  <target name="main" depends="jar" />
+  <target name="main" depends="clean,jar" />
 
 </project>
