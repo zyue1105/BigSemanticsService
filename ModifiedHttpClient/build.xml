@@ -43,7 +43,8 @@
            classpathref="classpath"
            debug="yes"
            debuglevel="lines,vars,source"
-           verbose="yes" />
+           verbose="yes"
+           fork="yes" />
 
     <copy todir="${classes.dir}">
       <fileset dir="${resources.dir}" includes="*" />

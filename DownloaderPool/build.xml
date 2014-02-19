@@ -63,7 +63,7 @@
             <fileset dir="${dist.lib.dir}" includes="*.jar" />
         </path>
         <javac srcdir="${src.dir}" destdir="${dist.classes.dir}" source="1.6" target="1.6"
-                 classpathref="classpath" />
+               fork="yes" classpathref="classpath" />
 
         <copy todir="${dist.classes.dir}">
             <fileset dir="${resources.dir}" includes="*" />
