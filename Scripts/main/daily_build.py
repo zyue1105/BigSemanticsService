@@ -110,7 +110,7 @@ class ServiceBuilder:
     # generate and copy the example table data file
     example_table_script = "generate_domain_example_table.py"
     example_table_data_file = "domain_type_examples.json"
-    cmds = [example_table_script, "--out", example_table_data_file]
+    cmds = ["python", example_table_script, "--out", example_table_data_file]
     check_call(cmds, wd = onto_vis_dir)
     cmds = ["scp", "-i", self.prod_login_id, example_table_data_file, dest_dir]
     check_call(cmds, wd = onto_vis_dir)
