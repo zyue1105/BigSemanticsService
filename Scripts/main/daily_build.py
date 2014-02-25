@@ -87,7 +87,7 @@ class ServiceBuilder:
     files = listdir(self.war_archive_dir)
     archives = [f for f in files if f.startswith("BigSemanticsService.war.")]
     if len(archives) > self.max_war_archives:
-      archives = sorted(arthives)
+      archives = sorted(archives)
       remove(join(self.war_archive_dir, archives[0]))
 
   def release_to_prod(self):
